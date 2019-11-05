@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+    <id>https://aiyou.life</id>
+    <title>Gridea</title>
+    <updated>2019-11-05T12:37:05.994Z</updated>
+    <generator>https://github.com/jpmonette/feed</generator>
+    <link rel="alternate" href="https://aiyou.life"/>
+    <link rel="self" href="https://aiyou.life/atom.xml"/>
+    <subtitle>温故而知新</subtitle>
+    <logo>https://aiyou.life/images/avatar.png</logo>
+    <icon>https://aiyou.life/favicon.ico</icon>
+    <rights>All rights reserved 2019, Gridea</rights>
+    <entry>
+        <title type="html"><![CDATA[函数参数绕过编译器的探究]]></title>
+        <id>https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu</id>
+        <link href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
+        </link>
+        <updated>2019-11-05T12:34:17.000Z</updated>
+        <content type="html"><![CDATA[<p>本文主要讲一个案例</p>
+<p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
+<p>源问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
+<p>先看示例代码</p>
+<pre><code class="language-typescript">interface SquareConfig {
+  color?: string;
+  width?: number;
+}
+
+function createSquare(config: SquareConfig): {color: string; area: number} {
+  let newSquare = {color: &quot;white&quot;, area: 100};
+  if (config.color) {
+    newSquare.color = config.color;
+  }
+  if (config.width) {
+    newSquare.area = config.width * config.width;
+  }
+  return newSquare;
+}
+
+[标注1]
+createSquare({ color: 'red', width: 100, height: 12 });    // 错误
+
+let param = { height: 200, width: 100, color: 'red' };
+
+createSquare(param);    // 正确
+
+[标注2]
+let param = {}
+
+createSquare(param)  // 正确
+
+let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+
+let param3 = { height: 200, color: &quot;red&quot; }
+
+createSquare(param3)  // 正确
+
+</code></pre>
+<p>原文中对 <strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。</p>
+<p>这里引出两个问题:</p>
+<p>1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？</p>
+<p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
+<h3 id="解题思路">解题思路</h3>
+<p>首先看代码中的函数</p>
+<pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
+  ...
+}
+</code></pre>
+<p>函数要求我们传入的参数是 SquareConfig 类型的。</p>
+<p>函数参数<code>{color: &quot;red&quot;, width: 100 }</code>可以定义为合法的 SquareConfig 类型，所以是正确的</p>
+<p>函数参数<code>{color: &quot;red&quot;, width: 100, height: 100 }</code>不可以定义为合法的 SquareConfig 类型，所以引起错误</p>
+<p>对上面的描述感觉迷糊的话，请接着往下看...</p>
+<p>再看下面的代码</p>
+<pre><code class="language-typescript">const test1:SquareConfig = {  // 正确
+  color: &quot;red&quot;,
+  width: 100
+}
+
+const test2:SquareConfig = {   // 出错
+  color: &quot;red&quot;,
+  width: 100,
+  height: 100
+}
+</code></pre>
+<p>代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。</p>
+<p><code>function createSquare(config: SquareConfig)</code>括号中实际进行了一次定义变量的过程,相当于如下代码:</p>
+<pre><code class="language-typescript">const t: SquareConfig = config
+function createSquare(t){
+  ...
+}
+</code></pre>
+<p>所以，当函数中传参 <code>{ color: 'red', width: 100, height: 12 }</code>时</p>
+<p>定义变量都没走通的话，那肯定会报错啦</p>
+<p>那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看</p>
+<p>其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。</p>
+<pre><code class="language-typescript">let a1 = {}
+let t1: SquareConfig = a1   // 正确
+createSquare(t1)
+
+let a2 = { width: 10}
+let t2: SquareConfig = a2   // 正确
+createSquare(t2)
+
+let a3 = { height: 10 }
+let t3: SquareConfig = a3   // 错误
+createSquare(t3)
+
+let a4 = { width: 10, color: &quot;red&quot;}
+let t4: SquareConfig = a4   // 正确
+createSquare(t4)
+
+let a5 = { width: 10, color: &quot;red&quot;, height: 10}
+let t5: SquareConfig = a5   // 正确
+createSquare(t5)
+</code></pre>
+<p>转化要求 类型兼容。object 与 SquareConfig 类型兼容，所以可以转化。转化成功与否在于 object 中是否有与 SquareConfig 公共项。</p>
+<p>至此就解释通了 标注1 和标注2 的问题啦.</p>
+<h2 id="总结">总结</h2>
+<p>研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。</p>
+<pre><code class="language-typescript">let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+</code></pre>
+<p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
+<pre><code class="language-typescript">interface SquareConfig {
+  color?: string;
+  width?: number;
+  [propName: string]: any;
+}
+</code></pre>
+<p>加入<code>[propName: string]: any;</code> 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&quot;坑&quot;</p>
+]]></content>
+    </entry>
+</feed>
