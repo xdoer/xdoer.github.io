@@ -751,3 +751,11 @@ a {
   font-size: 16px;
   margin: 4px 8px;
 }
+.simple-share {
+  display: flex;
+  justify-content: flex-start;
+}
+.simple-share a {
+  display: block;
+  padding: 5px;
+}
