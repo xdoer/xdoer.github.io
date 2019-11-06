@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573047770582">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573050199426">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -113,7 +113,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573047770582" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573050199426" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -305,7 +305,7 @@ let param2 = { height: 200 } as SquareConfig
 createSquare(param2)  // 正确
 </code></pre>
 <p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
-<pre><code class="language-typescript">interface SquareConfig {
+<pre><code class="language-javascript">interface SquareConfig {
   color?: string;
   width?: number;
   [propName: string]: any;
