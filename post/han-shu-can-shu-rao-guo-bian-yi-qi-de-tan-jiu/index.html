@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573038720783">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573038980592">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -30,7 +30,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573038720783" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573038980592" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -103,7 +103,7 @@
 <p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
 <p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
 <p>先看示例代码</p>
-<pre><code class="language-typescript">interface SquareConfig {
+<pre><code class="language-javascript">interface SquareConfig {
   color?: string;
   width?: number;
 }
@@ -150,7 +150,7 @@ createSquare(param3)  // 正确
 <p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
 <h2 id="解题思路">解题思路</h2>
 <p>首先看代码中的函数</p>
-<pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
+<pre><code class="language-javascript">function createSquare(config: SquareConfig): {color: string; area: number} {
   ...
 }
 </code></pre>
@@ -159,7 +159,7 @@ createSquare(param3)  // 正确
 <p>函数参数<code>{color: &quot;red&quot;, width: 100, height: 100 }</code>不可以定义为合法的 SquareConfig 类型，所以引起错误</p>
 <p>对上面的描述感觉迷糊的话，请接着往下看...</p>
 <p>再看下面的代码</p>
-<pre><code class="language-typescript">const test1:SquareConfig = {  // 正确
+<pre><code class="language-javascript">const test1:SquareConfig = {  // 正确
   color: &quot;red&quot;,
   width: 100
 }
@@ -172,7 +172,7 @@ const test2:SquareConfig = {   // 出错
 </code></pre>
 <p>代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。</p>
 <p><code>function createSquare(config: SquareConfig)</code>括号中实际进行了一次定义变量的过程,相当于如下代码:</p>
-<pre><code class="language-typescript">const t: SquareConfig = config
+<pre><code class="language-javascript">const t: SquareConfig = config
 function createSquare(t){
   ...
 }
@@ -181,7 +181,7 @@ function createSquare(t){
 <p>定义变量都没走通的话，那肯定会报错啦</p>
 <p>那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看</p>
 <p>其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。</p>
-<pre><code class="language-typescript">let a1 = {}
+<pre><code class="language-javascript">let a1 = {}
 let t1: SquareConfig = a1   // 正确
 createSquare(t1)
 
@@ -205,7 +205,7 @@ createSquare(t5)
 <p>至此就解释通了 标注1 和标注2 的问题啦.</p>
 <h2 id="总结">总结</h2>
 <p>研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。</p>
-<pre><code class="language-typescript">let param1 = { height: 200 }
+<pre><code class="language-javascript">let param1 = { height: 200 }
 
 createSquare(param1)  // 错误
 
