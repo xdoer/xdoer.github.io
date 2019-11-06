@@ -4,7 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>函数参数绕过编译器的探究 | 文享日志</title>
 <meta name="description" content="温故而知新" />
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1572965990272">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573026160613">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://aiyou.life">
-  <img class="avatar" src="https://aiyou.life/images/avatar.png?v=1572965990272" alt="">
+  <img class="avatar" src="https://aiyou.life/images/avatar.png?v=1573026160613" alt="">
   </a>
   <h1 class="site-title">
     文享日志
@@ -93,9 +93,9 @@
             
             <div class="post-content-wrapper">
               <div class="post-content">
-                <p>本文主要讲一个案例</p>
+                <h2 id="缘起">缘起</h2>
 <p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
-<p>源问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
+<p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
 <p>先看示例代码</p>
 <pre><code class="language-typescript">interface SquareConfig {
   color?: string;
@@ -142,7 +142,7 @@ createSquare(param3)  // 正确
 <p>这里引出两个问题:</p>
 <p>1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？</p>
 <p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
-<h3 id="解题思路">解题思路</h3>
+<h2 id="解题思路">解题思路</h2>
 <p>首先看代码中的函数</p>
 <pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
   ...
@@ -221,11 +221,8 @@ createSquare(param2)  // 正确
                 <ul class="markdownIt-TOC">
 <li>
 <ul>
-<li>
-<ul>
+<li><a href="#%E7%BC%98%E8%B5%B7">缘起</a></li>
 <li><a href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF">解题思路</a></li>
-</ul>
-</li>
 <li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
 </ul>
 </li>
