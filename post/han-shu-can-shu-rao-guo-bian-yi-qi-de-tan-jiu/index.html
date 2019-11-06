@@ -1,18 +1,15 @@
-
 <!DOCTYPE html>
 <html>
   <head>
-    
-<meta charset="utf-8" >
+    <meta charset="utf-8" >
 
 <title>函数参数绕过编译器的探究 | 文享日志</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573043933149">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573043964528">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -26,86 +23,88 @@
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
 
   </head>
   <body>
     <div id="app" class="main">
-      <div class="site-header-container">
-  <div class="site-header">
-    <div class="left">
-      <a href="https://aiyou.life">
-        <img class="avatar" src="https://aiyou.life/images/avatar.png?v=1573043933149" alt="" width="32px" height="32px">
-      </a>
-      <a href="https://aiyou.life">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://aiyou.life">
+        <img src="https://aiyou.life/images/avatar.png?v=1573043964528" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
     </div>
-    <div class="right">
-      <transition name="fade">
-        <i class="icon" :class="{ 'icon-close-outline': menuVisible, 'icon-menu-outline': !menuVisible }" @click="menuVisible = !menuVisible"></i>
-      </transition>
-    </div>
-  </div>
-</div>
-
-<transition name="fade">
-  <div class="menu-container" style="display: none;" v-show="menuVisible">
-    <div class="menu-list">
+    <div>
       
         
-          <a href="/" class="menu purple-link">
+          <a href="/" class="site-nav">
             首页
           </a>
         
       
         
-          <a href="/archives" class="menu purple-link">
+          <a href="/archives" class="site-nav">
             归档
           </a>
         
       
         
-          <a href="/tags" class="menu purple-link">
+          <a href="/tags" class="site-nav">
             标签
           </a>
         
       
         
-          <a href="/post/about" class="menu purple-link">
+          <a href="/post/about" class="site-nav">
             关于
           </a>
         
       
     </div>
   </div>
-</transition>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
 
 
-      <div class="content-container">
-        <div class="post-detail">
-          
-            <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
-            </div>
-          
-          <h2 class="post-title">函数参数绕过编译器的探究</h2>
-          <div class="post-info post-detail-info">
-            <span><i class="icon-calendar-outline"></i> 2019-11-05</span>
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">函数参数绕过编译器的探究</h2>
+            <div class="post-date">2019-11-05</div>
             
-              <span>
-                <i class="icon-pricetags-outline"></i>
-                
-                  <a href="https://aiyou.life/tag/E75leUW9b">
-                    typescript
-                    
-                  </a>
-                
-              </span>
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
+              </div>
             
-          </div>
-          <div class="post-content">
-            <h2 id="缘起">缘起</h2>
+            <div class="post-content">
+              <h2 id="缘起">缘起</h2>
 <p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
 <p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
 <p>先看示例代码</p>
@@ -228,41 +227,37 @@ createSquare(param2)  // 正确
 </code></pre>
 <p>加入<code>[propName: string]: any;</code> 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&quot;坑&quot;</p>
 
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://aiyou.life/tag/E75leUW9b" class="tag">
+                    typescript
+                  </a>
+                
+              </div>
+            
+            
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
           </div>
+
         </div>
-
-        
       </div>
-
-      
-        
-          <div id="gitalk-container"></div>
-        
-
-        
-      
-
-      <div class="site-footer">
-  <div class="slogan">温故而知新</div>
-  <div class="social-container">
-    
-      
-    
-      
-    
-      
-    
-      
-    
-      
-    
-  </div>
-  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
-</div>
-
-
     </div>
-    <script type="application/javascript">
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
+<script type="application/javascript">
+
+AOS.init();
 
 hljs.initHighlightingOnLoad()
 
