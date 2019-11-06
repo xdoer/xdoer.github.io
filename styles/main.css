@@ -752,10 +752,13 @@ a {
   margin: 4px 8px;
 }
 .simple-share {
-  display: flex;
-  justify-content: flex-start;
+  margin: 20px 0 20px 10px;
 }
 .simple-share a {
   display: block;
   padding: 5px;
+  margin: 0 5px;
+  font-size: 12px;
+  border-radius: 5px;
+  background-color: antiquewhite;
 }
