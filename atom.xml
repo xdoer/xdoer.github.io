@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-06T12:33:31.768Z</updated>
+    <updated>2019-11-06T12:39:19.121Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,33 +10,6 @@
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2019, 文享日志</rights>
-    <entry>
-        <title type="html"><![CDATA[jjj]]></title>
-        <id>https://aiyou.life/post/jjj</id>
-        <link href="https://aiyou.life/post/jjj">
-        </link>
-        <updated>2019-11-06T12:33:19.000Z</updated>
-        <content type="html"><![CDATA[<p>jjj</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[jhvhj]]></title>
-        <id>https://aiyou.life/post/jhvhj</id>
-        <link href="https://aiyou.life/post/jhvhj">
-        </link>
-        <updated>2019-11-06T12:24:23.000Z</updated>
-        <content type="html"><![CDATA[<p>hhvjvj</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[hhbh]]></title>
-        <id>https://aiyou.life/post/hhbh</id>
-        <link href="https://aiyou.life/post/hhbh">
-        </link>
-        <updated>2019-11-06T12:16:06.000Z</updated>
-        <content type="html"><![CDATA[<p>hhv</p>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[函数参数绕过编译器的探究]]></title>
         <id>https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu</id>
