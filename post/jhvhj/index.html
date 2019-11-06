@@ -1,10 +1,11 @@
 
+<!DOCTYPE html>
 <html>
   <head>
     
 <meta charset="utf-8" >
 
-<title>文享日志</title>
+<title>jhvhj | 文享日志</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -15,6 +16,12 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
 
 
 <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -77,79 +84,37 @@
 
 
       <div class="content-container">
-        
-        
-<section class="post-item">
-    <div class="content">
-      <a href="https://aiyou.life/post/jhvhj">
-        <h2 class="post-title">jhvhj</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-06</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://aiyou.life/post/hhbh">
-        <h2 class="post-title">hhbh</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-06</span>
-        
-      </div>
-    </div>
-    
-  </section>
-
-<section class="post-item">
-    <div class="content">
-      <a href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
-        <h2 class="post-title">函数参数绕过编译器的探究</h2>
-      </a>
-      <div class="post-abstract">
-        
-      </div>
-      <div class="post-info">
-        <span><i class="icon icon-calendar-outline"></i> 2019-11-05</span>
-        
-          <span>
-            <i class="icon icon-pricetags-outline"></i>
+        <div class="post-detail">
+          
+          <h2 class="post-title">jhvhj</h2>
+          <div class="post-info post-detail-info">
+            <span><i class="icon-calendar-outline"></i> 2019-11-06</span>
             
-              <a href="https://aiyou.life/tag/E75leUW9b">
-                typescript
-                
-              </a>
-            
-          </span>
-        
-      </div>
-    </div>
-    
-      <a href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
-        <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
+          </div>
+          <div class="post-content">
+            <p>hhvjvj</p>
+
+          </div>
         </div>
-      </a>
-    
-  </section>
 
-
-<div class="pagination-container">
-  
-  
-</div>
-
-
+        
+          <div class="next-post">
+            <a class="purple-link" href="https://aiyou.life/post/hhbh">
+              <h3 class="post-title">
+                下一篇：hhbh
+              </h3>
+            </a>
+          </div>
+          
       </div>
+
+      
+        
+          <div id="gitalk-container"></div>
+        
+
+        
+      
 
       <div class="site-footer">
   <div class="slogan">温故而知新</div>
@@ -183,6 +148,29 @@ var app = new Vue({
 })
 
 </script>
+
+
+
+  
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f9e29934c5621e13bb13',
+        clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+        repo: 'LuckyHH.github.io',
+        owner: 'LuckyHH',
+        admin: ['LuckyHH'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 
