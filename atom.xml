@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-06T15:07:22.380Z</updated>
+    <updated>2019-11-06T15:09:21.227Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -16,7 +16,12 @@
         <link href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
         </link>
         <updated>2019-11-05T12:34:17.000Z</updated>
+        <summary type="html"><![CDATA[<!-- **为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查** 的原因只给了一个简单的回答:"因为 squareOptions不会经过额外属性检查，所以编译器不会报错".解释的如此简单，让人迷糊 -->
+<p>哈哈哈哈哈哈哈</p>
+]]></summary>
         <content type="html"><![CDATA[<!-- **为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查** 的原因只给了一个简单的回答:"因为 squareOptions不会经过额外属性检查，所以编译器不会报错".解释的如此简单，让人迷糊 -->
+<p>哈哈哈哈哈哈哈</p>
+<!-- more -->
 <h2 id="缘起">缘起</h2>
 <p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
 <p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
