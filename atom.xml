@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-06T14:27:20.606Z</updated>
+    <updated>2019-11-06T14:39:23.464Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,24 +10,6 @@
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2019, 文享日志</rights>
-    <entry>
-        <title type="html"><![CDATA[测试2]]></title>
-        <id>https://aiyou.life/post/qh6b7OhpF</id>
-        <link href="https://aiyou.life/post/qh6b7OhpF">
-        </link>
-        <updated>2019-11-06T14:27:05.000Z</updated>
-        <content type="html"><![CDATA[<p>好吧好吧</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[测试一下]]></title>
-        <id>https://aiyou.life/post/IyaczwPC1</id>
-        <link href="https://aiyou.life/post/IyaczwPC1">
-        </link>
-        <updated>2019-11-06T14:26:37.000Z</updated>
-        <content type="html"><![CDATA[<p>防守打法</p>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[函数参数绕过编译器的探究]]></title>
         <id>https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu</id>
@@ -149,7 +131,7 @@ let param2 = { height: 200 } as SquareConfig
 createSquare(param2)  // 正确
 </code></pre>
 <p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
-<pre><code class="language-javascript">interface SquareConfig {
+<pre><code class="language-typescript">interface SquareConfig {
   color?: string;
   width?: number;
   [propName: string]: any;
