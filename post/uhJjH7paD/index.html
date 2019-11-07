@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>文享日志</title>
+<title>Gridea生成你的静态博客站 | 文享日志</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -13,6 +13,13 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
+
+  
+    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+  
+
+  
 
 
 <!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
@@ -182,49 +189,99 @@
 
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://aiyou.life/post/uhJjH7paD">
-                  <h2 class="post-title">Gridea生成你的静态博客站</h2>
-                </a>
-                <div class="post-date">
-                  2019-11-07
-                </div>
-                <div class="post-abstract">
-                  <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
+          <div class="post-detail">
+            <h2 class="post-title">Gridea生成你的静态博客站</h2>
+            <div class="post-date">2019-11-07</div>
+            
+            <div class="post-content">
+              <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
+<!-- more -->
+<h2 id="1-概念与原理">1. 概念与原理</h2>
+<h3 id="11-github">1.1 GitHub</h3>
+<p><a href="https://github.com/">GitHub</a>是一个面向开源及私有软件项目的托管平台。通俗点来说像一个网盘，办公室将代码推到GitHub，回家之后再拉下来，然后就可以接着工作了。除此之外，可以多人协作完成一个项目，项目成员提交的代码互相之间都可以看到并进行合并与修改，项目成员之外的人也可以fork一份代码，修改代码之后, PR(Pull Request)到项目分支，项目管理员选择合并与否。</p>
+<p>学习资料:</p>
+<blockquote>
+<ul>
+<li><a href="https://www.zhihu.com/question/20070065/answer/117017972">GitHub怎么用</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html">Git操作命令</a></li>
+</ul>
+</blockquote>
+<h3 id="12-github-page">1.2 GitHub Page</h3>
+<p>GitHub Page 是 GitHub 公司推出的网页服务。GitHub会分配一个域名到你的仓库(eg:<a href="https://github.com/LuckyHH/LuckyHH.github.io">我的仓库</a>被分配的域名为: LuckyHH.github.io),通过该域名就可以访问到你的项目。此时，仓库其实就是一个静态资源服务器了。</p>
+<h3 id="13-gridea">1.3 Gridea</h3>
+<p>Gridea 是一个写作客户端。是类似生成器之类的东西，在 Gridea 上写完文章之后，会将各种资源文件生成并同步到 GitHub仓库上，通过域名访问到的就是美化后的页面了。<br>
+类似的服务还有大名鼎鼎的 <a href="https://hexo.io/">Hexo</a> 和 <a href="http://jekyllcn.com/">Jekyll</a>.只不过他俩需要通过命名去生成和推文件，不如 Gridea 方便。</p>
+<h2 id="2-实践">2. 实践</h2>
+<p>其实 Gridea 作者自己录了视频，我看了一下还挺详细的。这里就不长篇大论了。</p>
+<p><a href="https://gridea.dev/">Gridea下载地址</a><br>
+<a href="https://space.bilibili.com/328305121/channel/detail?cid=75167">视频地址在这里</a></p>
+<h2 id="3-自定义域名">3. 自定义域名</h2>
+<p>通过 GitHub 分配的域名就可以访问到博客了。如果使用自定义域名，请看本节，否则跳过。</p>
+<h3 id="31-域名准备">3.1 域名准备</h3>
+<p>首先准备一个域名。可以到<a href="https://wanwang.aliyun.com/">阿里云</a>或者<a href="https://dnspod.cloud.tencent.com/">腾讯云</a>随便买一个即可，域名不需要备案。推荐到阿里云购买。<br>
+其实也有很多国外公司提供的免费域名(eg:<a href="https://www.freenom.com/zh/index.html?lang=zh">Freenom</a>)，但大都只有一年的免费使用时间，续费还挺贵的。</p>
+<h3 id="32-域名解析">3.2 域名解析</h3>
+<p>将域名解析到GitHub的服务器<br>
+[阿里云]<br>
+打开阿里云<a href="https://dns.console.aliyun.com/">域名解析控制面板</a>并点击<strong>解析设置</strong><br>
+<img src="https://aiyou.life/post-images/1573091513244.png" alt=""></p>
+<div style="text-align:center;">图 3.2.1</div>
+<p>点击<strong>添加记录</strong>，在弹出的框中,如图 3.2.3 中箭头部分输入 图 3.2.2 中框出的记录值，其他默认。点击<strong>确定</strong>即可<br>
+<img src="https://aiyou.life/post-images/1573091750777.png" alt=""></p>
+<div style="text-align:center;">图 3.2.2</div>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1573092227894.png" alt=""></figure>
+<div style="text-align:center;">图 3.2.3</div>
+<p>[腾讯云]<br>
+打开腾讯云<a href="https://console.cloud.tencent.com/cns">域名解析控制面板</a>并点击<strong>解析</strong><br>
+<img src="https://aiyou.life/post-images/1573092569137.png" alt=""></p>
+<div style="text-align:center;">图 3.2.4</div>
+<p>点击<strong>添加记录</strong>,在输入框中按图 3.2.5 输入即可。进行四次添加记录操作，记录值分别填入 图 3.2.2中框出的记录值<br>
+<img src="https://aiyou.life/post-images/1573092703412.png" alt=""></p>
+<div style="text-align:center;">图 3.2.5</div>
+<h3 id="33-gridea配置">3.3 Gridea配置</h3>
+<p>在软件上添加记录即可<br>
+<img src="https://aiyou.life/post-images/1573093078100.png" alt=""></p>
+<div style="text-align:center;">图 3.3.1</div>
+<h2 id="4-注意">4. 注意</h2>
+<blockquote>
+<ul>
+<li>GitHub的服务器在国外，所以博客访问速度会很慢，挂个VPN访问会快很多</li>
+<li>每次在Gridea同步完修改之后，需要等待几分钟网页才会有变化，这是GitHub服务器缓存导致的，无解</li>
+</ul>
+</blockquote>
 
-                </div>
-              </div>
-              
-            </article>
-          
-            <article class="post-item">
-              <div class="left">
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
                 <a href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
-                  <h2 class="post-title">函数参数绕过编译器检查的探究</h2>
+                  <h3 class="post-title">
+                    函数参数绕过编译器检查的探究
+                  </h3>
                 </a>
-                <div class="post-date">
-                  2019-11-05
-                </div>
-                <div class="post-abstract">
-                  <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
-
-                </div>
               </div>
-              
-                <a class="right" href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
-                  <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
-                  </div>
-                </a>
-              
-            </article>
-          
+            
 
-          <div class="pagination-container">
-  
-  
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
 </div>
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
 
         </div>
       </div>
@@ -246,6 +303,30 @@ var app = new Vue({
 })
 
 </script>
+
+
+
+  
+    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f9e29934c5621e13bb13',
+        clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+        repo: 'LuckyHH.github.io',
+        owner: 'LuckyHH',
+        admin: ['LuckyHH'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false  // Facebook-like distraction free mode
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
 
 
 
