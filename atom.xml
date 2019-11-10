@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-10T17:10:07.282Z</updated>
+    <updated>2019-11-10T17:16:11.782Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -102,7 +102,7 @@ for(let i = 0 ; i &lt; 5000 ; i++){
   See the Pen <a href='https://codepen.io/luckyhh/pen/bGGjVBg'>WebWorker</a> by LuckyHH
   (<a href='https://codepen.io/luckyhh'>@luckyhh</a>) on <a href='https://codepen.io'>CodePen</a>.
 </iframe>
-<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage('start')</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..</p>
+<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..</p>
 <p>那么问题又来了,worker是属于宏任务还是微任务呢?<br>
 验证代码如下:</p>
 <pre><code class="language-javascript">    ...
@@ -127,7 +127,7 @@ for(let i = 0 ; i &lt; 5000 ; i++){
 <p>运行结果如下:<br>
 <img src="https://aiyou.life/post-images/1573403893208.png" alt=""></p>
 <div style="text-align:center;">图 3.2</div>
-`SetTimeout`在`进入WebWorker`之前输出,说明Worker是宏任务
+<p><code>SetTimeout</code>在<code>进入WebWorker</code>之前输出,说明Worker是宏任务</p>
 <h2 id="4-后记">4. 后记</h2>
 <p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，因为实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的，因为看到的很多关于事件循环文章，包括和群里人探讨，他们都没有意识到(或提到)worker实际是一个宏任务。地位与setTimeout与setInterval一样。只要主线程有任务，他们就会被延后执行。</p>
 ]]></content>
