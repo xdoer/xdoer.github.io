@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-07T02:34:12.829Z</updated>
+    <updated>2019-11-10T17:05:03.432Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,6 +10,128 @@
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2019, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[关于提高setTimeout与setInterval精确度的探索]]></title>
+        <id>https://aiyou.life/post/kokne79MF</id>
+        <link href="https://aiyou.life/post/kokne79MF">
+        </link>
+        <updated>2019-11-10T09:54:20.000Z</updated>
+        <summary type="html"><![CDATA[<p>我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?</p>
+<!-- more -->
+<h2 id="1-settimeoutsetinterval用法">1. setTimeout/setInterval用法</h2>
+<p>这里还是简单提一嘴吧。这两个函数是定时器函数，setTimeout表示回调函数在 t 时间后运行，setInterval表示回调函数每隔 t 时间运行。</p>
+<pre><code class="language-javascript">setTimeout(function(){
+    ...
+}, t)
+
+setInterval(function(){
+    ...
+}, t)
+</code></pre>
+<p>在 CSS3/HTML5之前，二者常用来绘制页面动画。CSS3/HTML5之后，常用css来绘制动画。另外还一个API是requestAnimationFrame. 该函数与setInterval类似，区别在于该函数没有 t 参数，默认是屏幕刷新的每帧调用一次。每秒调用 1/屏幕刷新率 次</p>
+<pre><code class="language-javascript">requestAnimationFrame(function(){
+    // DOM动画
+})
+</code></pre>
+<h2 id="2-发现问题">2. 发现问题</h2>
+<p>Js是一个单线程语言，同一时间只能做同一件事情。这很好理解，如果同一时间能做多个任务，那么多任务都在操作DOM时，页面该怎么显示呢?因而JS设计为了单线程,但单线程也带来了一些问题，比如线程阻塞，CPU利用率不高等问题。看如下实例代码</p>
+<pre><code class="language-javascript">const startTime = Date.now()
+setTimeout(function(){
+    console.log('task finished after ' + (Date.now() - startTime) / 1000 + 's')
+}, 0)
+for(let i = 0 ; i &lt; 5000 ; i++){
+    console.log(5+8+8+8)
+}
+</code></pre>
+<p>执行结果如图 2.1 所示<br>
+<img src="https://aiyou.life/post-images/1573389781064.png" alt=""></p>
+<div style="text-align:center;">图 2.1</div>
+<p>for循环是一个耗时任务,阻塞了setTimeout的执行。我们设定0秒后执行输出，可实际结果是在0.822s之后输出，所以setTimeout的 t 参数根本不准。</p>
+<p>结论: 主线程里实际上是没有办法精确按时执行setTimeout/setInterval的回调函数。当浏览器js引擎解析代码遇到 setTimeout/setInterval 时，会将他们注册到下一个宏任务队列，只有执行完当前宏任务队列和微任务队列中的任务后，才会执行下一个宏任务队列中的任务。</p>
+<p>关于事件循环、宏任务、微任务不是本文重点，感兴趣的可以看看这篇文章<a href="https://juejin.im/post/5bac87b6f265da0a906f78d8">笔试题——JavaScript事件循环机制（event loop、macrotask、microtask）</a></p>
+<p>那么到底要怎么解决精确度问题呢?</p>
+<h2 id="3-解决问题">3. 解决问题</h2>
+<p>前文我们一直在提及主线程主线程的，那么有没有办法利用其它线程进行计时呢?当代码执行到特定位置，通知其它线程中开始计时任务，主线程继续完成复杂任务，那么线程就不会阻塞，这样的话计时精确度就提高了。那么问题来了，JS不是一门单线程语言吗，怎么能利用除了主线程之外的其他线程呢?</p>
+<p>在HTML5中，<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Worker">Worker</a>的引入使得我们有了利用其它线程的能力。注意:<strong>Worker中不能操作DOM</strong>。</p>
+<p>事情好办了。洋洋洒洒写下如下代码:</p>
+<pre><code class="language-javascript">    // worker生成器
+    const createWorker = (fn, options) =&gt; {
+      const blob = new Blob(['(' + fn.toString() + ')()']);
+      const url = URL.createObjectURL(blob);
+      if (options) {
+        return new Worker(url, options);
+      }
+      return new Worker(url);
+    } 
+    // 生成worker
+    const worker = createWorker(function () {
+      onmessage = function(e) {
+        console.log('进入WebWorker')
+        let count = 1
+        let startTime = Date.now()
+        let timer = setInterval(function () {
+            if (count++ === e.data) {
+            clearInterval(timer)
+            postMessage(startTime)
+            }
+        }, 1000)
+      }
+    })
+    // worker线程任务
+    const startTime = Date.now()
+    worker.postMessage(10)
+    worker.onmessage = function (e) {
+      console.log('Worker线程任务内部耗时:' + (Date.now() - e.data) + 'ms')
+      console.log('Worker线程任务耗时:'+ (Date.now() - startTime) + 'ms')
+      this.terminate()
+    }
+    // 主线程任务
+    for (let i = 0 ; i &lt; 5000 ; i++) {
+      console.log(5 + 8 + 8 + 8)
+    } 
+    console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
+</code></pre>
+<p>代码中, worker 线程每秒运行一次回调函数，进行计数，当回调函数执行了 10 次时，通知主线程。主线程打印 worker 线程运行时间。</p>
+<p>代码运行结果如图3.1所示<br>
+<img src="https://aiyou.life/post-images/1573401585223.png" alt=""></p>
+<div style="text-align:center;">图 3.1</div>
+<p>运行实例<img src="https://aiyou.life/post-images/1573405496347.png" alt="">:</p>
+<iframe height="265" style="width: 100%;" scrolling="no" title="WebWorker" src="https://codepen.io/luckyhh/embed/bGGjVBg?height=265&theme-id=default&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
+  See the Pen <a href='https://codepen.io/luckyhh/pen/bGGjVBg'>WebWorker</a> by LuckyHH
+  (<a href='https://codepen.io/luckyhh'>@luckyhh</a>) on <a href='https://codepen.io'>CodePen</a>.
+</iframe>
+<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage('start')</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..</p>
+<p>那么问题又来了,worker是属于宏任务还是微任务呢?<br>
+验证代码如下:</p>
+<pre><code class="language-javascript">    ...
+    setTimeout(()=&gt;{
+      console.log('SetTimeout')
+    }, 1)
+    const worker = createWorker(function () {
+      onmessage = function(e) {
+        console.log('进入WebWorker ')
+        let count = 1
+        let startTime = Date.now()
+        let timer = setInterval(function () {
+            if (count++ === e.data) {
+            clearInterval(timer)
+            postMessage(startTime)
+            }
+        }, 1000)
+      }
+    })
+    ...
+</code></pre>
+<p>运行结果如下:<br>
+<img src="https://aiyou.life/post-images/1573403893208.png" alt=""></p>
+<div style="text-align:center;">图 3.2</div>
+`SetTimeout`在`进入WebWorker`之前输出,说明Worker是宏任务
+<h2 id="4-后记">4. 后记</h2>
+<p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，因为实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的，因为看到的很多关于事件循环文章，包括和群里人探讨，他们都没有意识到(或提到)worker实际是一个宏任务。地位与setTimeout与setInterval一样。只要主线程有任务，他们就会被延后执行。</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[利用Gridea生成GitHubPage静态博客]]></title>
         <id>https://aiyou.life/post/uhJjH7paD</id>
