@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573406169440">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573406705457">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -120,7 +120,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573406169440" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573406705457" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -276,7 +276,7 @@ for(let i = 0 ; i &lt; 5000 ; i++){
 <p>代码运行结果如图3.1所示<br>
 <img src="https://aiyou.life/post-images/1573401585223.png" alt=""></p>
 <div style="text-align:center;">图 3.1</div>
-<p>运行实例:</p>
+<p>运行实例(点击到原网站看console吧):</p>
 <iframe height="265" style="width: 100%;" scrolling="no" title="WebWorker" src="https://codepen.io/luckyhh/embed/bGGjVBg?height=265&theme-id=default&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
   See the Pen <a href='https://codepen.io/luckyhh/pen/bGGjVBg'>WebWorker</a> by LuckyHH
   (<a href='https://codepen.io/luckyhh'>@luckyhh</a>) on <a href='https://codepen.io'>CodePen</a>.
@@ -306,9 +306,11 @@ for(let i = 0 ; i &lt; 5000 ; i++){
 <p>运行结果如下:<br>
 <img src="https://aiyou.life/post-images/1573403893208.png" alt=""></p>
 <div style="text-align:center;">图 3.2</div>
-<p><code>SetTimeout</code>在<code>进入WebWorker</code>之前输出,说明Worker是宏任务</p>
+<p><code>SetTimeout</code>在<code>进入WebWorker</code>之前输出,说明<strong>Worker是宏任务</strong></p>
 <h2 id="4-后记">4. 后记</h2>
 <p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，因为实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的，因为看到的很多关于事件循环文章，包括和群里人探讨，他们都没有意识到(或提到)worker实际是一个宏任务。地位与setTimeout与setInterval一样。只要主线程有任务，他们就会被延后执行。</p>
+<p>其实还有个问题没有解决，先留个坑吧。<br>
+如图: 3.1, 主线程任务耗时1069ms,Worker内部耗时10003ms,为什么主线程接收到的Worker耗时是16193ms,而不是 (1069 + 10003) ms,多出的 5s 干什么去了呢???</p>
 
             </div>
             
