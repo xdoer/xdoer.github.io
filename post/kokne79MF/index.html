@@ -182,9 +182,6 @@
             }
           };
         };
-        var share = new SimpleShare({
-          pic: 'https://aiyou.life/post-images/kokne79MF.png'
-        })
       </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
@@ -195,6 +192,10 @@
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/kokne79MF.png')">
               </div>
             
+            <div class="post-abstract" style="display:none">
+              <p>我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?</p>
+
+            </div>
             <div class="post-content">
               <p>我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?</p>
 <!-- more -->
@@ -387,6 +388,12 @@ let timer = setInterval(function(){
               </div>
             
 
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/kokne79MF.png',
+                content: document.querySelector('.post-abstract').innerText
+              })
+            </script>
             <div class="simple-share">
   <span>分享至:</span>
   <div class="share-btn">

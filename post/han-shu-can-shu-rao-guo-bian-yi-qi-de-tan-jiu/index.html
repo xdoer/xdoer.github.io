@@ -182,9 +182,6 @@
             }
           };
         };
-        var share = new SimpleShare({
-          pic: 'https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png'
-        })
       </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
@@ -195,6 +192,10 @@
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
               </div>
             
+            <div class="post-abstract" style="display:none">
+              <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
+
+            </div>
             <div class="post-content">
               <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
 <!-- more -->
@@ -333,6 +334,12 @@ createSquare(param2)  // 正确
             
             
 
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png',
+                content: document.querySelector('.post-abstract').innerText
+              })
+            </script>
             <div class="simple-share">
   <span>分享至:</span>
   <div class="share-btn">

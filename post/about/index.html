@@ -182,9 +182,6 @@
             }
           };
         };
-        var share = new SimpleShare({
-          pic: ''
-        })
       </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
@@ -192,6 +189,9 @@
             <h2 class="post-title">关于</h2>
             <div class="post-date">2019-11-06</div>
             
+            <div class="post-abstract" style="display:none">
+              
+            </div>
             <div class="post-content">
               <h2 id="关于本站">🏠 关于本站</h2>
 <p>本站是使用了<a href="https://github.com/getgridea/gridea">Gridea</a>项目生成的托管在GitHub上的静态博客。<br>
@@ -208,6 +208,12 @@
             
             
 
+            <script>
+              var share = new SimpleShare({
+                pic: '',
+                content: document.querySelector('.post-abstract').innerText
+              })
+            </script>
             <div class="simple-share">
   <span>分享至:</span>
   <div class="share-btn">
