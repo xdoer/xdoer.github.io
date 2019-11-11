@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573441055082">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573441615726">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -106,8 +106,6 @@
       }
     };
   };
-
-  var share = new SimpleShare()
 </script>
 
 
@@ -120,7 +118,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573441055082" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573441615726" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -289,7 +287,13 @@
         </div>
       </div>
     </div>
-
+    <script>
+      var share = new SimpleShare({
+        pic: 'https://aiyou.life/post-images/uhJjH7paD.jpg',
+        content: '<p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
+'
+      })
+    </script>
     <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script type="application/javascript">
@@ -304,7 +308,6 @@ var app = new Vue({
     menuVisible: false,
   },
 })
-
 </script>
 
 
