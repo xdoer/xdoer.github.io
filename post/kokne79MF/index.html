@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573440957130">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573441055082">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -120,7 +120,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573440957130" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573441055082" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -256,8 +256,8 @@ const worker = createWorker(function () {
         let startTime = Date.now()
         let timer = setInterval(function () {
             if (count++ === e.data) {
-            clearInterval(timer)
-            postMessage(startTime)
+                clearInterval(timer)
+                postMessage(startTime)
             }
         }, 1000)
     }
@@ -300,8 +300,8 @@ const worker = createWorker(function () {
     let startTime = Date.now()
     let timer = setInterval(function () {
         if (count++ === e.data) {
-        clearInterval(timer)
-        postMessage(startTime)
+            clearInterval(timer)
+            postMessage(startTime)
         }
     }, 1000)
     }
@@ -324,17 +324,17 @@ const createWorker = (fn, options) =&gt; {
     const blob = new Blob(['(' + fn.toString() + ')()']);
     const url = URL.createObjectURL(blob);
     if (options) {
-    return new Worker(url, options);
+        return new Worker(url, options);
     }
     return new Worker(url);
 }
 const worker = createWorker(function () {
     const startTime = Date.now()
     for (let i = 0; i &lt; 9000; i++) {
-    console.log(5 + 8 + 8 + 8)
-    if (i === 9000 - 1) {
-        postMessage(startTime)
-    }
+        console.log(5 + 8 + 8 + 8)
+        if (i === 9000 - 1) {
+            postMessage(startTime)
+        }
     }
 })
 worker.postMessage('start')
@@ -356,11 +356,11 @@ setTimeout(function () {
 }, 10)
 let timer = setInterval(function(){
     for (let i = 0; i &lt; 9000; i++) {
-    console.log(5 + 8 + 8 + 8)
-    if (i === 9000 - 1) {
-        clearInterval(timer)
-        console.log('task2 finished after ' + (Date.now() - startTime) + 'ms')
-    }
+        console.log(5 + 8 + 8 + 8)
+        if (i === 9000 - 1) {
+            clearInterval(timer)
+            console.log('task2 finished after ' + (Date.now() - startTime) + 'ms')
+        }
     }
 }, 10)
 </code></pre>

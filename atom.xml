@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-11T02:55:59.476Z</updated>
+    <updated>2019-11-11T02:57:37.559Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -77,8 +77,8 @@ const worker = createWorker(function () {
         let startTime = Date.now()
         let timer = setInterval(function () {
             if (count++ === e.data) {
-            clearInterval(timer)
-            postMessage(startTime)
+                clearInterval(timer)
+                postMessage(startTime)
             }
         }, 1000)
     }
@@ -121,8 +121,8 @@ const worker = createWorker(function () {
     let startTime = Date.now()
     let timer = setInterval(function () {
         if (count++ === e.data) {
-        clearInterval(timer)
-        postMessage(startTime)
+            clearInterval(timer)
+            postMessage(startTime)
         }
     }, 1000)
     }
@@ -145,17 +145,17 @@ const createWorker = (fn, options) =&gt; {
     const blob = new Blob(['(' + fn.toString() + ')()']);
     const url = URL.createObjectURL(blob);
     if (options) {
-    return new Worker(url, options);
+        return new Worker(url, options);
     }
     return new Worker(url);
 }
 const worker = createWorker(function () {
     const startTime = Date.now()
     for (let i = 0; i &lt; 9000; i++) {
-    console.log(5 + 8 + 8 + 8)
-    if (i === 9000 - 1) {
-        postMessage(startTime)
-    }
+        console.log(5 + 8 + 8 + 8)
+        if (i === 9000 - 1) {
+            postMessage(startTime)
+        }
     }
 })
 worker.postMessage('start')
@@ -177,11 +177,11 @@ setTimeout(function () {
 }, 10)
 let timer = setInterval(function(){
     for (let i = 0; i &lt; 9000; i++) {
-    console.log(5 + 8 + 8 + 8)
-    if (i === 9000 - 1) {
-        clearInterval(timer)
-        console.log('task2 finished after ' + (Date.now() - startTime) + 'ms')
-    }
+        console.log(5 + 8 + 8 + 8)
+        if (i === 9000 - 1) {
+            clearInterval(timer)
+            console.log('task2 finished after ' + (Date.now() - startTime) + 'ms')
+        }
     }
 }, 10)
 </code></pre>
