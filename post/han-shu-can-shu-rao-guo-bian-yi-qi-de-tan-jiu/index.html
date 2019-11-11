@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>函数参数绕过编译器检查的探究 | 文享日志</title>
+<meta name="description" content="温故而知新">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573465082801">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://aiyou.life/styles/main.css">
+
+
+  
+    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+  
+
+  
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
+<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
+<script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://aiyou.life">
+        <img src="https://aiyou.life/images/avatar.png?v=1573465082801" class="site-logo">
+        <h1 class="site-title">文享日志</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/LuckyHH" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+          <a class="social-link" href="https://www.weibo.com/hhhhhgg" target="_blank">
+            <i class="fab fa-weibo"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      温故而知新
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+      <script>
+        var SimpleShare = function (options) {
+
+          // get share content
+          options = options || {};
+          var url = options.url || window.location.href;
+          var title = options.title || document.title;
+          var content = options.content || '';
+          var pic = options.pic || '';
+
+          // fix content format
+          url = encodeURIComponent(url);
+          title = encodeURIComponent(title);
+          content = encodeURIComponent(content);
+          pic = encodeURIComponent(pic);
+
+          // share target url
+          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
+          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
+          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
+          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
+          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
+          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
+          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
+          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
+          var weixin = 'http://qr.topscan.com/api.php?text={url}';
+          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
+
+          // replace content functions
+          function replaceAPI(api) {
+            api = api.replace('{url}', url);
+            api = api.replace('{title}', title);
+            api = api.replace('{content}', content);
+            api = api.replace('{pic}', pic);
+
+            return api;
+          }
+
+          // share target
+          this.qzone = function () {
+            window.open(replaceAPI(qzone));
+          };
+          this.weibo = function () {
+            window.open(replaceAPI(weibo));
+          };
+          this.tqq = function () {
+            window.open(replaceAPI(tqq));
+          };
+          this.renren = function () {
+            window.open(replaceAPI(renren));
+          };
+          this.douban = function () {
+            window.open(replaceAPI(douban));
+          };
+          this.facebook = function () {
+            window.open(replaceAPI(facebook));
+          };
+          this.twitter = function () {
+            window.open(replaceAPI(twitter));
+          };
+          this.linkedin = function () {
+            window.open(replaceAPI(linkedin));
+          };
+          this.qq = function () {
+            window.open(replaceAPI(qq));
+          };
+          this.weixin = function (callback) {
+            if (!callback) {
+              window.open(replaceAPI(weixin));
+            } else {
+              callback(replaceAPI(weixin));
+            }
+          };
+        };
+      </script>
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">函数参数绕过编译器检查的探究</h2>
+            <div class="post-date">2019-11-05</div>
+            
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png')">
+              </div>
+            
+            <div class="post-abstract" style="display:none">
+              <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
+
+            </div>
+            <div class="post-content">
+              <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
+<!-- more -->
+<h2 id="缘起">缘起</h2>
+<p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
+<p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
+<p>先看示例代码</p>
+<pre><code class="language-typescript">interface SquareConfig {
+  color?: string;
+  width?: number;
+}
+
+function createSquare(config: SquareConfig): {color: string; area: number} {
+  let newSquare = {color: &quot;white&quot;, area: 100};
+  if (config.color) {
+    newSquare.color = config.color;
+  }
+  if (config.width) {
+    newSquare.area = config.width * config.width;
+  }
+  return newSquare;
+}
+
+[标注1]
+createSquare({ color: 'red', width: 100, height: 12 });    // 错误
+
+let param = { height: 200, width: 100, color: 'red' };
+
+createSquare(param);    // 正确
+
+[标注2]
+let param = {}
+
+createSquare(param)  // 正确
+
+let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+
+let param3 = { height: 200, color: &quot;red&quot; }
+
+createSquare(param3)  // 正确
+
+</code></pre>
+<p>原文中对 <strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。</p>
+<p>这里引出两个问题:</p>
+<p>1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？</p>
+<p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
+<h2 id="解题思路">解题思路</h2>
+<p>首先看代码中的函数</p>
+<pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
+  ...
+}
+</code></pre>
+<p>函数要求我们传入的参数是 SquareConfig 类型的。</p>
+<p>函数参数<code>{color: &quot;red&quot;, width: 100 }</code>可以定义为合法的 SquareConfig 类型，所以是正确的</p>
+<p>函数参数<code>{color: &quot;red&quot;, width: 100, height: 100 }</code>不可以定义为合法的 SquareConfig 类型，所以引起错误</p>
+<p>对上面的描述感觉迷糊的话，请接着往下看...</p>
+<p>再看下面的代码</p>
+<pre><code class="language-typescript">const test1:SquareConfig = {  // 正确
+  color: &quot;red&quot;,
+  width: 100
+}
+
+const test2:SquareConfig = {   // 出错
+  color: &quot;red&quot;,
+  width: 100,
+  height: 100
+}
+</code></pre>
+<p>代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。</p>
+<p><code>function createSquare(config: SquareConfig)</code>括号中实际进行了一次定义变量的过程,相当于如下代码:</p>
+<pre><code class="language-typescript">const t: SquareConfig = config
+function createSquare(t){
+  ...
+}
+</code></pre>
+<p>所以，当函数中传参 <code>{ color: 'red', width: 100, height: 12 }</code>时</p>
+<p>定义变量都没走通的话，那肯定会报错啦</p>
+<p>那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看</p>
+<p>其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。</p>
+<pre><code class="language-typescript">let a1 = {}
+let t1: SquareConfig = a1   // 正确
+createSquare(t1)
+
+let a2 = { width: 10}
+let t2: SquareConfig = a2   // 正确
+createSquare(t2)
+
+let a3 = { height: 10 }
+let t3: SquareConfig = a3   // 错误
+createSquare(t3)
+
+let a4 = { width: 10, color: &quot;red&quot;}
+let t4: SquareConfig = a4   // 正确
+createSquare(t4)
+
+let a5 = { width: 10, color: &quot;red&quot;, height: 10}
+let t5: SquareConfig = a5   // 正确
+createSquare(t5)
+</code></pre>
+<p>转化要求 类型兼容。object 与 SquareConfig 类型兼容，所以可以转化。转化成功与否在于 object 中是否有与 SquareConfig 公共项。</p>
+<p>至此就解释通了 标注1 和标注2 的问题啦.</p>
+<h2 id="总结">总结</h2>
+<p>研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。</p>
+<pre><code class="language-typescript">let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+</code></pre>
+<p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
+<pre><code class="language-typescript">interface SquareConfig {
+  color?: string;
+  width?: number;
+  [propName: string]: any;
+}
+</code></pre>
+<p>加入<code>[propName: string]: any;</code> 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&quot;坑&quot;</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://aiyou.life/tag/E75leUW9b" class="tag">
+                    typescript
+                  </a>
+                
+              </div>
+            
+            
+
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu.png',
+                content: document.querySelector('.post-abstract').innerText
+              })
+            </script>
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
+</div>
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+</script>
+
+
+
+  
+    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f9e29934c5621e13bb13',
+        clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+        repo: 'LuckyHH.github.io',
+        owner: 'LuckyHH',
+        admin: ['LuckyHH'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false,  // Facebook-like distraction free mode
+        body: '&lt;p&gt;在TypeScript中文网接口一章中，对于函数传参&lt;strong&gt;为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查&lt;/strong&gt; 的原因只给了一个简单的回答:&amp;quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&amp;quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h2 id=&#34;缘起&#34;&gt;缘起&lt;/h2&gt;
+&lt;p&gt;问题源于TypeScript中&lt;a href=&#34;https://www.tslang.cn/docs/handbook/interfaces.html&#34;&gt;接口&lt;/a&gt;一章额外的类型检查一节关于最后一种绕过编译器检查的描述&lt;/p&gt;
+&lt;p&gt;原问题请查看&lt;a href=&#34;https://segmentfault.com/q/1010000018219694?_ea=7267273&#34;&gt;TypeScript绕过编译器检查的一点困惑&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;先看示例代码&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;interface SquareConfig {
+  color?: string;
+  width?: number;
+}
+
+function createSquare(config: SquareConfig): {color: string; area: number} {
+  let newSquare = {color: &amp;quot;white&amp;quot;, area: 100};
+  if (config.color) {
+    newSquare.color = config.color;
+  }
+  if (config.width) {
+    newSquare.area = config.width * config.width;
+  }
+  return newSquare;
+}
+
+[标注1]
+createSquare({ color: &#39;red&#39;, width: 100, height: 12 });    // 错误
+
+let param = { height: 200, width: 100, color: &#39;red&#39; };
+
+createSquare(param);    // 正确
+
+[标注2]
+let param = {}
+
+createSquare(param)  // 正确
+
+let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+
+let param3 = { height: 200, color: &amp;quot;red&amp;quot; }
+
+createSquare(param3)  // 正确
+
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;原文中对 &lt;strong&gt;为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查&lt;/strong&gt; 的原因只给了一个简单的回答:&amp;quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&amp;quot;.解释的如此简单，让人迷糊。&lt;/p&gt;
+&lt;p&gt;这里引出两个问题:&lt;/p&gt;
+&lt;p&gt;1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？&lt;/p&gt;
+&lt;p&gt;2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？&lt;/p&gt;
+&lt;h2 id=&#34;解题思路&#34;&gt;解题思路&lt;/h2&gt;
+&lt;p&gt;首先看代码中的函数&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;function createSquare(config: SquareConfig): {color: string; area: number} {
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;函数要求我们传入的参数是 SquareConfig 类型的。&lt;/p&gt;
+&lt;p&gt;函数参数&lt;code&gt;{color: &amp;quot;red&amp;quot;, width: 100 }&lt;/code&gt;可以定义为合法的 SquareConfig 类型，所以是正确的&lt;/p&gt;
+&lt;p&gt;函数参数&lt;code&gt;{color: &amp;quot;red&amp;quot;, width: 100, height: 100 }&lt;/code&gt;不可以定义为合法的 SquareConfig 类型，所以引起错误&lt;/p&gt;
+&lt;p&gt;对上面的描述感觉迷糊的话，请接着往下看...&lt;/p&gt;
+&lt;p&gt;再看下面的代码&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;const test1:SquareConfig = {  // 正确
+  color: &amp;quot;red&amp;quot;,
+  width: 100
+}
+
+const test2:SquareConfig = {   // 出错
+  color: &amp;quot;red&amp;quot;,
+  width: 100,
+  height: 100
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;function createSquare(config: SquareConfig)&lt;/code&gt;括号中实际进行了一次定义变量的过程,相当于如下代码:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;const t: SquareConfig = config
+function createSquare(t){
+  ...
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;所以，当函数中传参 &lt;code&gt;{ color: &#39;red&#39;, width: 100, height: 12 }&lt;/code&gt;时&lt;/p&gt;
+&lt;p&gt;定义变量都没走通的话，那肯定会报错啦&lt;/p&gt;
+&lt;p&gt;那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看&lt;/p&gt;
+&lt;p&gt;其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;let a1 = {}
+let t1: SquareConfig = a1   // 正确
+createSquare(t1)
+
+let a2 = { width: 10}
+let t2: SquareConfig = a2   // 正确
+createSquare(t2)
+
+let a3 = { height: 10 }
+let t3: SquareConfig = a3   // 错误
+createSquare(t3)
+
+let a4 = { width: 10, color: &amp;quot;red&amp;quot;}
+let t4: SquareConfig = a4   // 正确
+createSquare(t4)
+
+let a5 = { width: 10, color: &amp;quot;red&amp;quot;, height: 10}
+let t5: SquareConfig = a5   // 正确
+createSquare(t5)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;转化要求 类型兼容。object 与 SquareConfig 类型兼容，所以可以转化。转化成功与否在于 object 中是否有与 SquareConfig 公共项。&lt;/p&gt;
+&lt;p&gt;至此就解释通了 标注1 和标注2 的问题啦.&lt;/p&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;let param1 = { height: 200 }
+
+createSquare(param1)  // 错误
+
+let param2 = { height: 200 } as SquareConfig
+
+createSquare(param2)  // 正确
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示&lt;/strong&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-typescript&#34;&gt;interface SquareConfig {
+  color?: string;
+  width?: number;
+  [propName: string]: any;
+}
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;加入&lt;code&gt;[propName: string]: any;&lt;/code&gt; 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&amp;quot;坑&amp;quot;&lt;/p&gt;
+',
+        labels: '[object Object]'
+      })
+
+      gitalk.render('gitalk-container')
+
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
