@@ -269,17 +269,7 @@ var app = new Vue({
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
         distractionFreeMode: false,  // Facebook-like distraction free mode
         labels: 'default'.split(','),
-        body: '&lt;h2 id=&#34;关于本站&#34;&gt;🏠 关于本站&lt;/h2&gt;
-&lt;p&gt;本站是使用了&lt;a href=&#34;https://github.com/getgridea/gridea&#34;&gt;Gridea&lt;/a&gt;项目生成的托管在GitHub上的静态博客。&lt;br&gt;
-主要用来记录感悟与笔记，原来的网站由于服务器到期，代码写的不好且有XSS漏洞而关闭了。&lt;br&gt;
-历史文章可以查看备份到Heroku上的&lt;a href=&#34;https://hanblog.herokuapp.com/idx/0&#34;&gt;网站&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;博主是谁&#34;&gt;👨‍💻 博主是谁&lt;/h2&gt;
-&lt;p&gt;2019年毕业于石河子大学的男青年。&lt;/p&gt;
-&lt;h2 id=&#34;友情链接&#34;&gt;👩‍👩‍👦‍👦 友情链接&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://hanblog.herokuapp.com/idx/0&#34;&gt;哈哈哈哈&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-'
+        body: document.querySelector('.post-abstract').innerText
       })
 
       gitalk.render('gitalk-container')
