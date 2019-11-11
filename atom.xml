@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-11T10:27:57.175Z</updated>
+    <updated>2019-11-11T10:29:17.823Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -264,8 +264,8 @@ let timer = setInterval(function(){
     </entry>
     <entry>
         <title type="html"><![CDATA[函数参数绕过编译器检查的探究]]></title>
-        <id>https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu</id>
-        <link href="https://aiyou.life/post/han-shu-can-shu-rao-guo-bian-yi-qi-de-tan-jiu">
+        <id>https://aiyou.life/post/kokne79MA</id>
+        <link href="https://aiyou.life/post/kokne79MA">
         </link>
         <updated>2019-11-05T12:34:17.000Z</updated>
         <summary type="html"><![CDATA[<p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
