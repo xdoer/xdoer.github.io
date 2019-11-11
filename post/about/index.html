@@ -211,7 +211,7 @@
             <script>
               var share = new SimpleShare({
                 pic: '',
-                content: document.querySelector('.post-abstract').innerText
+                content: `${document.querySelector('.post-abstract').innerText}`
               })
             </script>
             <div class="simple-share">
@@ -269,7 +269,7 @@ var app = new Vue({
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
         distractionFreeMode: false,  // Facebook-like distraction free mode
         labels: 'default'.split(','),
-        body: document.querySelector('.post-abstract').innerText
+        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
       })
 
       gitalk.render('gitalk-container')
