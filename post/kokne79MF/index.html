@@ -457,51 +457,51 @@ var app = new Vue({
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
         distractionFreeMode: false,  // Facebook-like distraction free mode
         labels: 'javascript'.split(','),
-        body: '<p>我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?</p>
-<!-- more -->
-<h2 id="1-settimeoutsetinterval用法">1. setTimeout/setInterval用法</h2>
-<p>这里还是简单提一嘴吧。这两个函数是定时器函数，setTimeout表示回调函数在 t 时间后运行，setInterval表示回调函数每隔 t 时间运行。</p>
-<pre><code class="language-javascript">setTimeout(function(){
+        body: '&lt;p&gt;我们都知道，setTimeout与setInterval都不是精确的计时器，它还与当前主线程任务队列中的任务大小数量有关。当主线程任务队列的任务没有执行完毕时,setTimeout与setInterval就不会准确的在 t 时间后运行。那怎么才能提高二者的精确度呢?&lt;/p&gt;
+&lt;!-- more --&gt;
+&lt;h2 id=&#34;1-settimeoutsetinterval用法&#34;&gt;1. setTimeout/setInterval用法&lt;/h2&gt;
+&lt;p&gt;这里还是简单提一嘴吧。这两个函数是定时器函数，setTimeout表示回调函数在 t 时间后运行，setInterval表示回调函数每隔 t 时间运行。&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;setTimeout(function(){
     ...
 }, t)
 
 setInterval(function(){
     ...
 }, t)
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 1.1</div>
-<p>在 CSS3/HTML5之前，二者常用来绘制页面动画。CSS3/HTML5之后，常用css来绘制动画。另外还一个API是requestAnimationFrame. 该函数与setInterval类似，区别在于该函数没有 t 参数，默认是屏幕刷新的每帧调用一次。每秒调用（1/屏幕刷新率）次</p>
-<pre><code class="language-javascript">requestAnimationFrame(function(){
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 1.1&lt;/div&gt;
+&lt;p&gt;在 CSS3/HTML5之前，二者常用来绘制页面动画。CSS3/HTML5之后，常用css来绘制动画。另外还一个API是requestAnimationFrame. 该函数与setInterval类似，区别在于该函数没有 t 参数，默认是屏幕刷新的每帧调用一次。每秒调用（1/屏幕刷新率）次&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;requestAnimationFrame(function(){
     // DOM动画
 })
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 1.2</div>
-<h2 id="2-发现问题">2. 发现问题</h2>
-<p>Js是一个单线程语言，同一时间只能做同一件事情。这很好理解，如果同一时间能做多个任务，那么多任务都在操作DOM时，页面该怎么显示呢?因而JS设计为了单线程,但单线程也带来了一些问题，比如线程阻塞，CPU利用率不高等问题。看代码2.1</p>
-<pre><code class="language-javascript">setTimeout(function () {
-    console.log('task finished after ' + (Date.now() - startTime) + 'ms')
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 1.2&lt;/div&gt;
+&lt;h2 id=&#34;2-发现问题&#34;&gt;2. 发现问题&lt;/h2&gt;
+&lt;p&gt;Js是一个单线程语言，同一时间只能做同一件事情。这很好理解，如果同一时间能做多个任务，那么多任务都在操作DOM时，页面该怎么显示呢?因而JS设计为了单线程,但单线程也带来了一些问题，比如线程阻塞，CPU利用率不高等问题。看代码2.1&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;setTimeout(function () {
+    console.log(&#39;task finished after &#39; + (Date.now() - startTime) + &#39;ms&#39;)
 }, 0)
 
-for (let i = 0 ; i &lt; 9000 ; i++) {
+for (let i = 0 ; i &amp;lt; 9000 ; i++) {
     console.log(5 + 8 + 8 + 8)
 }
-console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 2.1</div>
-<p>执行结果如图 2.1 所示<br>
-<img src="https://aiyou.life/post-images/1573436890372.png" alt=""></p>
-<div style="text-align:center;font-size:80%">图 2.1</div>
-<p>for循环是一个耗时任务,阻塞了setTimeout的执行。我们设定0秒后执行输出，可实际结果是在1243ms之后输出，所以setTimeout的 t 参数定时不够精确。</p>
-<!-- **结论**: *主线程里实际上是没有办法精确按时执行setTimeout/setInterval的回调函数。当浏览器js引擎解析代码遇到 setTimeout/setInterval 时，会将他们注册到下一个宏任务队列，只有执行完当前宏任务队列和微任务队列中的任务后，才会执行下一个宏任务队列中的任务。代码的执行本身就消耗时间*。 -->
-<p>关于事件循环、宏任务、微任务不是本文重点，感兴趣的可以看看这篇文章<a href="https://juejin.im/post/5bac87b6f265da0a906f78d8">笔试题——JavaScript事件循环机制（event loop、macrotask、microtask）</a></p>
-<p>那么到底要怎么解决精确度问题呢?</p>
-<h2 id="3-解决问题">3. 解决问题</h2>
-<p>前文我们一直在提及主线程主线程的，那么有没有办法利用其它线程进行计时呢?当代码执行到特定位置，通知其它线程中开始计时任务，主线程继续完成复杂任务，那么线程就不会阻塞，这样的话计时精确度就提高了。那么问题来了，JS不是一门单线程语言吗，怎么能利用除了主线程之外的其他线程呢?</p>
-<p>在HTML5中，<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Worker">Worker</a>的引入使得我们有了利用其它线程的能力。注意:<strong>Worker中不能操作DOM</strong>。</p>
-<p>事情好办了。洋洋洒洒写下如下代码:</p>
-<pre><code class="language-javascript">// worker生成器
-const createWorker = (fn, options) =&gt; {
-    const blob = new Blob(['(' + fn.toString() + ')()']);
+console.log(&#39;主线程复杂任务耗时:&#39; + (Date.now() - startTime) + &#39;ms&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 2.1&lt;/div&gt;
+&lt;p&gt;执行结果如图 2.1 所示&lt;br&gt;
+&lt;img src=&#34;https://aiyou.life/post-images/1573436890372.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;图 2.1&lt;/div&gt;
+&lt;p&gt;for循环是一个耗时任务,阻塞了setTimeout的执行。我们设定0秒后执行输出，可实际结果是在1243ms之后输出，所以setTimeout的 t 参数定时不够精确。&lt;/p&gt;
+&lt;!-- **结论**: *主线程里实际上是没有办法精确按时执行setTimeout/setInterval的回调函数。当浏览器js引擎解析代码遇到 setTimeout/setInterval 时，会将他们注册到下一个宏任务队列，只有执行完当前宏任务队列和微任务队列中的任务后，才会执行下一个宏任务队列中的任务。代码的执行本身就消耗时间*。 --&gt;
+&lt;p&gt;关于事件循环、宏任务、微任务不是本文重点，感兴趣的可以看看这篇文章&lt;a href=&#34;https://juejin.im/post/5bac87b6f265da0a906f78d8&#34;&gt;笔试题——JavaScript事件循环机制（event loop、macrotask、microtask）&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;那么到底要怎么解决精确度问题呢?&lt;/p&gt;
+&lt;h2 id=&#34;3-解决问题&#34;&gt;3. 解决问题&lt;/h2&gt;
+&lt;p&gt;前文我们一直在提及主线程主线程的，那么有没有办法利用其它线程进行计时呢?当代码执行到特定位置，通知其它线程中开始计时任务，主线程继续完成复杂任务，那么线程就不会阻塞，这样的话计时精确度就提高了。那么问题来了，JS不是一门单线程语言吗，怎么能利用除了主线程之外的其他线程呢?&lt;/p&gt;
+&lt;p&gt;在HTML5中，&lt;a href=&#34;https://developer.mozilla.org/zh-CN/docs/Web/API/Worker&#34;&gt;Worker&lt;/a&gt;的引入使得我们有了利用其它线程的能力。注意:&lt;strong&gt;Worker中不能操作DOM&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;事情好办了。洋洋洒洒写下如下代码:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;// worker生成器
+const createWorker = (fn, options) =&amp;gt; {
+    const blob = new Blob([&#39;(&#39; + fn.toString() + &#39;)()&#39;]);
     const url = URL.createObjectURL(blob);
     if (options) {
         return new Worker(url, options);
@@ -511,7 +511,7 @@ const createWorker = (fn, options) =&gt; {
 // 生成worker
 const worker = createWorker(function () {
     onmessage = function(e) {
-        console.log('进入WebWorker')
+        console.log(&#39;进入WebWorker&#39;)
         let count = 1
         let startTime = Date.now()
         let timer = setInterval(function () {
@@ -526,36 +526,36 @@ const worker = createWorker(function () {
 const startTime = Date.now()
 worker.postMessage(10)
 worker.onmessage = function (e) {
-    console.log('Worker线程任务内部耗时:' + (Date.now() - e.data) + 'ms')
-    console.log('Worker线程任务耗时:'+ (Date.now() - startTime) + 'ms')
+    console.log(&#39;Worker线程任务内部耗时:&#39; + (Date.now() - e.data) + &#39;ms&#39;)
+    console.log(&#39;Worker线程任务耗时:&#39;+ (Date.now() - startTime) + &#39;ms&#39;)
     this.terminate()
 }
 // 主线程任务
-for (let i = 0 ; i &lt; 5000 ; i++) {
+for (let i = 0 ; i &amp;lt; 5000 ; i++) {
     console.log(5 + 8 + 8 + 8)
 } 
-console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 3.1</div>
-<p>代码中, worker 线程每秒运行一次回调函数，进行计数，当回调函数执行了 10 次时，通知主线程。主线程打印 worker 线程运行时间。</p>
-<p>代码运行结果如图3.1所示<br>
-<img src="https://aiyou.life/post-images/1573401585223.png" alt=""></p>
-<div style="text-align:center;font-size:80%">图 3.1</div>
-<p>运行实例(查看console):</p>
-<iframe height="265" style="width: 100%;" scrolling="no" title="WebWorker" src="https://codepen.io/luckyhh/embed/bGGjVBg?height=265&theme-id=default&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href='https://codepen.io/luckyhh/pen/bGGjVBg'>WebWorker</a> by LuckyHH
-  (<a href='https://codepen.io/luckyhh'>@luckyhh</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
-<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调。</p>
-<p>那么问题又来了,worker是属于宏任务还是微任务呢?<br>
-验证代码如下:</p>
-<pre><code class="language-javascript">...
-setTimeout(()=&gt;{
-    console.log('SetTimeout')
+console.log(&#39;主线程复杂任务耗时:&#39; + (Date.now() - startTime) + &#39;ms&#39;)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 3.1&lt;/div&gt;
+&lt;p&gt;代码中, worker 线程每秒运行一次回调函数，进行计数，当回调函数执行了 10 次时，通知主线程。主线程打印 worker 线程运行时间。&lt;/p&gt;
+&lt;p&gt;代码运行结果如图3.1所示&lt;br&gt;
+&lt;img src=&#34;https://aiyou.life/post-images/1573401585223.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;图 3.1&lt;/div&gt;
+&lt;p&gt;运行实例(查看console):&lt;/p&gt;
+&lt;iframe height=&#34;265&#34; style=&#34;width: 100%;&#34; scrolling=&#34;no&#34; title=&#34;WebWorker&#34; src=&#34;https://codepen.io/luckyhh/embed/bGGjVBg?height=265&amp;theme-id=default&amp;default-tab=js,result&#34; frameborder=&#34;no&#34; allowtransparency=&#34;true&#34; allowfullscreen=&#34;true&#34;&gt;
+  See the Pen &lt;a href=&#39;https://codepen.io/luckyhh/pen/bGGjVBg&#39;&gt;WebWorker&lt;/a&gt; by LuckyHH
+  (&lt;a href=&#39;https://codepen.io/luckyhh&#39;&gt;@luckyhh&lt;/a&gt;) on &lt;a href=&#39;https://codepen.io&#39;&gt;CodePen&lt;/a&gt;.
+&lt;/iframe&gt;
+&lt;p&gt;运行结果并不符合预期。预期结果应当是&lt;strong&gt;Worker线程任务内部耗时&lt;/strong&gt;与&lt;strong&gt;Worker线程任务耗时&lt;/strong&gt;保持一致，或相差不多。出现这个结果的原因在于js代码在执行到&lt;code&gt;worker.postMessage(10)&lt;/code&gt;时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调。&lt;/p&gt;
+&lt;p&gt;那么问题又来了,worker是属于宏任务还是微任务呢?&lt;br&gt;
+验证代码如下:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;...
+setTimeout(()=&amp;gt;{
+    console.log(&#39;SetTimeout&#39;)
 }, 1)
 const worker = createWorker(function () {
     onmessage = function(e) {
-    console.log('进入WebWorker ')
+    console.log(&#39;进入WebWorker &#39;)
     let count = 1
     let startTime = Date.now()
     let timer = setInterval(function () {
@@ -567,21 +567,21 @@ const worker = createWorker(function () {
     }
 })
 ...
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 3.2</div>
-<p>运行结果如下:<br>
-<img src="https://aiyou.life/post-images/1573403893208.png" alt=""></p>
-<div style="text-align:center;font-size:80%">图 3.2</div>
-<p><code>SetTimeout</code>在<code>进入WebWorker</code>之前输出,说明<strong>Worker是宏任务</strong></p>
-<h2 id="4-更进一步">4. 更进一步</h2>
-<p>上一节中,我们考虑将计时器函数丢到Worker中去执行.但实际运行结果并不符合预期。那我们换一种思路，将主线程耗时任务丢到Worker执行，计时器精度会提高吗?<br>
-看如下代码4.1:</p>
-<pre><code class="language-javascript">const startTime = Date.now()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 3.2&lt;/div&gt;
+&lt;p&gt;运行结果如下:&lt;br&gt;
+&lt;img src=&#34;https://aiyou.life/post-images/1573403893208.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;图 3.2&lt;/div&gt;
+&lt;p&gt;&lt;code&gt;SetTimeout&lt;/code&gt;在&lt;code&gt;进入WebWorker&lt;/code&gt;之前输出,说明&lt;strong&gt;Worker是宏任务&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&#34;4-更进一步&#34;&gt;4. 更进一步&lt;/h2&gt;
+&lt;p&gt;上一节中,我们考虑将计时器函数丢到Worker中去执行.但实际运行结果并不符合预期。那我们换一种思路，将主线程耗时任务丢到Worker执行，计时器精度会提高吗?&lt;br&gt;
+看如下代码4.1:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;const startTime = Date.now()
 setTimeout(function () {
-    console.log('task finished after ' + (Date.now() - startTime) + 'ms')
+    console.log(&#39;task finished after &#39; + (Date.now() - startTime) + &#39;ms&#39;)
 }, 0)
-const createWorker = (fn, options) =&gt; {
-    const blob = new Blob(['(' + fn.toString() + ')()']);
+const createWorker = (fn, options) =&amp;gt; {
+    const blob = new Blob([&#39;(&#39; + fn.toString() + &#39;)()&#39;]);
     const url = URL.createObjectURL(blob);
     if (options) {
         return new Worker(url, options);
@@ -590,50 +590,50 @@ const createWorker = (fn, options) =&gt; {
 }
 const worker = createWorker(function () {
     const startTime = Date.now()
-    for (let i = 0; i &lt; 9000; i++) {
+    for (let i = 0; i &amp;lt; 9000; i++) {
         console.log(5 + 8 + 8 + 8)
         if (i === 9000 - 1) {
             postMessage(startTime)
         }
     }
 })
-worker.postMessage('start')
+worker.postMessage(&#39;start&#39;)
 worker.onmessage = function (e) {
-    console.log('Worker线程任务内部耗时:' + (Date.now() - e.data) + 'ms')
-    console.log('Worker线程任务耗时:'+ (Date.now() - startTime) + 'ms')
+    console.log(&#39;Worker线程任务内部耗时:&#39; + (Date.now() - e.data) + &#39;ms&#39;)
+    console.log(&#39;Worker线程任务耗时:&#39;+ (Date.now() - startTime) + &#39;ms&#39;)
     this.terminate()
 }
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 4.1</div>
-<p>运行结果如图4.1:<br>
-<img src="https://aiyou.life/post-images/1573437200815.png" alt=""></p>
-<div style="text-align:center;font-size:80%">图 4.1</div>
-<p>对比上文代码2.1,可以看到计时器精度提高了不少。</p>
-<p>将Worker替换成setInterval试试</p>
-<pre><code class="language-javascript">const startTime = Date.now()
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 4.1&lt;/div&gt;
+&lt;p&gt;运行结果如图4.1:&lt;br&gt;
+&lt;img src=&#34;https://aiyou.life/post-images/1573437200815.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;图 4.1&lt;/div&gt;
+&lt;p&gt;对比上文代码2.1,可以看到计时器精度提高了不少。&lt;/p&gt;
+&lt;p&gt;将Worker替换成setInterval试试&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-javascript&#34;&gt;const startTime = Date.now()
 setTimeout(function () {
-    console.log('task finished after ' + (Date.now() - startTime) + 'ms')
+    console.log(&#39;task finished after &#39; + (Date.now() - startTime) + &#39;ms&#39;)
 }, 10)
 let timer = setInterval(function(){
-    for (let i = 0; i &lt; 9000; i++) {
+    for (let i = 0; i &amp;lt; 9000; i++) {
         console.log(5 + 8 + 8 + 8)
         if (i === 9000 - 1) {
             clearInterval(timer)
-            console.log('task2 finished after ' + (Date.now() - startTime) + 'ms')
+            console.log(&#39;task2 finished after &#39; + (Date.now() - startTime) + &#39;ms&#39;)
         }
     }
 }, 10)
-</code></pre>
-<div style="text-align:center;font-size:80%">代码 4.2</div>
-<p>运行结果如图4.2:<br>
-<img src="https://aiyou.life/post-images/1573438068318.png" alt=""></p>
-<div style="text-align:center;font-size:80%">图 4.2</div>
-<p>对比上文代码2.1,可以看到计时器精度也提高了不少。</p>
-<p><strong>总结</strong>:<em>主线程遇到耗时任务，应当考虑将其丢到下一个宏任务中去执行，这样不会阻塞当前任务队列的执行。题目中讲到要提高计时器函数精度，实际计时器也是一个宏任务。计时器与耗时任务在丢到下一个任务队列，要保证计时器任务在前，这样就可以提高计时器精度。再者，计时器函数要尽量靠前，先于其他代码执行，因为代码执行本身也会消耗时间</em>。</p>
-<h2 id="5-最佳实战">5. 最佳实战</h2>
-<p>主线程遇到无关DOM的耗时任务时，应当首先考虑使用Worker进行处理与计算。这样才不会阻塞主线程。代码4.2中，我们尝试将耗时任务放到主线程的中的下一个宏任务队列中，如果任务有上万数据进行计算，还是会阻塞主线程。Worker虽然属于宏任务，但只是将数据传输到Worker线程，由Worker进行计算。计算完成后，通知主线程。</p>
-<h2 id="6-后记">6. 后记</h2>
-<p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的(就是有点耗费头发😭)。</p>
+&lt;/code&gt;&lt;/pre&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;代码 4.2&lt;/div&gt;
+&lt;p&gt;运行结果如图4.2:&lt;br&gt;
+&lt;img src=&#34;https://aiyou.life/post-images/1573438068318.png&#34; alt=&#34;&#34;&gt;&lt;/p&gt;
+&lt;div style=&#34;text-align:center;font-size:80%&#34;&gt;图 4.2&lt;/div&gt;
+&lt;p&gt;对比上文代码2.1,可以看到计时器精度也提高了不少。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;:&lt;em&gt;主线程遇到耗时任务，应当考虑将其丢到下一个宏任务中去执行，这样不会阻塞当前任务队列的执行。题目中讲到要提高计时器函数精度，实际计时器也是一个宏任务。计时器与耗时任务在丢到下一个任务队列，要保证计时器任务在前，这样就可以提高计时器精度。再者，计时器函数要尽量靠前，先于其他代码执行，因为代码执行本身也会消耗时间&lt;/em&gt;。&lt;/p&gt;
+&lt;h2 id=&#34;5-最佳实战&#34;&gt;5. 最佳实战&lt;/h2&gt;
+&lt;p&gt;主线程遇到无关DOM的耗时任务时，应当首先考虑使用Worker进行处理与计算。这样才不会阻塞主线程。代码4.2中，我们尝试将耗时任务放到主线程的中的下一个宏任务队列中，如果任务有上万数据进行计算，还是会阻塞主线程。Worker虽然属于宏任务，但只是将数据传输到Worker线程，由Worker进行计算。计算完成后，通知主线程。&lt;/p&gt;
+&lt;h2 id=&#34;6-后记&#34;&gt;6. 后记&lt;/h2&gt;
+&lt;p&gt;这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的(就是有点耗费头发😭)。&lt;/p&gt;
 '
       })
 
