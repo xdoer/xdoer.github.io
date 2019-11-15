@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-15T09:08:52.218Z</updated>
+    <updated>2019-11-15T09:19:44.394Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -83,6 +83,8 @@ const worker = createWorker(function () {
         }, 1000)
     }
 })
+
+// 将代码2.1中的setTimeout替换为了 worker
 // worker线程任务
 const startTime = Date.now()
 worker.postMessage(10)
@@ -102,13 +104,13 @@ console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
 <p>代码运行结果如图3.1所示<br>
 <img src="https://aiyou.life/post-images/1573401585223.png" alt=""></p>
 <div style="text-align:center;font-size:80%">图 3.1</div>
-<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调。再者主线程的耗时任务其实还是在阻塞主线程的，所以Worker线程推过来的数据主线程没有接受到，因而造成误差。</p>
+<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调,其他代码接着运行。</p>
 <p>那么问题又来了,worker是属于宏任务还是微任务呢?<br>
 验证代码如下:</p>
 <pre><code class="language-javascript">...
 setTimeout(()=&gt;{
     console.log('SetTimeout')
-}, 1)
+}, 0)
 const worker = createWorker(function () {
     onmessage = function(e) {
     console.log('进入WebWorker ')
@@ -136,6 +138,7 @@ const worker = createWorker(function () {
 setTimeout(function () {
     console.log('task finished after ' + (Date.now() - startTime) + 'ms')
 }, 0)
+// 将代码2.1中的耗时任务放到worker
 const createWorker = (fn, options) =&gt; {
     const blob = new Blob(['(' + fn.toString() + ')()']);
     const url = URL.createObjectURL(blob);
@@ -170,6 +173,7 @@ worker.onmessage = function (e) {
 setTimeout(function () {
     console.log('task finished after ' + (Date.now() - startTime) + 'ms')
 }, 0)
+// 将代码2.1中耗时任务放到setTimeout中
 setTimeout(function () {
     for (let i = 0 ; i &lt; 9000 ; i++) {
         console.log(5 + 8 + 8 + 8)
@@ -213,7 +217,7 @@ loop(function (timer) {
 </code></pre>
 <p>如上代码,我们构造了一个与<code>setInterval</code>函数功能类似的loop函数。插入主线程的任务的时间排除了代码的执行时间,相对于setInterval精度提高了很多。但当代码的执行时间大于设定的t时,主线程插入任务时间也不会准。</p>
 <h2 id="7-后记">7. 后记</h2>
-<p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的(就是有点耗费头发😭)。</p>
+<p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的(就是有点耗费头发😭)。。</p>
 ]]></content>
     </entry>
     <entry>
