@@ -9,7 +9,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573472508201">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1573805521582">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -51,7 +51,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1573472508201" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1573805521582" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -245,7 +245,7 @@ console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
 <p>关于事件循环、宏任务、微任务不是本文重点，感兴趣的可以看看这篇文章<a href="https://juejin.im/post/5bac87b6f265da0a906f78d8">笔试题——JavaScript事件循环机制（event loop、macrotask、microtask）</a></p>
 <p>那么到底要怎么解决精确度问题呢?</p>
 <h2 id="3-解决问题">3. 解决问题</h2>
-<p>前文我们一直在提及主线程主线程的，那么有没有办法利用其它线程进行计时呢?当代码执行到特定位置，通知其它线程中开始计时任务，主线程继续完成复杂任务，那么线程就不会阻塞，这样的话计时精确度就提高了。那么问题来了，JS不是一门单线程语言吗，怎么能利用除了主线程之外的其他线程呢?</p>
+<p>前文我们一直在提及主线程主线程的，那么有没有办法利用其它线程进行计时呢?当代码执行到特定位置，通知其它线程中开始计时任务，主线程继续完成复杂任务，那么就不会阻塞计时器的运行，这样的话计时精确度就提高了。那么问题来了，JS不是一门单线程语言吗，怎么能利用除了主线程之外的其他线程呢?</p>
 <p>在HTML5中，<a href="https://developer.mozilla.org/zh-CN/docs/Web/API/Worker">Worker</a>的引入使得我们有了利用其它线程的能力。注意:<strong>Worker中不能操作DOM</strong>。</p>
 <p>事情好办了。洋洋洒洒写下如下代码:</p>
 <pre><code class="language-javascript">// worker生成器
@@ -290,12 +290,7 @@ console.log('主线程复杂任务耗时:' + (Date.now() - startTime) + 'ms')
 <p>代码运行结果如图3.1所示<br>
 <img src="https://aiyou.life/post-images/1573401585223.png" alt=""></p>
 <div style="text-align:center;font-size:80%">图 3.1</div>
-<p>运行实例(查看console):</p>
-<iframe height="265" style="width: 100%;" scrolling="no" title="WebWorker" src="https://codepen.io/luckyhh/embed/bGGjVBg?height=265&theme-id=default&default-tab=js,result" frameborder="no" allowtransparency="true" allowfullscreen="true">
-  See the Pen <a href='https://codepen.io/luckyhh/pen/bGGjVBg'>WebWorker</a> by LuckyHH
-  (<a href='https://codepen.io/luckyhh'>@luckyhh</a>) on <a href='https://codepen.io'>CodePen</a>.
-</iframe>
-<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调。</p>
+<p>运行结果并不符合预期。预期结果应当是<strong>Worker线程任务内部耗时</strong>与<strong>Worker线程任务耗时</strong>保持一致，或相差不多。出现这个结果的原因在于js代码在执行到<code>worker.postMessage(10)</code>时,并没有通知到Worker开始工作，而是等待当前任务队列执行完毕，才开始调用 Worker😭..这里不像fetch函数那样，代码执行到fetch时,浏览器另开线程去处理请求，拿到结果再进行回调。再者主线程的耗时任务其实还是在阻塞主线程的，所以Worker线程推过来的数据主线程没有接受到，因而造成误差。</p>
 <p>那么问题又来了,worker是属于宏任务还是微任务呢?<br>
 验证代码如下:</p>
 <pre><code class="language-javascript">...
@@ -323,7 +318,7 @@ const worker = createWorker(function () {
 <div style="text-align:center;font-size:80%">图 3.2</div>
 <p><code>SetTimeout</code>在<code>进入WebWorker</code>之前输出,说明<strong>Worker是宏任务</strong></p>
 <h2 id="4-更进一步">4. 更进一步</h2>
-<p>上一节中,我们考虑将计时器函数丢到Worker中去执行.但实际运行结果并不符合预期。那我们换一种思路，将主线程耗时任务丢到Worker执行，计时器精度会提高吗?<br>
+<p>上一节中,我们考虑将计时器函数丢到Worker中去执行.但实际运行结果并不符合预期。那我们换一种思路，将主线程耗时任务丢到Worker执行，计时器精度会提高吗?答案是肯定的<br>
 看如下代码4.1:</p>
 <pre><code class="language-javascript">const startTime = Date.now()
 setTimeout(function () {
