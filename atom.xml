@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-15T08:12:04.533Z</updated>
+    <updated>2019-11-15T09:02:22.237Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -188,6 +188,33 @@ let timer = setInterval(function(){
 <p><strong>总结</strong>:<em>主线程遇到耗时任务，应当考虑将其丢到下一个宏任务中去执行，这样不会阻塞当前任务队列的执行。题目中讲到要提高计时器函数精度，实际计时器也是一个宏任务。计时器与耗时任务在丢到下一个任务队列，要保证计时器任务在前，这样就可以提高计时器精度。再者，计时器函数要尽量靠前，先于其他代码执行，因为代码执行本身也会消耗时间</em>。</p>
 <h2 id="5-最佳实战">5. 最佳实战</h2>
 <p>主线程遇到无关DOM的耗时任务时，应当首先考虑使用Worker进行处理与计算。这样才不会阻塞主线程。代码4.2中，我们尝试将耗时任务放到主线程的中的下一个宏任务队列中，如果任务有上万数据进行计算，还是会阻塞主线程。Worker虽然属于宏任务，但只是将数据传输到Worker线程，由Worker进行计算。计算完成后，通知主线程。</p>
+<h2 id="6-实现一个相对精确的setinterval">6. 实现一个相对精确的setInterval</h2>
+<pre><code class="language-javascript">function loop(fn, interval) {
+    const startTime = Date.now()
+    let count = 0
+    let currentInterval = interval
+    let timer = 0
+    function inner() {
+        count++
+        let offset = new Date().getTime() - (startTime + count * interval)
+        currentInterval = interval - offset
+        console.log('代码执行时间：' + offset, '下次循环间隔' + currentInterval)
+        timer = setTimeout(inner, currentInterval)
+        fn(timer)
+    }
+    setTimeout(inner, currentInterval)
+}
+
+let count = 0
+loop(function (timer) {
+    console.log('外部函数')
+    if (count++ === 10) {
+        console.log('外部函数执行完毕')
+        clearTimeout(timer)
+    }
+}, 1000)
+</code></pre>
+<p>如上代码,我们构造了一个与<code>setInterval</code>函数功能类似的loop函数。插入主线程的任务的时间排除了代码的执行时间,相对于setInterval精度提高了很多。但当代码的执行时间大于设定的t时,主线程插入任务时间也不会准。</p>
 <h2 id="6-后记">6. 后记</h2>
 <p>这个问题来自于公众号上看到的某大厂的面试题。因而引发了一系列思考与探讨，顺便研究了一下WebWorker。其实提高setTimeout与setInterval计时精确度本身是一件无意义的事情，实际中本就没有这样的应用场景，但探索的过程还是蛮有意义的(就是有点耗费头发😭)。</p>
 ]]></content>
