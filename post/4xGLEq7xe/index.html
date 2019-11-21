@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>关于 | 文享日志</title>
+<title>利用树莓派搭建个人服务器 | 文享日志</title>
 <meta name="description" content="温故而知新">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -195,31 +195,101 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">关于</h2>
-            <div class="post-date">2019-11-06</div>
+            <h2 class="post-title">利用树莓派搭建个人服务器</h2>
+            <div class="post-date">2019-11-21</div>
+            
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/4xGLEq7xe.png')">
+              </div>
             
             <div class="post-abstract" style="display:none">
-              
+              <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
+
             </div>
             <div class="post-content">
-              <h2 id="关于本站">🏠 关于本站</h2>
-<p>本站是使用了<a href="https://github.com/getgridea/gridea">Gridea</a>项目生成的托管在GitHub上的静态博客。<br>
-主要用来记录感悟与笔记，原来的网站由于服务器到期，代码写的不好且有XSS漏洞而关闭了。<br>
-历史文章可以查看备份到Heroku上的<a href="https://hanblog.herokuapp.com/idx/0">网站</a></p>
-<h2 id="博主是谁">👨‍💻 博主是谁</h2>
-<p>2019年毕业于石河子大学的男青年。</p>
-<h2 id="友情链接">👩‍👩‍👦‍👦 友情链接</h2>
+              <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
+<!-- more -->
+<h2 id="物料准备">物料准备</h2>
+<blockquote>
 <ul>
-<li><a href="https://hanblog.herokuapp.com/idx/0">哈哈哈哈</a></li>
+<li>服务器一台。我使用树莓派当服务器。对于性能有需求的，可以考虑使用电脑主机或者买台物理服务器。注意平衡好功耗与性能的关系，毕竟一台电脑主机或物理机24小时开机，耗电量也不小。</li>
+<li>智能路由器一台。我家用的斐讯K2，刷了潘多拉系统。智能路由器意味着系统是基于OpenWrt的，可以安装各种软件。</li>
+<li>互联网。这里单独列出来，是因为对互联网也有要求。网络需要有公网IP,最好开放了80端口。很多互联网服务提供商(ISP)给用户提供的都是经过NAT转发的内网地址，并且屏蔽了80端口。这种情况下，可以打电话到ISP客服要求给调成公网IP和开放80端口。当然实在调不了，可以使用内网穿透来解决公网IP的问题，但端口就无能为力了，访问的时候，只能配合端口来访问。</li>
 </ul>
+</blockquote>
+<p>当然，服务器直连互联网也是可以的。这样的话，搭建过程更简便，缺点是网络利用率低。</p>
+<h2 id="地址解析">地址解析</h2>
+<p>尽管ISP分配给我们了公网IP，但很大程度上公网IP是随着每次拨号会不停变动(比如家里停电、重启路由器等都会重新拨号)，每次拿到的将是一个新的公网IP。我们知道，两个端通信的前提是知道对方的IP地址，IP地址变动的话，将不能通信。举个简单的例子:我和小明经常打电话，有一天小明把电话号换了，我打他原来的电话号，就可能无人接听或者被其他陌生人接到了，那在这个时候，我只能去他家跑一趟，问问他的新电话号，以后我俩就又能互相打电话了。域名就是他的家庭地址，IP就是电话号。我们可以根据域名通过DNS服务来获取IP。有人可能会疑惑，公网IP变动后，域名是怎么知道你的IP变动呢?</p>
+<h3 id="ddns">DDNS</h3>
+<p>DNS我们都知道是用来将域名解析成IP的。那DDNS是什么?DDNS（Dynamic Domain Name Server，动态域名服务）是将用户的动态IP地址映射到一个固定的域名解析服务上，用户每次连接网络的时候客户端程序就会通过信息传递把该主机的动态IP地址传送给位于服务商主机上的服务器程序，服务器程序负责提供DNS服务并实现动态域名解析。<br>
+由上述概念可知，只要我们在路由器每次联网时，监控IP地址变动，就有办法更新DNS解析记录。那怎么完成监控和更新?</p>
+<h3 id="阿里ddns">阿里DDNS</h3>
+<p>提供类似服务的厂商有很多，国内做的最好的还是阿里。相关文档点击<a href="https://help.aliyun.com/document_detail/141482.html">这里</a>..里面参考代码给的是Java版本的。其他实现可以在GitHub上搜一下。个人觉得最好还是选择bash实现，使用Cron定时任务定时执行就行。</p>
+<p><strong>注意</strong>:有些智能路由器里本身就带有这个功能，无论是固件集成还是插件形式的。</p>
+<p>如图所示，我家路由器固件集成了阿里DDNS<br>
+<img src="https://aiyou.life/post-images/1574309892496.png" alt=""></p>
+<h3 id="域名">域名</h3>
+<p>对域名其实没有什么要求，阿里云上随便买一个就行了。很便宜，10年只要60多块。<br>
+如图所示<br>
+<img src="https://aiyou.life/post-images/1574311032422.png" alt=""><br>
+记录前四条，是指向GitHubPage，也就是本博客的地址。阿里DDNS配置正确的话，会自动生成最后一条记录，地址指向了我家的路由器。</p>
+<h3 id="内网穿透">内网穿透</h3>
+<p>上面介绍的前提是你有公网IP的情况下。没有公网IP只能靠内网穿透来提供Web服务。相关教程可以Google查看。<br>
+内网穿透优点是不需要公网IP，缺点是依赖服务提供商的稳定性，且不能自定义域名。如果人家服务器挂了，或者域名到期了，你这里也不能用了。</p>
+<p><strong>注意</strong>: 有些智能路由器里本身就带有这个功能，无论是固件集成还是插件形式的。</p>
+<p>如图所示，我家路由器固件集成了内网穿透工具<br>
+<img src="https://aiyou.life/post-images/1574312158496.png" alt=""></p>
+<h3 id="验证">验证</h3>
+<p>地址解析配置完成之后，需要验证一下是否解析成功</p>
+<pre><code class="language-bash">ping -c 4 www.aiyou.life
+</code></pre>
+<p>查看解析到的IP是否与公网IP一致</p>
+<p>如图所示<br>
+<img src="https://aiyou.life/post-images/1574312401056.png" alt=""></p>
+<h2 id="端口转发">端口转发</h2>
+<p>地址解析配置完成后，所有通过域名的访问都将直接请求到了路由器上。所以需要通过端口转发，将请求转到内网中的服务器上。这一步其实很简单，只需要记住几个常用的端口，配置一下就行了。</p>
+<p>如图所示，来自互联网的80端口请求，都会转发到我的树莓派服务器(192.168.111)上。<br>
+<img src="https://aiyou.life/post-images/1574313048391.png" alt=""></p>
+<p>这一步验证也很容易，在服务器上装个Nginx即可。然后通过域名访问，查看是否转发到了Nginx页面。</p>
+<p>如图所示，即为成功（Chrome和Safari都把www给隐藏了，实际完整地址是 www.aiyou.life）<br>
+<img src="https://aiyou.life/post-images/1574313486613.png" alt=""></p>
+<h2 id="应用转发">应用转发</h2>
+<p>当只有一个静态应用时，只需要替换一下Nginx默认的文件就可以了。但我们的服务器肯定不止部署一个应用，且也不一定是静态的。因而需要考虑使用Nginx进行正向/反向代理。阿里DDNS理论上应该是支持多域名指向同一个IP地址的。这样的话，我可以为每一个应用分配一个二级域名，Nginx代理配置不同的server_name即可。但我尝试了半天也没有试成功。所以只能根据访问路径，代理到不同的应用。</p>
+<p>配置代理时需要仔细查阅Nginx文档<br>
+如图所示，昨天被这两个 / 坑了一天时间😭<br>
+<img src="https://aiyou.life/post-images/1574314812013.png" alt=""></p>
+<p>转发到其他应用时，只需要再添加一个 location 即可。</p>
+<h2 id="成果展示">成果展示</h2>
+<p>目前树莓派上只部署了一个之前写的爬虫。</p>
+<pre><code>http://www.aiyou.life/spider
+</code></pre>
+<p>用桌面浏览器打开，移动端没优化。</p>
+<h2 id="结语">结语</h2>
+<p>现代智能家用路由器大都基于OpenWrt系统，而OpenWrt是基于Linux专为路由器打造的系统。路由器作为家庭网络中枢，其实功能是很骚的，可玩性很强。虽然路由器配置不高，但乐趣不就是在有限的资源中搞出不同的花样吗?</p>
 
             </div>
             
+              <div class="tag-container">
+                
+                  <a href="https://aiyou.life/tag/g_6wyy_ol" class="tag">
+                    网络
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://aiyou.life/post/kokne79MF">
+                  <h3 class="post-title">
+                    关于提高setTimeout与setInterval精确度的探索
+                  </h3>
+                </a>
+              </div>
             
 
             <script>
               var share = new SimpleShare({
-                pic: '',
+                pic: 'https://aiyou.life/post-images/4xGLEq7xe.png',
                 content: `${document.querySelector('.post-abstract').innerText}`
               })
             </script>
@@ -277,7 +347,7 @@ var app = new Vue({
         admin: ['LuckyHH'],
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
         distractionFreeMode: false,  // Facebook-like distraction free mode
-        labels: 'default'.split(','),
+        labels: '网络'.split(','),
         body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
       })
 
