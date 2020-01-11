@@ -2,13 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2019-11-24T08:47:33.294Z</updated>
+    <updated>2020-01-11T15:15:42.060Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
-    <rights>All rights reserved 2019, 文享日志</rights>
+    <rights>All rights reserved 2020, 文享日志</rights>
     <entry>
         <title type="html"><![CDATA[利用树莓派搭建个人服务器]]></title>
         <id>https://aiyou.life/post/4xGLEq7xe</id>
@@ -69,11 +69,6 @@
 如图所示，昨天被这两个 / 坑了一天时间😭<br>
 <img src="https://aiyou.life/post-images/1574314812013.png" alt=""></p>
 <p>转发到其他应用时，只需要再添加一个 location 即可。</p>
-<h2 id="成果展示">成果展示</h2>
-<p>目前树莓派上只部署了一个之前写的爬虫。</p>
-<pre><code>http://www.aiyou.life/spider
-</code></pre>
-<p>用桌面浏览器打开，移动端没优化。</p>
 <h2 id="结语">结语</h2>
 <p>现代智能家用路由器大都基于OpenWrt系统，而OpenWrt是基于Linux专为路由器打造的系统。路由器作为家庭网络中枢，其实功能是很骚的，可玩性很强。虽然路由器配置不高，但乐趣不就是在有限的资源中搞出不同的花样吗?</p>
 ]]></content>
