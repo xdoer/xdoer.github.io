@@ -4,34 +4,23 @@
     <meta charset="utf-8" >
 
 <title>利用树莓派搭建个人服务器 | 文享日志</title>
-<meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1578755739365">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1596990979618">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
 
   
-    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
   
 
   
 
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
-<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
-<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
-<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-
-<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
@@ -44,6 +33,13 @@
 </script>
 
 
+    <meta name="description" content="大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。
+
+物料准备
+
+
+服务器一台。我使用树莓派当服务器。对于性能有..." />
+    <meta name="keywords" content="网络" />
   </head>
   <body>
     <div id="app" class="main">
@@ -52,7 +48,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1578755739365" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1596990979618" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -126,81 +122,7 @@
   </div>
 </div>
 
-      <script>
-        var SimpleShare = function (options) {
 
-          // get share content
-          options = options || {};
-          var url = options.url || window.location.href;
-          var title = options.title || document.title;
-          var content = options.content || '';
-          var pic = options.pic || '';
-
-          // fix content format
-          url = encodeURIComponent(url);
-          title = encodeURIComponent(title);
-          content = encodeURIComponent(content);
-          pic = encodeURIComponent(pic);
-
-          // share target url
-          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
-          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
-          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
-          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
-          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
-          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
-          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
-          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
-          var weixin = 'http://qr.topscan.com/api.php?text={url}';
-          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
-
-          // replace content functions
-          function replaceAPI(api) {
-            api = api.replace('{url}', url);
-            api = api.replace('{title}', title);
-            api = api.replace('{content}', content);
-            api = api.replace('{pic}', pic);
-
-            return api;
-          }
-
-          // share target
-          this.qzone = function () {
-            window.open(replaceAPI(qzone));
-          };
-          this.weibo = function () {
-            window.open(replaceAPI(weibo));
-          };
-          this.tqq = function () {
-            window.open(replaceAPI(tqq));
-          };
-          this.renren = function () {
-            window.open(replaceAPI(renren));
-          };
-          this.douban = function () {
-            window.open(replaceAPI(douban));
-          };
-          this.facebook = function () {
-            window.open(replaceAPI(facebook));
-          };
-          this.twitter = function () {
-            window.open(replaceAPI(twitter));
-          };
-          this.linkedin = function () {
-            window.open(replaceAPI(linkedin));
-          };
-          this.qq = function () {
-            window.open(replaceAPI(qq));
-          };
-          this.weixin = function (callback) {
-            if (!callback) {
-              window.open(replaceAPI(weixin));
-            } else {
-              callback(replaceAPI(weixin));
-            }
-          };
-        };
-      </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
@@ -210,11 +132,7 @@
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/4xGLEq7xe.png')">
               </div>
             
-            <div class="post-abstract" style="display:none">
-              <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
-
-            </div>
-            <div class="post-content">
+            <div class="post-content" v-pre>
               <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
 <!-- more -->
 <h2 id="物料准备">物料准备</h2>
@@ -235,37 +153,37 @@
 <p>提供类似服务的厂商有很多，国内做的最好的还是阿里。相关文档点击<a href="https://help.aliyun.com/document_detail/141482.html">这里</a>..里面参考代码给的是Java版本的。其他实现可以在GitHub上搜一下。个人觉得最好还是选择bash实现，使用Cron定时任务定时执行就行。</p>
 <p><strong>注意</strong>:有些智能路由器里本身就带有这个功能，无论是固件集成还是插件形式的。</p>
 <p>如图所示，我家路由器固件集成了阿里DDNS<br>
-<img src="https://aiyou.life/post-images/1574309892496.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574309892496.png" alt="" loading="lazy"></p>
 <h3 id="域名">域名</h3>
 <p>对域名其实没有什么要求，阿里云上随便买一个就行了。很便宜，10年只要60多块。<br>
 如图所示<br>
-<img src="https://aiyou.life/post-images/1574311032422.png" alt=""><br>
+<img src="https://aiyou.life/post-images/1574311032422.png" alt="" loading="lazy"><br>
 记录前四条，是指向GitHubPage，也就是本博客的地址。阿里DDNS配置正确的话，会自动生成最后一条记录，地址指向了我家的路由器。</p>
 <h3 id="内网穿透">内网穿透</h3>
 <p>上面介绍的前提是你有公网IP的情况下。没有公网IP只能靠内网穿透来提供Web服务。相关教程可以Google查看。<br>
 内网穿透优点是不需要公网IP，缺点是依赖服务提供商的稳定性，且不能自定义域名。如果人家服务器挂了，或者域名到期了，你这里也不能用了。</p>
 <p><strong>注意</strong>: 有些智能路由器里本身就带有这个功能，无论是固件集成还是插件形式的。</p>
 <p>如图所示，我家路由器固件集成了内网穿透工具<br>
-<img src="https://aiyou.life/post-images/1574312158496.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574312158496.png" alt="" loading="lazy"></p>
 <h3 id="验证">验证</h3>
 <p>地址解析配置完成之后，需要验证一下是否解析成功</p>
 <pre><code class="language-bash">ping -c 4 www.aiyou.life
 </code></pre>
 <p>查看解析到的IP是否与公网IP一致</p>
 <p>如图所示<br>
-<img src="https://aiyou.life/post-images/1574312401056.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574312401056.png" alt="" loading="lazy"></p>
 <h2 id="端口转发">端口转发</h2>
 <p>地址解析配置完成后，所有通过域名的访问都将直接请求到了路由器上。所以需要通过端口转发，将请求转到内网中的服务器上。这一步其实很简单，只需要记住几个常用的端口，配置一下就行了。</p>
 <p>如图所示，来自互联网的80端口请求，都会转发到我的树莓派服务器(192.168.111)上。<br>
-<img src="https://aiyou.life/post-images/1574313048391.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574313048391.png" alt="" loading="lazy"></p>
 <p>这一步验证也很容易，在服务器上装个Nginx即可。然后通过域名访问，查看是否转发到了Nginx页面。</p>
 <p>如图所示，即为成功（Chrome和Safari都把www给隐藏了，实际完整地址是 www.aiyou.life）<br>
-<img src="https://aiyou.life/post-images/1574313486613.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574313486613.png" alt="" loading="lazy"></p>
 <h2 id="应用转发">应用转发</h2>
 <p>当只有一个静态应用时，只需要替换一下Nginx默认的文件就可以了。但我们的服务器肯定不止部署一个应用，且也不一定是静态的。因而需要考虑使用Nginx进行正向/反向代理。阿里DDNS理论上应该是支持多域名指向同一个IP地址的。这样的话，我可以为每一个应用分配一个二级域名，Nginx代理配置不同的server_name即可。但我尝试了半天也没有试成功。所以只能根据访问路径，代理到不同的应用。</p>
 <p>配置代理时需要仔细查阅Nginx文档<br>
 如图所示，昨天被这两个 / 坑了一天时间😭<br>
-<img src="https://aiyou.life/post-images/1574314812013.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1574314812013.png" alt="" loading="lazy"></p>
 <p>转发到其他应用时，只需要再添加一个 location 即可。</p>
 <h2 id="结语">结语</h2>
 <p>现代智能家用路由器大都基于OpenWrt系统，而OpenWrt是基于Linux专为路由器打造的系统。路由器作为家庭网络中枢，其实功能是很骚的，可玩性很强。虽然路由器配置不高，但乐趣不就是在有限的资源中搞出不同的花样吗?</p>
@@ -274,7 +192,7 @@
             
               <div class="tag-container">
                 
-                  <a href="https://aiyou.life/tag/g_6wyy_ol" class="tag">
+                  <a href="https://aiyou.life/tag/g_6wyy_ol/" class="tag">
                     网络
                   </a>
                 
@@ -283,29 +201,13 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://aiyou.life/post/kokne79MF">
+                <a href="https://aiyou.life/post/kokne79MF/">
                   <h3 class="post-title">
                     关于提高setTimeout与setInterval精确度的探索
                   </h3>
                 </a>
               </div>
             
-
-            <script>
-              var share = new SimpleShare({
-                pic: 'https://aiyou.life/post-images/4xGLEq7xe.png',
-                content: `${document.querySelector('.post-abstract').innerText}`
-              })
-            </script>
-            <div class="simple-share">
-  <span>分享至:</span>
-  <div class="share-btn">
-    <a href="javascript:share.qzone()">QQ空间</a>
-    <a href="javascript:share.weibo()">微博</a>
-    <a href="javascript:share.facebook()">Facebook</a>
-    <a href="javascript:share.twitter()">Twitter</a>    
-  </div>
-</div>
 
             
               
@@ -316,16 +218,15 @@
             
 
           </div>
+
         </div>
       </div>
     </div>
-    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script type="application/javascript">
 
 AOS.init();
-
-hljs.initHighlightingOnLoad()
 
 var app = new Vue({
   el: '#app',
@@ -334,24 +235,14 @@ var app = new Vue({
   },
 })
 
-function oneWord(element) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('get', 'https://v1.hitokoto.cn/');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      element.innerText = JSON.parse(xhr.responseText).hitokoto;
-    }
-  }
-  xhr.send();
-}
-oneWord(document.querySelector('.site-description'))
 </script>
 
 
 
+
+
   
-    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
     <script>
 
       var gitalk = new Gitalk({
@@ -361,12 +252,11 @@ oneWord(document.querySelector('.site-description'))
         owner: 'LuckyHH',
         admin: ['LuckyHH'],
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
-        distractionFreeMode: false,  // Facebook-like distraction free mode
-        labels: '网络'.split(','),
-        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
+        distractionFreeMode: false  // Facebook-like distraction free mode
       })
 
       gitalk.render('gitalk-container')
+
     </script>
   
 

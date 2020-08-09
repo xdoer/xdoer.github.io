@@ -489,7 +489,9 @@ a {
   font-size: 18px;
   color: #495057;
 }
-.post-detail .post-content p code {
+.post-detail .post-content p code,
+.post-detail .post-content ul code,
+.post-detail .post-content ol code {
   padding: 0 3px;
   margin: 0 2px;
   background: #e9ecef;
@@ -561,6 +563,11 @@ a {
 }
 .post-detail .post-content em {
   color: #868e96;
+}
+.post-detail .post-content hr {
+  height: 0;
+  border: 2px solid #efefef;
+  margin-bottom: 24px;
 }
 .tag {
   display: inline-block;
@@ -750,21 +757,4 @@ a {
   color: #dee2e6;
   font-size: 16px;
   margin: 4px 8px;
-}
-.simple-share {
-  margin: 20px 0;
-  display: flex;
-  align-items: baseline;
-  font-size: 12px;
-}
-.simple-share .share-btn {
-  display: flex;
-  justify-content: flex-start;
-}
-.simple-share .share-btn a {
-  display: block;
-  padding: 5px;
-  margin: 0 5px;
-  border-radius: 5px;
-  background-color: antiquewhite;
 }

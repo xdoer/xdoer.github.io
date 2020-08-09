@@ -4,34 +4,23 @@
     <meta charset="utf-8" >
 
 <title>利用Gridea生成GitHubPage静态博客 | 文享日志</title>
-<meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1578755739365">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1596990979618">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
 
   
-    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
   
 
   
 
 
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
-<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
-<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
-<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-
-<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
@@ -44,6 +33,12 @@
 </script>
 
 
+    <meta name="description" content="无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。
+
+1. 概念与原理
+1.1 GitHub
+GitHub是一个面向开源及私有软件项目的托管平台。通..." />
+    <meta name="keywords" content="博客" />
   </head>
   <body>
     <div id="app" class="main">
@@ -52,7 +47,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1578755739365" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1596990979618" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -126,81 +121,7 @@
   </div>
 </div>
 
-      <script>
-        var SimpleShare = function (options) {
 
-          // get share content
-          options = options || {};
-          var url = options.url || window.location.href;
-          var title = options.title || document.title;
-          var content = options.content || '';
-          var pic = options.pic || '';
-
-          // fix content format
-          url = encodeURIComponent(url);
-          title = encodeURIComponent(title);
-          content = encodeURIComponent(content);
-          pic = encodeURIComponent(pic);
-
-          // share target url
-          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
-          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
-          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
-          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
-          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
-          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
-          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
-          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
-          var weixin = 'http://qr.topscan.com/api.php?text={url}';
-          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
-
-          // replace content functions
-          function replaceAPI(api) {
-            api = api.replace('{url}', url);
-            api = api.replace('{title}', title);
-            api = api.replace('{content}', content);
-            api = api.replace('{pic}', pic);
-
-            return api;
-          }
-
-          // share target
-          this.qzone = function () {
-            window.open(replaceAPI(qzone));
-          };
-          this.weibo = function () {
-            window.open(replaceAPI(weibo));
-          };
-          this.tqq = function () {
-            window.open(replaceAPI(tqq));
-          };
-          this.renren = function () {
-            window.open(replaceAPI(renren));
-          };
-          this.douban = function () {
-            window.open(replaceAPI(douban));
-          };
-          this.facebook = function () {
-            window.open(replaceAPI(facebook));
-          };
-          this.twitter = function () {
-            window.open(replaceAPI(twitter));
-          };
-          this.linkedin = function () {
-            window.open(replaceAPI(linkedin));
-          };
-          this.qq = function () {
-            window.open(replaceAPI(qq));
-          };
-          this.weixin = function (callback) {
-            if (!callback) {
-              window.open(replaceAPI(weixin));
-            } else {
-              callback(replaceAPI(weixin));
-            }
-          };
-        };
-      </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
@@ -210,11 +131,7 @@
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/uhJjH7paD.jpg')">
               </div>
             
-            <div class="post-abstract" style="display:none">
-              <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
-
-            </div>
-            <div class="post-content">
+            <div class="post-content" v-pre>
               <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
 <!-- more -->
 <h2 id="1-概念与原理">1. 概念与原理</h2>
@@ -245,23 +162,23 @@
 <p>将域名解析到GitHub的服务器<br>
 [阿里云]<br>
 打开阿里云<a href="https://dns.console.aliyun.com/">域名解析控制面板</a>并点击<strong>解析设置</strong><br>
-<img src="https://aiyou.life/post-images/1573091513244.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1573091513244.png" alt="" loading="lazy"></p>
 <div style="text-align:center;">图 3.2.1</div>
 <p>点击<strong>添加记录</strong>，在弹出的框中,如图 3.2.3 中箭头部分输入 图 3.2.2 中框出的记录值，其他默认。点击<strong>确定</strong>即可<br>
-<img src="https://aiyou.life/post-images/1573091750777.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1573091750777.png" alt="" loading="lazy"></p>
 <div style="text-align:center;">图 3.2.2</div>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1573092227894.png" alt=""></figure>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1573092227894.png" alt="" loading="lazy"></figure>
 <div style="text-align:center;">图 3.2.3</div>
 <p>[腾讯云]<br>
 打开腾讯云<a href="https://console.cloud.tencent.com/cns">域名解析控制面板</a>并点击<strong>解析</strong><br>
-<img src="https://aiyou.life/post-images/1573092569137.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1573092569137.png" alt="" loading="lazy"></p>
 <div style="text-align:center;">图 3.2.4</div>
 <p>点击<strong>添加记录</strong>,在输入框中按图 3.2.5 输入即可。进行四次添加记录操作，记录值分别填入 图 3.2.2中框出的记录值<br>
-<img src="https://aiyou.life/post-images/1573092703412.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1573092703412.png" alt="" loading="lazy"></p>
 <div style="text-align:center;">图 3.2.5</div>
 <h3 id="33-gridea配置">3.3 Gridea配置</h3>
 <p>在软件上添加记录即可<br>
-<img src="https://aiyou.life/post-images/1573093078100.png" alt=""></p>
+<img src="https://aiyou.life/post-images/1573093078100.png" alt="" loading="lazy"></p>
 <div style="text-align:center;">图 3.3.1</div>
 <h2 id="4-注意">4. 注意</h2>
 <blockquote>
@@ -275,7 +192,7 @@
             
               <div class="tag-container">
                 
-                  <a href="https://aiyou.life/tag/X7Cdzy-Hu" class="tag">
+                  <a href="https://aiyou.life/tag/X7Cdzy-Hu/" class="tag">
                     博客
                   </a>
                 
@@ -284,29 +201,13 @@
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://aiyou.life/post/aanhFpuGI">
+                <a href="https://aiyou.life/post/aanhFpuGI/">
                   <h3 class="post-title">
                     TS中函数传参绕过编译器检查的探究
                   </h3>
                 </a>
               </div>
             
-
-            <script>
-              var share = new SimpleShare({
-                pic: 'https://aiyou.life/post-images/uhJjH7paD.jpg',
-                content: `${document.querySelector('.post-abstract').innerText}`
-              })
-            </script>
-            <div class="simple-share">
-  <span>分享至:</span>
-  <div class="share-btn">
-    <a href="javascript:share.qzone()">QQ空间</a>
-    <a href="javascript:share.weibo()">微博</a>
-    <a href="javascript:share.facebook()">Facebook</a>
-    <a href="javascript:share.twitter()">Twitter</a>    
-  </div>
-</div>
 
             
               
@@ -317,16 +218,15 @@
             
 
           </div>
+
         </div>
       </div>
     </div>
-    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 <script type="application/javascript">
 
 AOS.init();
-
-hljs.initHighlightingOnLoad()
 
 var app = new Vue({
   el: '#app',
@@ -335,24 +235,14 @@ var app = new Vue({
   },
 })
 
-function oneWord(element) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('get', 'https://v1.hitokoto.cn/');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      element.innerText = JSON.parse(xhr.responseText).hitokoto;
-    }
-  }
-  xhr.send();
-}
-oneWord(document.querySelector('.site-description'))
 </script>
 
 
 
+
+
   
-    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
     <script>
 
       var gitalk = new Gitalk({
@@ -362,12 +252,11 @@ oneWord(document.querySelector('.site-description'))
         owner: 'LuckyHH',
         admin: ['LuckyHH'],
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
-        distractionFreeMode: false,  // Facebook-like distraction free mode
-        labels: '博客'.split(','),
-        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
+        distractionFreeMode: false  // Facebook-like distraction free mode
       })
 
       gitalk.render('gitalk-container')
+
     </script>
   
 
