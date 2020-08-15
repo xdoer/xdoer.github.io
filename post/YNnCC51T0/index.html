@@ -4,23 +4,34 @@
     <meta charset="utf-8" >
 
 <title>我的学生👨‍🎓时代-小学篇 | 文享日志</title>
+<meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1597500030873">
+<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1597502246807">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
 
   
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
   
 
   
 
 
-<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
+<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
 
 
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
@@ -33,11 +44,6 @@
 </script>
 
 
-    <meta name="description" content="好早之前就想写这样一篇回忆性质的文章了，想把脑海中的残存的点点滴滴记录下来，可一直由于各种原因耽搁了，几天前辗转难眠，便一点一点开始回想起从幼儿园到大学毕业的点滴，有了赶快把这些记忆通过文字保留下来的冲动，遂有了这篇文章。
-
-小学篇
-二年级..." />
-    <meta name="keywords" content="生活" />
   </head>
   <body>
     <div id="app" class="main">
@@ -46,7 +52,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1597500030873" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1597502246807" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -108,17 +114,95 @@
   </div>
 </div>
 
+      <script>
+        var SimpleShare = function (options) {
 
+          // get share content
+          options = options || {};
+          var url = options.url || window.location.href;
+          var title = options.title || document.title;
+          var content = options.content || '';
+          var pic = options.pic || '';
+
+          // fix content format
+          url = encodeURIComponent(url);
+          title = encodeURIComponent(title);
+          content = encodeURIComponent(content);
+          pic = encodeURIComponent(pic);
+
+          // share target url
+          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
+          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
+          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
+          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
+          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
+          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
+          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
+          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
+          var weixin = 'http://qr.topscan.com/api.php?text={url}';
+          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
+
+          // replace content functions
+          function replaceAPI(api) {
+            api = api.replace('{url}', url);
+            api = api.replace('{title}', title);
+            api = api.replace('{content}', content);
+            api = api.replace('{pic}', pic);
+
+            return api;
+          }
+
+          // share target
+          this.qzone = function () {
+            window.open(replaceAPI(qzone));
+          };
+          this.weibo = function () {
+            window.open(replaceAPI(weibo));
+          };
+          this.tqq = function () {
+            window.open(replaceAPI(tqq));
+          };
+          this.renren = function () {
+            window.open(replaceAPI(renren));
+          };
+          this.douban = function () {
+            window.open(replaceAPI(douban));
+          };
+          this.facebook = function () {
+            window.open(replaceAPI(facebook));
+          };
+          this.twitter = function () {
+            window.open(replaceAPI(twitter));
+          };
+          this.linkedin = function () {
+            window.open(replaceAPI(linkedin));
+          };
+          this.qq = function () {
+            window.open(replaceAPI(qq));
+          };
+          this.weixin = function (callback) {
+            if (!callback) {
+              window.open(replaceAPI(weixin));
+            } else {
+              callback(replaceAPI(weixin));
+            }
+          };
+        };
+      </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
             <h2 class="post-title">我的学生👨‍🎓时代-小学篇</h2>
-            <div class="post-date">2020-08-09</div>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-08-09</span> <span>共 3662 字</span></div>
             
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/YNnCC51T0.png')">
               </div>
             
-            <div class="post-content" v-pre>
+            <div class="post-abstract" style="display:none">
+              <p>好早之前就想写这样一篇回忆性质的文章了，想把脑海中的残存的点点滴滴记录下来，可一直由于各种原因耽搁了，几天前辗转难眠，便一点一点开始回想起从幼儿园到大学毕业的点滴，有了赶快把这些记忆通过文字保留下来的冲动，遂有了这篇文章。</p>
+
+            </div>
+            <div class="post-content">
               <p>好早之前就想写这样一篇回忆性质的文章了，想把脑海中的残存的点点滴滴记录下来，可一直由于各种原因耽搁了，几天前辗转难眠，便一点一点开始回想起从幼儿园到大学毕业的点滴，有了赶快把这些记忆通过文字保留下来的冲动，遂有了这篇文章。</p>
 <!-- more -->
 <h2 id="小学篇">小学篇</h2>
@@ -162,6 +246,22 @@
               </div>
             
 
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/YNnCC51T0.png',
+                content: `${document.querySelector('.post-abstract').innerText}`
+              })
+            </script>
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
+</div>
+
             
               
                 <div id="gitalk-container" data-aos="fade-in"></div>
@@ -171,15 +271,16 @@
             
 
           </div>
-
         </div>
       </div>
     </div>
-
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script type="application/javascript">
 
 AOS.init();
+
+hljs.initHighlightingOnLoad()
 
 var app = new Vue({
   el: '#app',
@@ -188,14 +289,24 @@ var app = new Vue({
   },
 })
 
+function oneWord(element) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://v1.hitokoto.cn/');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      element.innerText = JSON.parse(xhr.responseText).hitokoto;
+    }
+  }
+  xhr.send();
+}
+oneWord(document.querySelector('.site-description'))
 </script>
 
 
 
-
-
   
-    <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
     <script>
 
       var gitalk = new Gitalk({
@@ -205,11 +316,12 @@ var app = new Vue({
         owner: 'LuckyHH',
         admin: ['LuckyHH'],
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
-        distractionFreeMode: false  // Facebook-like distraction free mode
+        distractionFreeMode: false,  // Facebook-like distraction free mode
+        labels: '生活'.split(','),
+        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
       })
 
       gitalk.render('gitalk-container')
-
     </script>
   
 
