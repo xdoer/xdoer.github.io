@@ -2,13 +2,109 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2020-09-05T15:19:51.275Z</updated>
+    <updated>2020-09-05T17:57:37.149Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2020, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[ReactNative渐进式图片加载]]></title>
+        <id>https://aiyou.life/post/FEu-GtOkz/</id>
+        <link href="https://aiyou.life/post/FEu-GtOkz/">
+        </link>
+        <updated>2020-09-05T16:22:37.000Z</updated>
+        <summary type="html"><![CDATA[<p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
+<!-- more -->
+<h2 id="原理">原理</h2>
+<p>首先给图片一个固定宽高的容器，容器中有两个透明度为0的 Image 元素， 其中一个加载缩略图，一个为原图，监听图片加载，调整透明度，给过渡动画。</p>
+<h2 id="依赖">依赖</h2>
+<pre><code class="language-bash">react-native-fast-image   用于缓存图片
+react-spring/native   用于实现动画效果
+</code></pre>
+<h2 id="对比图">对比图</h2>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599328089874.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">优化前</div>
+<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599328239398.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">优化后</div>
+<h2 id="核心代码">核心代码</h2>
+<pre><code class="language-typescript">import React, { FC } from 'react'
+import { View, StyleSheet, ImageStyle, ViewStyle, animated } from 'react-native'
+import FastImage, { FastImageProps } from 'react-native-fast-image'
+import { animated } from 'react-spring/native'
+import { useSpring } from 'react-spring'
+
+const AnimatedFastImage = animated(FastImage)
+
+interface ImgStyle extends ImageStyle {
+  width: number | string
+  height: number | string
+}
+
+interface Props extends FastImageProps {
+  thumbnailSource?: FastImageProps['source']
+  style: ImgStyle
+  containerStyle?: ViewStyle
+}
+
+export const ProgressiveImage: FC&lt;Props&gt; = ({
+  thumbnailSource,
+  source,
+  style,
+  containerStyle,
+  ...props
+}) =&gt; {
+  const [thumbOpStyle, setThumbOpStyle] = useSpring(() =&gt; ({ opacity: 0, config: { duration: 500 } }))
+  const [imgOpStyle, setImgOpStyle] = useSpring(() =&gt; ({ opacity: 0, config: { duration: 500 } }))
+
+  function handleThumbnailLoad() {
+    setThumbOpStyle({ opacity: 1, config: { duration: 500 } })
+  }
+
+  function onImageLoad() {
+    setImgOpStyle({ opacity: 1, config: { duration: 500 } })
+  }
+
+  return (
+    &lt;View style={[styles.container, { width: style.width, height: style.height }, containerStyle]}&gt;
+      {thumbnailSource &amp;&amp; (
+        &lt;AnimatedFastImage
+          {...props}
+          source={thumbnailSource}
+          style={[style, thumbOpStyle]}
+          onLoad={handleThumbnailLoad}
+          blurRadius={1}
+        /&gt;
+      )}
+      &lt;AnimatedFastImage
+        {...props}
+        source={source}
+        style={[styles.imageOverlay, imgOpStyle, style]}
+        onLoad={onImageLoad}
+      /&gt;
+    &lt;/View&gt;
+  )
+}
+
+const styles = StyleSheet.create({
+  imageOverlay: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+  },
+  container: {
+    backgroundColor: '#e1e4e8',
+  },
+})
+
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[多行文本溢出省略]]></title>
         <id>https://aiyou.life/post/qo35dDzbQ/</id>
