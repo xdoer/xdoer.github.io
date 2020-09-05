@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>利用Gridea生成GitHubPage静态博客 | 文享日志</title>
+<title>多行文本溢出省略 | 文享日志</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -192,89 +192,173 @@
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
-            <h2 class="post-title">利用Gridea生成GitHubPage静态博客</h2>
-            <div class="post-date" style="display:flex;justify-content: space-between"><span>2019-11-07</span> <span>共 3286 字</span></div>
+            <h2 class="post-title">多行文本溢出省略</h2>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-09-05</span> <span>共 5602 字</span></div>
             
-              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/uhJjH7paD.jpg')">
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/qo35dDzbQ.jpeg')">
               </div>
             
             <div class="post-abstract" style="display:none">
-              <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
+              <p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
 
             </div>
             <div class="post-content">
-              <p>无意间发现了这么一个项目，感觉很好很强大，因而研究了一下，搭建了基于Gridea和GitHubPage的静态博客。现将搭建过程记录，以飨读者。</p>
+              <p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
 <!-- more -->
-<h2 id="1-概念与原理">1. 概念与原理</h2>
-<h3 id="11-github">1.1 GitHub</h3>
-<p><a href="https://github.com/">GitHub</a>是一个面向开源及私有软件项目的托管平台。通俗点来说像一个网盘，办公室将代码推到GitHub，回家之后再拉下来，然后就可以接着工作了。除此之外，可以多人协作完成一个项目，项目成员提交的代码互相之间都可以看到并进行合并与修改，项目成员之外的人也可以fork一份代码，修改代码之后, PR(Pull Request)到项目分支，项目管理员选择合并与否。</p>
-<p>学习资料:</p>
-<blockquote>
+<h1 id="单行文本省略">单行文本省略</h1>
+<p>单行文本省略较为简单，且兼容性较好。</p>
+<p>要实现单行文本省略，下面CSS属性缺一不可</p>
+<pre><code class="language-css">width: 100px;  // 固定宽度
+overflow: hidden;   // 溢出隐藏
+white-space: nowrap;    // 文字不换行
+text-overflow: ellipsis;    // 文字溢出截断
+</code></pre>
+<h1 id="多行文本省略">多行文本省略</h1>
+<p>当接到这个需求的时候，考虑到我们产品运行在微信小程序，而小程序在IOS和安卓平台都是用了webkit内核, 因而下面的代码应当在两个平台都可以很好运行。</p>
+<p>webkit 内核的浏览器可以原生实现多行文本溢出省略。</p>
+<pre><code class="language-css">display: -webkit-box；
+-webkit-box-orient: vertical;
+-webkit-line-clamp: 2;
+overflow: hidden；
+text-overflow: ellipsis；
+</code></pre>
+<p>然而事实并非如此。实际上面代码在安卓可以运行，但在IOS下则空白。<br>
+<img src="https://aiyou.life/post-images/1599296417880.png" alt="" loading="lazy"></p>
+<div style="text-align:center;font-size:80%">line-clamp兼容性</div>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599295340251.png" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">微信小程序运行环境</div>
+<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599296818625.png" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">IOS WkWebView 基于 Webkit</div>
+<p>找了半天资料，也没有找到原因。猜想可能 WkWebView 中的 webkit 版本太低的缘故。</p>
+<p>既然上面的代码不能使用，只能尝试其他办法。</p>
+<h2 id="js-方式">JS 方式</h2>
+<p>JS计算裁剪的方式被排除了</p>
 <ul>
-<li><a href="https://www.zhihu.com/question/20070065/answer/117017972">GitHub怎么用</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2015/12/git-cheat-sheet.html">Git操作命令</a></li>
+<li>第一，这有悖于行为与展示相分离的理念</li>
+<li>第二，要考虑汉字，英文字母，图标，全角半角符号等才能相对准确算出文字占用几行，要不要裁切</li>
+<li>第三，我们的使用场景中要解析富文本，对于HTML标签，链接地址等要考虑的较多，实现方案较为复杂</li>
 </ul>
-</blockquote>
-<h3 id="12-github-page">1.2 GitHub Page</h3>
-<p>GitHub Page 是 GitHub 公司推出的网页服务。GitHub会分配一个域名到你的仓库(eg:<a href="https://github.com/LuckyHH/LuckyHH.github.io">我的仓库</a>被分配的域名为: LuckyHH.github.io),通过该域名就可以访问到你的项目。此时，仓库其实就是一个静态资源服务器了。</p>
-<h3 id="13-gridea">1.3 Gridea</h3>
-<p>Gridea 是一个写作客户端。是类似生成器之类的东西，在 Gridea 上写完文章之后，会将各种资源文件生成并同步到 GitHub仓库上，通过域名访问到的就是美化后的页面了。<br>
-类似的服务还有大名鼎鼎的 <a href="https://hexo.io/">Hexo</a> 和 <a href="http://jekyllcn.com/">Jekyll</a>.只不过他俩需要通过命令去生成和推文件，不如 Gridea 方便。</p>
-<h2 id="2-实践">2. 实践</h2>
-<p>其实 Gridea 作者自己录了视频，我看了一下还挺详细的。这里就不长篇大论了。</p>
-<p><a href="https://gridea.dev/">Gridea下载地址</a><br>
-<a href="https://space.bilibili.com/328305121/channel/detail?cid=75167">视频地址在这里</a></p>
-<h2 id="3-自定义域名">3. 自定义域名</h2>
-<p>通过 GitHub 分配的域名就可以访问到博客了。如果使用自定义域名，请看本节，否则跳过。</p>
-<h3 id="31-域名准备">3.1 域名准备</h3>
-<p>首先准备一个域名。可以到<a href="https://wanwang.aliyun.com/">阿里云</a>或者<a href="https://dnspod.cloud.tencent.com/">腾讯云</a>随便买一个即可，域名不需要备案。推荐到阿里云购买。<br>
-其实也有很多国外公司提供的免费域名(eg:<a href="https://www.freenom.com/zh/index.html?lang=zh">Freenom</a>)，但大都只有一年的免费使用时间，续费还挺贵的。</p>
-<h3 id="32-域名解析">3.2 域名解析</h3>
-<p>将域名解析到GitHub的服务器<br>
-[阿里云]<br>
-打开阿里云<a href="https://dns.console.aliyun.com/">域名解析控制面板</a>并点击<strong>解析设置</strong><br>
-<img src="https://aiyou.life/post-images/1573091513244.png" alt="" loading="lazy"></p>
-<div style="text-align:center;">图 3.2.1</div>
-<p>点击<strong>添加记录</strong>，在弹出的框中,如图 3.2.3 中箭头部分输入 图 3.2.2 中框出的记录值，其他默认。点击<strong>确定</strong>即可<br>
-<img src="https://aiyou.life/post-images/1573091750777.png" alt="" loading="lazy"></p>
-<div style="text-align:center;">图 3.2.2</div>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1573092227894.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;">图 3.2.3</div>
-<p>[腾讯云]<br>
-打开腾讯云<a href="https://console.cloud.tencent.com/cns">域名解析控制面板</a>并点击<strong>解析</strong><br>
-<img src="https://aiyou.life/post-images/1573092569137.png" alt="" loading="lazy"></p>
-<div style="text-align:center;">图 3.2.4</div>
-<p>点击<strong>添加记录</strong>,在输入框中按图 3.2.5 输入即可。进行四次添加记录操作，记录值分别填入 图 3.2.2中框出的记录值<br>
-<img src="https://aiyou.life/post-images/1573092703412.png" alt="" loading="lazy"></p>
-<div style="text-align:center;">图 3.2.5</div>
-<h3 id="33-gridea配置">3.3 Gridea配置</h3>
-<p>在软件上添加记录即可<br>
-<img src="https://aiyou.life/post-images/1573093078100.png" alt="" loading="lazy"></p>
-<div style="text-align:center;">图 3.3.1</div>
-<h2 id="4-注意">4. 注意</h2>
-<blockquote>
+<h2 id="css-方式">CSS 方式</h2>
+<h3 id="方法一">方法一</h3>
+<p>很容易写下下面这些代码，缺点是固定高度，文字数量必须超过两行，当文字只有一行或两行时，都会显示末尾的省略号。且文字超过两行，末尾的省略号有可能遮挡住一半的字符。这样的效果不是我们想要的。</p>
+<pre><code class="language-css">.container {
+    position: 'relative';
+    width: 200px;
+    height: 40px;
+    line-height: 20px;
+    overflow: hidden;
+}
+.container::after {
+    content: '...';
+    display: 'block';
+    position: 'absolute';
+    right: 0;
+    bottom: 0;
+}
+</code></pre>
+<h3 id="方法二">方法二</h3>
+<p>CSS 处理的难点在于知道有没有换行，思考良久后无果，从网上找了找资料，发现一种很巧妙的办法。解决了一部分问题。</p>
+<p>该方法利用浮动元素特性实现。原理很简单，但想法很独特。下面给出一个限定两行的例子。</p>
+<h4 id="第一步创建如图布局">第一步：创建如图布局</h4>
+<figure data-type="image" tabindex="3"><img src="https://aiyou.life/post-images/1599306945438.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">第一步</div>
+<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;baseline&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;text&quot;&gt;这是一段很长的文本这是一段很长的文本这是一段很长的文本这是一段很长的文本&lt;/div&gt;
+    &lt;div class=&quot;omit&quot;&gt;...&lt;/div&gt;
+&lt;/div&gt;
+</code></pre>
+<pre><code class="language-less">.container {
+    background: #099;
+    max-height: 40px;
+    line-height: 20px;
+    .baseline {
+        float: left;
+        width: 20px;
+        height: 40px;
+        background: yellow;
+    }
+    .text {
+        float: right;
+        width: calc(100% - 20px);
+        background: blueviolet;
+        word-break: break-all;
+    }
+    .omit {
+        float: right;
+        content: &quot;...&quot;;
+        width: 20px;
+        height: 20px;
+        background: red;
+    }
+}
+</code></pre>
+<h4 id="第二步省略号归位">第二步：省略号归位</h4>
+<figure data-type="image" tabindex="4"><img src="https://aiyou.life/post-images/1599314322562.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">第二步</div>
+<pre><code class="language-less">...
+    .omit {
+        float: right;
+        content: &quot;...&quot;;
+        width: 20px;
+        height: 20px;
+        background: red;
+        + position: relative;
+        + left: 100%;
+        + transform: translate(-100%, -100%);
+    }
+...
+</code></pre>
+<p>这里利用 position: relative 相对父元素将自己定位到了父元素的宽度外，之后利用 transform 向上向左移动了一个自己的宽高。当只有一行时，省略号移出了视线之外，当两行时，省略号回归了正确的位置。</p>
+<h4 id="第三步隐藏多余元素">第三步：隐藏多余元素</h4>
+<figure data-type="image" tabindex="5"><img src="https://aiyou.life/post-images/1599315200026.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">第三步</div>
+<pre><code class="language-less">...
+.container {
+    background: #099;
+    max-height: 40px;
+    line-height: 20px;
+    ++ overflow: hidden;
+    ...
+    .text {
+        float: right;
+        -- width: calc(100% - 20px);
+        ++ width: 100%;
+        ++ margin-left: -20px;
+        background: blueviolet;
+        word-break: break-all;
+    }
+...
+</code></pre>
+<p>这里使用 margin-left 为负，盖住了 baseline 元素。这样保证了基本布局不变，且达到了影藏无关元素的作用。由于在父元素中设定了 overflow: hidden, 清除浮动，所以父元素的背景颜色显示出来了。</p>
+<h4 id="局限性">局限性</h4>
+<figure data-type="image" tabindex="6"><img src="https://aiyou.life/post-images/1599316233622.gif" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">局限</div>
+使用该种方式，局限在于固定高度。baseline 元素必须设定为固定高度，因而撑起了父元素的高度。
+<h4 id="注意">注意</h4>
 <ul>
-<li>GitHub的服务器在国外，所以博客访问速度会很慢，挂个VPN访问会快很多</li>
-<li>每次在Gridea同步完修改之后，需要等待几分钟网页才会有变化，这是GitHub服务器缓存导致的，无解</li>
+<li>container 元素中 maxHeight/Height 必须是 LineHeight 的整数倍。倍数表示限制几行</li>
+<li>container 元素中 maxHeight/Height 要与 baseline 元素的 height 保持一致</li>
+<li>baseline 元素宽度要与 emit 元素宽度保持一致</li>
+<li>emit 元素高度要为 container 元素的行高</li>
 </ul>
-</blockquote>
+<h4 id="应用案例">应用案例</h4>
+<figure data-type="image" tabindex="7"><img src="https://aiyou.life/post-images/1599318337342.png" alt="" loading="lazy"></figure>
+<div style="text-align:center;font-size:80%">指尖探案小程序评论</div>
+<p>对比App Store中的评论，可以看出我们的实现还是相对完美<br>
+<img src="https://aiyou.life/post-images/1599318937357.jpg" alt="" loading="lazy"></p>
+<div style="text-align:center;font-size:80%">AppStore评论</div>
+<h2 id="参考">参考</h2>
+<p><a href="https://juejin.im/post/5dc15b35f265da4d432a3d10#heading-9">可能是最全的 “文本溢出截断省略” 方案合集</a></p>
 
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://aiyou.life/tag/X7Cdzy-Hu/" class="tag">
-                    博客
-                  </a>
-                
-              </div>
             
             
               <div class="next-post">
                 <div class="next">下一篇</div>
-                <a href="https://aiyou.life/post/aanhFpuGI/">
+                <a href="https://aiyou.life/post/-d73T0KeE/">
                   <h3 class="post-title">
-                    TS中函数传参绕过编译器检查的探究
+                    TS学习笔记
                   </h3>
                 </a>
               </div>
@@ -282,7 +366,7 @@
 
             <script>
               var share = new SimpleShare({
-                pic: 'https://aiyou.life/post-images/uhJjH7paD.jpg',
+                pic: 'https://aiyou.life/post-images/qo35dDzbQ.jpeg',
                 content: `${document.querySelector('.post-abstract').innerText}`
               })
             </script>
@@ -351,7 +435,7 @@ oneWord(document.querySelector('.site-description'))
         admin: ['LuckyHH'],
         id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
         distractionFreeMode: false,  // Facebook-like distraction free mode
-        labels: '博客'.split(','),
+        labels: 'default'.split(','),
         body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
       })
 
