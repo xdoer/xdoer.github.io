@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Taro小程序开发提升效率的几点分享-路由篇 | 文享日志</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1600780463572">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://aiyou.life/styles/main.css">
+
+
+  
+    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+  
+
+  
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
+<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-151889564-1');
+</script>
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://aiyou.life">
+        <img src="https://aiyou.life/images/avatar.png?v=1600780463572" class="site-logo">
+        <h1 class="site-title">文享日志</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/LuckyHH" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+      <script>
+        var SimpleShare = function (options) {
+
+          // get share content
+          options = options || {};
+          var url = options.url || window.location.href;
+          var title = options.title || document.title;
+          var content = options.content || '';
+          var pic = options.pic || '';
+
+          // fix content format
+          url = encodeURIComponent(url);
+          title = encodeURIComponent(title);
+          content = encodeURIComponent(content);
+          pic = encodeURIComponent(pic);
+
+          // share target url
+          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
+          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
+          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
+          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
+          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
+          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
+          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
+          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
+          var weixin = 'http://qr.topscan.com/api.php?text={url}';
+          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
+
+          // replace content functions
+          function replaceAPI(api) {
+            api = api.replace('{url}', url);
+            api = api.replace('{title}', title);
+            api = api.replace('{content}', content);
+            api = api.replace('{pic}', pic);
+
+            return api;
+          }
+
+          // share target
+          this.qzone = function () {
+            window.open(replaceAPI(qzone));
+          };
+          this.weibo = function () {
+            window.open(replaceAPI(weibo));
+          };
+          this.tqq = function () {
+            window.open(replaceAPI(tqq));
+          };
+          this.renren = function () {
+            window.open(replaceAPI(renren));
+          };
+          this.douban = function () {
+            window.open(replaceAPI(douban));
+          };
+          this.facebook = function () {
+            window.open(replaceAPI(facebook));
+          };
+          this.twitter = function () {
+            window.open(replaceAPI(twitter));
+          };
+          this.linkedin = function () {
+            window.open(replaceAPI(linkedin));
+          };
+          this.qq = function () {
+            window.open(replaceAPI(qq));
+          };
+          this.weixin = function (callback) {
+            if (!callback) {
+              window.open(replaceAPI(weixin));
+            } else {
+              callback(replaceAPI(weixin));
+            }
+          };
+        };
+      </script>
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Taro小程序开发提升效率的几点分享-路由篇</h2>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-09-22</span> <span>共 6988 字</span></div>
+            
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/FkN_iGcYQ.png')">
+              </div>
+            
+            <div class="post-abstract" style="display:none">
+              <p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+
+            </div>
+            <div class="post-content">
+              <p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+<!-- more -->
+<h2 id="环境">环境</h2>
+<p>基础环境: taro 3.0.5 / react 16.10.0 / typescript 4.1.0</p>
+<p>技术栈: React Hooks</p>
+<h2 id="路由部分">路由部分</h2>
+<p>Taro 小程序路由方法调用示例</p>
+<p>路由跳转</p>
+<pre><code class="language-typescript">navigateTo({
+  url: `/package-appointment/pages/manage-appointments/index?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
+})
+</code></pre>
+<p>参数解析</p>
+<pre><code class="language-typescript">const { params } = useRouter()
+const { roomId, appointmentId, scriptId } = params
+const oRoomId = Number.parseInt(roomId)
+const oAppointmentId = Number.parseInt(appointmentId)
+const oScriptId = Number.parseInt(scriptId)
+</code></pre>
+<h2 id="优化方案">优化方案</h2>
+<h3 id="part-1-路由表文件">PART 1 路由表文件</h3>
+<p>新建一个路由表文件 routeTable.ts，为路径命名。</p>
+<pre><code class="language-typescript">export enum URLs {
+  INDEX = '/pages/index/index',
+  MANAGE_APPOINTMENTS = '/package-appointment/pages/manage-appointments/index',
+  INTENT_DETAIL = '/package-intent/pages/intent-detail/index'
+}
+</code></pre>
+<p>调用时，只需要引入路由表文件</p>
+<pre><code class="language-typescript">import { URLs } from '@/common/routeTable'
+...
+navigateTo({
+  url: `${URLs.MANAGE_APPOINTMENTS}?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
+})
+...
+</code></pre>
+<p>引入了路由表文件的同时，引入了新的问题，新建一个页面要维护两个路由地址文件，一个是 app.config ，另一个就是路由表文件 routeTable。两个文件，只要有一点错误，页面就不能正确的被访问。怎么处理这个问题？</p>
+<h3 id="part-2-脚本更新路由表与相关配置">PART 2 脚本更新路由表与相关配置</h3>
+<p>观察 app.config 路径配置与路由表配置。其实都与文件夹目录强相关，页面跳转路径，都是去找对应路径的文件地址</p>
+<pre><code class="language-typescript">...
+  pages: [
+    'pages/index/index',
+  ],
+  subPackages: [
+    {
+      root: 'package-appointment',
+      name: 'appointment',
+      pages: [
+        'pages/appointment/index',
+        'pages/manage-appointments/index',
+      ],
+    },
+...
+</code></pre>
+<p>既然页面文件与路径是对应关系，我们可以写一个脚本去处理问题。首先扫描源码文件夹，通过正则表达式找到 pages 和 package- 下的所有页面（这里默认开发者拥有良好的开发习惯，开发页面不进行路径嵌套）。找到文件后，获取文件夹名称作为路由表的 shortName, 构造数据后即可替换和新建到 app.config 和 routeTable 中。</p>
+<p>除此之外，还可以顺带把 project.config.json 中 miniprogram 字段更新，用于开发页面进行快捷调试。</p>
+<p>主函数如下</p>
+<pre><code class="language-javascript">async function main(dirPath) {
+  const baseDirsName = await readDir(dirPath)
+  // 读取目录下的页面
+  const target = baseDirsName.filter((dirName) =&gt; /^pages$|^package-\w+$/.test(dirName))
+
+  // 读取APP配置文件
+  let appConfigFileStr = await readFile(APP_CONFIG_PATH)
+  // 生成路由表文件
+  let routeTableFileStr = ''
+  
+  // 主包页面快捷入口配置（主包与分包分开写是为了保证主包的页面在最上面）
+  let mainEntrance = []  
+  // 分包页面快捷入口配置
+  let entrance = []
+
+  // 分包配置
+  let subPackage = []
+
+  for await (let i of target) {
+    if (i === 'pages') {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i)))
+      appConfigFileStr = handleMainPageConfig(dirsName, appConfigFileStr)
+      routeTableFileStr = handleMainRouteTable(dirsName, routeTableFileStr)
+      mainEntrance = handleMainProjectConfig(dirsName, [])
+    } else {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i, 'pages')))
+      subPackage = handleSubPageConfig(i, dirsName, subPackage)
+      routeTableFileStr = handleSubRouteTable(i, dirsName, routeTableFileStr)
+      entrance = handleSubProjectConfig(i, dirsName, entrance)
+    }
+  }
+  updateAppConfig(appConfigFileStr, subPackage)
+  updateRouteTable(routeTableFileStr)
+  updateProjectConfig(mainEntrance.concat(entrance))
+}
+
+main(path.resolve(BASE_PATH, 'src'))
+
+</code></pre>
+<p>脚本完成之后，每次开发页面时，只需要在 pages 目录下或者分包 pages 目录下新建目录，运行脚本命令即可自动更新 app.config 、 project.config 和 routeTable。</p>
+<h3 id="part-3-地址参数改造">PART 3 地址参数改造</h3>
+<p>观察 PART 1 部分的代码，其实可以看到，虽然通过路由表形式缩短了一部分地址的长度，但是似乎还可以进一步的缩短地址。</p>
+<p>将参数提取出来，再拼装进去</p>
+<pre><code class="language-typescript">// queryParams 封装
+const covertObjToSearchParams = (searchObj: commonObjectProps = {}) =&gt; {
+  let searchParams = ''
+  for (let i in searchObj) {
+    searchParams = searchParams + `${i}=${searchObj[i]}&amp;`
+  }
+  return searchParams.slice(0, -1)
+}
+
+const queryParams = covertObjToSearchParams({ roomId, appointmentId, scriptId })
+
+navigateTo({
+  url: `${URLs.MANAGE_APPOINTMENTS}?${queryParams}`
+})
+
+</code></pre>
+<p>通过这种方式传递参数，简洁直观，方便不少。</p>
+<h3 id="part-4-路由跳转方法改造">PART 4 路由跳转方法改造</h3>
+<p>小程序中的方法大都都是通过一个对象传递的参数，这是因为大多数方法都有很多参数，通过对象传参则显得代码整洁友好。观察我们的代码，用到的最多的就是一个 url 参数, 那我们完全可以直接将地址放到第一个参数位上。</p>
+<p>navigateTo 方法改造</p>
+<pre><code class="language-typescript">import { navigateTo as originNavigateTo } from '@tarojs/taro'
+
+export function navigateTo(url: string, params?: commonObjectProps, opt?: commonObjectProps) {
+  if (!params) return originNavigateTo({ url, ...opt })
+
+  const _url = `${url}?${covertObjToSearchParams(params)}`
+  originNavigateTo({ url: _url, ...opt })
+}
+</code></pre>
+<p>navigateTo 调用</p>
+<pre><code class="language-typescript">navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })`
+</code></pre>
+<p>相比前文中的最开始时的路由调用，这里更加直观明了</p>
+<p>路由跳转的问题解决了。我们看一下路由参数解析。</p>
+<h3 id="part-5-路由参数解析方法改造">PART 5 路由参数解析方法改造</h3>
+<p>Taro 中提供了 <strong>useRouter</strong> hooks去解析路由参数，但该 Hooks 解析出的参数都是字符串类型。</p>
+<p>当使用参数时，需要先导出 <strong>params</strong> 对象，然后再拿到参数值，对于一些数字、布尔类型值还只能再通过转换获得原始值。流程繁琐且复杂。怎么解决这个问题?</p>
+<p>首先初步对 useRouter 进行封装</p>
+<pre><code class="language-typescript">import { useRouter as useOriginRouter } from '@tarojs/taro'
+
+export function useRouter&lt;T&gt;(): T {
+  const { params } = useOriginRouter()
+  return params
+}
+</code></pre>
+<p>封装完的 useRouter 只简化了导出 params 的过程，而参数类型转换还是只能根据具体的参数进行具体转换。那这样的封装其实还是有点鸡肋。</p>
+<p>通过 queryParams 传递的参数只能是字符串形式的，所以解析参数也只能是字符串形式。因而可以通过 <strong>JSON.stringify</strong> 将参数对象转换为字符串，解析时再利用 <strong>JSON.parse</strong> 解析出保有原始数据类型的参数。</p>
+<pre><code class="language-typescript">import { useRouter as useOriginRouter, navigateTo as originNavigateTo } from '@tarojs/taro'
+
+// 路由跳转
+export function navigateTo(url: string, params?: object) {
+  if (!params) return originNavigateTo({ url })
+
+  const _url = `${url}?navParams=${JSON.stringify(params)}`
+  originNavigateTo({ url: _url })
+}
+
+// 路由解析
+export function useRouter&lt;T&gt;(): T {
+  const { params } = useOriginRouter()
+
+  try {
+    const targetParams = params['navParams']
+    if (targetParams) return JSON.parse(targetParams)
+  } catch (e) {
+    console.warn('参数解析失败', e)
+  }
+
+  return {} as T
+}
+</code></pre>
+<p>使用这种封装方式，虽然 URL 不直观且不利于 SEO，但在小程序环境中，用户根本不会看到 URL，且在小程序环境中，SEO根本没什么用。</p>
+<p>使用我们封装好的代码，文章开头给出的示例可简化为如下代码:</p>
+<pre><code class="language-typescript">import { navigateTo, useRouter } from '@/app'
+
+navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })
+...
+
+const { roomId, appointmentId, scriptId } = useRouter()
+...
+
+</code></pre>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://aiyou.life/tag/TfrzxMzWY/" class="tag">
+                    小程序
+                  </a>
+                
+                  <a href="https://aiyou.life/tag/E75leUW9b/" class="tag">
+                    typescript
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://aiyou.life/post/FEu-GtOkz/">
+                  <h3 class="post-title">
+                    ReactNative渐进式图片加载
+                  </h3>
+                </a>
+              </div>
+            
+
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/FkN_iGcYQ.png',
+                content: `${document.querySelector('.post-abstract').innerText}`
+              })
+            </script>
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
+</div>
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+function oneWord(element) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://v1.hitokoto.cn/');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      element.innerText = JSON.parse(xhr.responseText).hitokoto;
+    }
+  }
+  xhr.send();
+}
+oneWord(document.querySelector('.site-description'))
+</script>
+
+
+
+  
+    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f9e29934c5621e13bb13',
+        clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+        repo: 'LuckyHH.github.io',
+        owner: 'LuckyHH',
+        admin: ['LuckyHH'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false,  // Facebook-like distraction free mode
+        labels: '小程序,typescript'.split(','),
+        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
+      })
+
+      gitalk.render('gitalk-container')
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
