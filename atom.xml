@@ -2,13 +2,376 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2020-09-23T01:47:23.583Z</updated>
+    <updated>2020-09-23T02:43:00.428Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2020, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[Taro小程序开发提升效率的几点分享-路由篇]]></title>
+        <id>https://aiyou.life/post/FkN_iGcYQ/</id>
+        <link href="https://aiyou.life/post/FkN_iGcYQ/">
+        </link>
+        <updated>2020-09-22T13:00:12.000Z</updated>
+        <summary type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+<!-- more -->
+<h2 id="环境">环境</h2>
+<p>基础环境: taro 3.0.5 / react 16.10.0 / typescript 4.1.0</p>
+<p>技术栈: React Hooks</p>
+<h2 id="路由部分">路由部分</h2>
+<p>Taro 小程序路由方法调用示例</p>
+<p>路由跳转</p>
+<pre><code class="language-typescript">navigateTo({
+  url: `/package-appointment/pages/manage-appointments/index?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
+})
+</code></pre>
+<p>参数解析</p>
+<pre><code class="language-typescript">const { params } = useRouter()
+const { roomId, appointmentId, scriptId } = params
+const oRoomId = Number.parseInt(roomId)
+const oAppointmentId = Number.parseInt(appointmentId)
+const oScriptId = Number.parseInt(scriptId)
+</code></pre>
+<h2 id="优化方案">优化方案</h2>
+<h3 id="part-1-路由表文件">PART 1 路由表文件</h3>
+<p>新建一个路由表文件 routeTable.ts，为路径命名。</p>
+<pre><code class="language-typescript">export enum URLs {
+  INDEX = '/pages/index/index',
+  MANAGE_APPOINTMENTS = '/package-appointment/pages/manage-appointments/index',
+  INTENT_DETAIL = '/package-intent/pages/intent-detail/index'
+}
+</code></pre>
+<p>调用时，只需要引入路由表文件</p>
+<pre><code class="language-typescript">import { URLs } from '@/common/routeTable'
+...
+navigateTo({
+  url: `${URLs.MANAGE_APPOINTMENTS}?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
+})
+...
+</code></pre>
+<p>引入了路由表文件的同时，引入了新的问题，新建一个页面要维护两个路由地址文件，一个是 app.config ，另一个就是路由表文件 routeTable。增加了维护成本，同时两个文件，只要有一点错误，页面就不能正确的被访问。怎么处理这个问题？</p>
+<h3 id="part-2-脚本更新路由表与相关配置">PART 2 脚本更新路由表与相关配置</h3>
+<p>无论 app.config 路径配置还是路由表配置，页面与路径是对应关系，我们可以写一个脚本去处理问题。首先扫描源码文件夹，通过正则表达式找到 pages 和 package- 下的所有页面。找到文件后，获取文件夹名称作为路由表的 shortName, 构造数据后即可替换和新建到 app.config 和 routeTable 中。</p>
+<p>除此之外，还可以顺带把 project.config.json 中 miniprogram 字段更新，用于开发页面进行快捷调试。</p>
+<p>脚本完成之后，每次开发页面时，只需要在 pages 目录下或者分包 pages 目录下新建目录，运行脚本命令即可自动更新 app.config 、 project.config 和 routeTable。</p>
+<p>注意:</p>
+<blockquote>
+<ul>
+<li>查找页面文件，默认 pages 下的一级目录为所有页面文件，这里需要开发者拥有良好的开发习惯，写的页面没有进行嵌套。</li>
+<li>脚本代码很简单，就不新建仓库了，完整代码已经贴到了最下面</li>
+</ul>
+</blockquote>
+<h3 id="part-3-地址参数改造">PART 3 地址参数改造</h3>
+<p>观察 PART 1 部分的代码，其实可以看到，虽然通过路由表形式缩短了一部分地址的长度，但是参数部分还可以做些文章。</p>
+<pre><code class="language-typescript">// queryParams 封装
+const covertObjToSearchParams = (searchObj: commonObjectProps = {}) =&gt; {
+  let searchParams = ''
+  for (let i in searchObj) {
+    searchParams = searchParams + `${i}=${searchObj[i]}&amp;`
+  }
+  return searchParams.slice(0, -1)
+}
+
+const queryParams = covertObjToSearchParams({ roomId, appointmentId, scriptId })
+
+navigateTo({
+  url: `${URLs.MANAGE_APPOINTMENTS}?${queryParams}`
+})
+
+</code></pre>
+<p>通过这种方式传递参数，简洁直观，方便不少。</p>
+<h3 id="part-4-路由跳转方法改造">PART 4 路由跳转方法改造</h3>
+<p>小程序中的方法大都都是通过一个对象传递的参数，这是因为大多数方法都有很多参数，通过对象传参则显得代码整洁友好。观察我们的代码，用到的最多的就是一个 url 参数, 那我们完全可以直接将地址放到第一个参数位上。</p>
+<p>navigateTo 方法改造</p>
+<pre><code class="language-typescript">import { navigateTo as originNavigateTo } from '@tarojs/taro'
+
+export function navigateTo(url: string, params?: commonObjectProps, opt?: commonObjectProps) {
+  if (!params) return originNavigateTo({ url, ...opt })
+
+  const _url = `${url}?${covertObjToSearchParams(params)}`
+  originNavigateTo({ url: _url, ...opt })
+}
+</code></pre>
+<p>navigateTo 调用</p>
+<pre><code class="language-typescript">navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })`
+</code></pre>
+<p>相比前文中的最开始时的路由调用，这里更加简洁明了</p>
+<h3 id="part-5-路由参数解析方法改造">PART 5 路由参数解析方法改造</h3>
+<p>Taro 中提供了 <strong>useRouter</strong> hooks去解析路由参数，但该 Hooks 解析出的参数都是字符串类型。</p>
+<p>当使用参数时，需要先导出 <strong>params</strong> 对象，然后再拿到参数值，对于一些数字、布尔类型值还只能再通过转换获得原始值。流程繁琐且复杂。怎么解决这个问题?</p>
+<p>首先对 useRouter 进行初步封装</p>
+<pre><code class="language-typescript">import { useRouter as useOriginRouter } from '@tarojs/taro'
+
+export function useRouter&lt;T&gt;(): T {
+  const { params } = useOriginRouter()
+  return params
+}
+</code></pre>
+<p>封装完的 useRouter 只简化了导出 params 的过程，而参数类型转换还是只能根据具体的参数进行具体转换。那这样的封装其实还是有点鸡肋。</p>
+<p>通过 queryParams 传递的参数只能是字符串形式的，所以解析参数也只能解析出字符串。因而可以通过 <strong>JSON.stringify</strong> 将参数对象转换为字符串，解析时再利用 <strong>JSON.parse</strong> 解析出保有原始数据类型的参数。</p>
+<pre><code class="language-typescript">import { useRouter as useOriginRouter, navigateTo as originNavigateTo } from '@tarojs/taro'
+
+// 路由跳转
+export function navigateTo(url: string, params?: object) {
+  if (!params) return originNavigateTo({ url })
+
+  const _url = `${url}?navParams=${JSON.stringify(params)}`
+  originNavigateTo({ url: _url })
+}
+
+// 路由解析
+export function useRouter&lt;T&gt;(): T {
+  const { params } = useOriginRouter()
+
+  try {
+    const targetParams = params['navParams']
+    if (targetParams) return JSON.parse(targetParams)
+  } catch (e) {
+    console.warn('参数解析失败', e)
+  }
+
+  return {} as T
+}
+</code></pre>
+<p>使用这种封装方式，虽然 URL 不直观且不利于 SEO，但在小程序环境中，用户根本不会看到 URL，且在当前小程序环境中，SEO似乎根本没什么用。</p>
+<p>使用我们封装好的代码，文章开头给出的示例可简化为如下代码:</p>
+<pre><code class="language-typescript">import { navigateTo, useRouter } from '@/app'
+
+navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })
+...
+
+const { roomId, appointmentId, scriptId } = useRouter()
+...
+
+</code></pre>
+<h2 id="完整路由脚本生成和代码">完整路由脚本生成和代码</h2>
+<p>脚本代码很简单，就不新建仓库存了。</p>
+<h3 id="主脚本文件">主脚本文件</h3>
+<pre><code class="language-javascript">const path = require('path')
+const fs = require('fs')
+const { isDir, readDir, readFile, writeFile } = require('./util')
+const PROJECT_CONFIG = require('../project.config.json')
+
+const BASE_PATH = path.resolve(__dirname, '..')
+const APP_CONFIG_PATH = path.resolve(BASE_PATH, 'src/app.config.ts')
+const URL_TABLE_PATH = path.resolve(BASE_PATH, 'src/common/url.constant.ts')
+const PACKAGE_CONFIG_PATH = path.resolve(BASE_PATH, 'project.config.json')
+
+function handleMainPageConfig(dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'pages/${dir}/index'\n`)
+  fileStr = fileStr.replace(/pages[\S\s]*subPackages/, `pages: [${paths}], subPackages`)
+  return fileStr
+}
+
+function handleSubPageConfig(rootPath, dirsName, subPackage) {
+  const [, name] = rootPath.split('-')
+  subPackage.push({
+    root: rootPath,
+    name,
+    pages: dirsName.map((name) =&gt; `pages/${name}/index`),
+  })
+  return subPackage
+}
+
+function handleMainRouteTable(dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'/pages/${dir}/index'\n`)
+  for (let i = 0; i &lt; dirsName.length; i++) {
+    const current = dirsName[i]
+    const name = current
+      .split('-')
+      .map((v) =&gt; v.toUpperCase())
+      .join('_')
+    fileStr = fileStr + `${name}=${paths[i]},`
+  }
+  return fileStr
+}
+
+function handleSubRouteTable(rootPath, dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'/${rootPath}/pages/${dir}/index'\n`)
+  for (let i = 0; i &lt; dirsName.length; i++) {
+    const current = dirsName[i]
+    const name = current
+      .split('-')
+      .map((v) =&gt; v.toUpperCase())
+      .join('_')
+    fileStr = fileStr + `${name}=${paths[i]},`
+  }
+  return fileStr
+}
+
+function handleMainProjectConfig(dirsName, routes) {
+  const paths = dirsName.map((dir) =&gt; `pages/${dir}/index`)
+  return routes.concat(paths.map((_path, idx) =&gt; {
+    return {
+      id: idx + 1,
+      name: dirsName[idx],
+      pathName: _path,
+      query: '',
+    }
+  }))
+}
+
+function handleSubProjectConfig(rootPath, dirsName, routes) {
+  const paths = dirsName.map((dir) =&gt; `${rootPath}/pages/${dir}/index`)
+  return routes.concat(
+    paths.map((_path, idx) =&gt; {
+      return {
+        id: idx + 1,
+        name: dirsName[idx],
+        pathName: _path,
+        query: '',
+      }
+    }),
+  )
+}
+
+async function updateAppConfig(fileStr, subPackage) {
+  fileStr = fileStr.replace(/(subPackages[\S\s]*)window/g, `subPackages: ${JSON.stringify(subPackage)}, window`)
+  await writeFile(APP_CONFIG_PATH, fileStr)
+}
+
+async function updateRouteTable(fileStr) {
+  let routeTable = `
+    // 自动生成, pages 文件夹新建目录，运行 npm run g
+    export enum URLs {
+      ${fileStr}
+    }
+  `
+  await writeFile(URL_TABLE_PATH, routeTable)
+}
+
+async function updateProjectConfig(entrance) {
+  PROJECT_CONFIG.condition.miniprogram.list = entrance
+  await writeFile(PACKAGE_CONFIG_PATH, JSON.stringify(PROJECT_CONFIG, null, 2))
+}
+
+function sortDirs(dirsName) {
+  const indexIdx = dirsName.findIndex((dirname) =&gt; dirname === 'index')
+  if (indexIdx === -1) return dirsName.sort((a, b) =&gt; a.localeCompare(b))
+  dirsName.splice(indexIdx, 1)
+  dirsName = dirsName.sort((a, b) =&gt; a.localeCompare(b))
+  dirsName.unshift('index')
+  return dirsName
+}
+
+async function main(dirPath) {
+  const baseDirsName = await readDir(dirPath)
+  const target = baseDirsName.filter((dirName) =&gt; /^pages$|^package-\w+$/.test(dirName))
+
+  // 读取APP配置文件
+  let appConfigFileStr = await readFile(APP_CONFIG_PATH)
+  // app.config 分包配置
+  let subPackage = []
+
+  // 生成路由表文件
+  let routeTableFileStr = ''
+  
+  // project.config 项目快捷入口配置
+  let entrance = []
+  let mainEntrance = []
+
+  for await (let i of target) {
+    if (i === 'pages') {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i)))
+      appConfigFileStr = handleMainPageConfig(dirsName, appConfigFileStr)
+      routeTableFileStr = handleMainRouteTable(dirsName, routeTableFileStr)
+      mainEntrance = handleMainProjectConfig(dirsName, [])
+    } else {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i, 'pages')))
+      subPackage = handleSubPageConfig(i, dirsName, subPackage)
+      routeTableFileStr = handleSubRouteTable(i, dirsName, routeTableFileStr)
+      entrance = handleSubProjectConfig(i, dirsName, entrance)
+    }
+  }
+  updateAppConfig(appConfigFileStr, subPackage)
+  updateRouteTable(routeTableFileStr)
+  updateProjectConfig(mainEntrance.concat(entrance))
+}
+
+// 主函数
+main(path.resolve(BASE_PATH, 'src'))
+
+</code></pre>
+<h3 id="工具脚本文件">工具脚本文件</h3>
+<pre><code class="language-javascript">const path = require('path')
+const fs = require('fs')
+
+// 当前路径是文件夹
+function isDir(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.stat(filePath, (err, stats) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(stats.isDirectory())
+      }
+    })
+  })
+}
+
+// 读取当前文件夹目录
+function readDir(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.readdir(filePath, 'utf8', (err, dir) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(dir)
+      }
+    })
+  })
+}
+
+// 读取文件
+function readFile(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.readFile(filePath, (err, dir) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(dir.toString())
+      }
+    })
+  })
+}
+
+// 写文件
+async function writeFile(filePath, fileStr) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.writeFile(filePath, fileStr, (err, res) =&gt; {
+      if (err) return reject(err)
+      resolve(res)
+    })
+  })
+}
+
+// 文件夹扫描
+async function fileScanner(filePath, fn) {
+  const dir = await isDir(filePath)
+  if (dir) {
+    const dirs = await readDir(filePath)
+    for await (const name of dirs) {
+      fileScanner(path.resolve(filePath, name), fn)
+    }
+  } else {
+    await fn(filePath)
+  }
+}
+
+module.exports = {
+  isDir,
+  readDir,
+  readFile,
+  writeFile,
+  fileScanner,
+}
+</code></pre>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[ReactNative渐进式图片加载]]></title>
         <id>https://aiyou.life/post/FEu-GtOkz/</id>
@@ -2042,140 +2405,6 @@ loop(function (timer) {
 <li>每次在Gridea同步完修改之后，需要等待几分钟网页才会有变化，这是GitHub服务器缓存导致的，无解</li>
 </ul>
 </blockquote>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[TS中函数传参绕过编译器检查的探究]]></title>
-        <id>https://aiyou.life/post/aanhFpuGI/</id>
-        <link href="https://aiyou.life/post/aanhFpuGI/">
-        </link>
-        <updated>2019-11-05T10:32:32.000Z</updated>
-        <summary type="html"><![CDATA[<p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
-<!-- more -->
-<h2 id="缘起">缘起</h2>
-<p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
-<p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
-<p>先看示例代码</p>
-<pre><code class="language-typescript">interface SquareConfig {
-  color?: string;
-  width?: number;
-}
-
-function createSquare(config: SquareConfig): {color: string; area: number} {
-  let newSquare = {color: &quot;white&quot;, area: 100};
-  if (config.color) {
-    newSquare.color = config.color;
-  }
-  if (config.width) {
-    newSquare.area = config.width * config.width;
-  }
-  return newSquare;
-}
-
-[标注1]
-createSquare({ color: 'red', width: 100, height: 12 });    // 错误
-
-let param = { height: 200, width: 100, color: 'red' };
-
-createSquare(param);    // 正确
-
-[标注2]
-let param = {}
-
-createSquare(param)  // 正确
-
-let param1 = { height: 200 }
-
-createSquare(param1)  // 错误
-
-let param2 = { height: 200 } as SquareConfig
-
-createSquare(param2)  // 正确
-
-let param3 = { height: 200, color: &quot;red&quot; }
-
-createSquare(param3)  // 正确
-
-</code></pre>
-<p>原文中对 <strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。</p>
-<p>这里引出两个问题:</p>
-<p>1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？</p>
-<p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
-<h2 id="解题思路">解题思路</h2>
-<p>首先看代码中的函数</p>
-<pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
-  ...
-}
-</code></pre>
-<p>函数要求我们传入的参数是 SquareConfig 类型的。</p>
-<p>函数参数<code>{color: &quot;red&quot;, width: 100 }</code>可以定义为合法的 SquareConfig 类型，所以是正确的</p>
-<p>函数参数<code>{color: &quot;red&quot;, width: 100, height: 100 }</code>不可以定义为合法的 SquareConfig 类型，所以引起错误</p>
-<p>对上面的描述感觉迷糊的话，请接着往下看...</p>
-<p>再看下面的代码</p>
-<pre><code class="language-typescript">const test1:SquareConfig = {  // 正确
-  color: &quot;red&quot;,
-  width: 100
-}
-
-const test2:SquareConfig = {   // 出错
-  color: &quot;red&quot;,
-  width: 100,
-  height: 100
-}
-</code></pre>
-<p>代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。</p>
-<p><code>function createSquare(config: SquareConfig)</code>括号中实际进行了一次定义变量的过程,相当于如下代码:</p>
-<pre><code class="language-typescript">const t: SquareConfig = config
-function createSquare(t){
-  ...
-}
-</code></pre>
-<p>所以，当函数中传参 <code>{ color: 'red', width: 100, height: 12 }</code>时</p>
-<p>定义变量都没走通的话，那肯定会报错啦</p>
-<p>那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看</p>
-<p>其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。</p>
-<pre><code class="language-typescript">let a1 = {}
-let t1: SquareConfig = a1   // 正确
-createSquare(t1)
-
-let a2 = { width: 10}
-let t2: SquareConfig = a2   // 正确
-createSquare(t2)
-
-let a3 = { height: 10 }
-let t3: SquareConfig = a3   // 错误
-createSquare(t3)
-
-let a4 = { width: 10, color: &quot;red&quot;}
-let t4: SquareConfig = a4   // 正确
-createSquare(t4)
-
-let a5 = { width: 10, color: &quot;red&quot;, height: 10}
-let t5: SquareConfig = a5   // 正确
-createSquare(t5)
-</code></pre>
-<p>转化要求 类型兼容。object 与 SquareConfig 类型兼容，所以可以转化。转化成功与否在于 object 中是否有与 SquareConfig 公共项。</p>
-<p>至此就解释通了 标注1 和标注2 的问题啦.</p>
-<h2 id="总结">总结</h2>
-<p>研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。</p>
-<pre><code class="language-typescript">let param1 = { height: 200 }
-
-createSquare(param1)  // 错误
-
-let param2 = { height: 200 } as SquareConfig
-
-createSquare(param2)  // 正确
-</code></pre>
-<p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
-<pre><code class="language-typescript">interface SquareConfig {
-  color?: string;
-  width?: number;
-  [propName: string]: any;
-}
-</code></pre>
-<p>加入<code>[propName: string]: any;</code> 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&quot;坑&quot;</p>
 ]]></content>
     </entry>
 </feed>

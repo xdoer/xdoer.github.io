@@ -10,7 +10,7 @@
 
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1600780840698">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1600828932513">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -52,7 +52,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1600780840698" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1600828932513" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -193,7 +193,7 @@
         <div class="content-container" data-aos="fade-up">
           <div class="post-detail">
             <h2 class="post-title">Taro小程序开发提升效率的几点分享-路由篇</h2>
-            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-09-22</span> <span>共 6988 字</span></div>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-09-22</span> <span>共 11428 字</span></div>
             
               <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/FkN_iGcYQ.png')">
               </div>
@@ -239,70 +239,20 @@ navigateTo({
 })
 ...
 </code></pre>
-<p>引入了路由表文件的同时，引入了新的问题，新建一个页面要维护两个路由地址文件，一个是 app.config ，另一个就是路由表文件 routeTable。两个文件，只要有一点错误，页面就不能正确的被访问。怎么处理这个问题？</p>
+<p>引入了路由表文件的同时，引入了新的问题，新建一个页面要维护两个路由地址文件，一个是 app.config ，另一个就是路由表文件 routeTable。增加了维护成本，同时两个文件，只要有一点错误，页面就不能正确的被访问。怎么处理这个问题？</p>
 <h3 id="part-2-脚本更新路由表与相关配置">PART 2 脚本更新路由表与相关配置</h3>
-<p>观察 app.config 路径配置与路由表配置。其实都与文件夹目录强相关，页面跳转路径，都是去找对应路径的文件地址</p>
-<pre><code class="language-typescript">...
-  pages: [
-    'pages/index/index',
-  ],
-  subPackages: [
-    {
-      root: 'package-appointment',
-      name: 'appointment',
-      pages: [
-        'pages/appointment/index',
-        'pages/manage-appointments/index',
-      ],
-    },
-...
-</code></pre>
-<p>既然页面文件与路径是对应关系，我们可以写一个脚本去处理问题。首先扫描源码文件夹，通过正则表达式找到 pages 和 package- 下的所有页面（这里默认开发者拥有良好的开发习惯，开发页面不进行路径嵌套）。找到文件后，获取文件夹名称作为路由表的 shortName, 构造数据后即可替换和新建到 app.config 和 routeTable 中。</p>
+<p>无论 app.config 路径配置还是路由表配置，页面与路径是对应关系，我们可以写一个脚本去处理问题。首先扫描源码文件夹，通过正则表达式找到 pages 和 package- 下的所有页面。找到文件后，获取文件夹名称作为路由表的 shortName, 构造数据后即可替换和新建到 app.config 和 routeTable 中。</p>
 <p>除此之外，还可以顺带把 project.config.json 中 miniprogram 字段更新，用于开发页面进行快捷调试。</p>
-<p>主函数如下</p>
-<pre><code class="language-javascript">async function main(dirPath) {
-  const baseDirsName = await readDir(dirPath)
-  // 读取目录下的页面
-  const target = baseDirsName.filter((dirName) =&gt; /^pages$|^package-\w+$/.test(dirName))
-
-  // 读取APP配置文件
-  let appConfigFileStr = await readFile(APP_CONFIG_PATH)
-  // 生成路由表文件
-  let routeTableFileStr = ''
-  
-  // 主包页面快捷入口配置（主包与分包分开写是为了保证主包的页面在最上面）
-  let mainEntrance = []  
-  // 分包页面快捷入口配置
-  let entrance = []
-
-  // 分包配置
-  let subPackage = []
-
-  for await (let i of target) {
-    if (i === 'pages') {
-      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i)))
-      appConfigFileStr = handleMainPageConfig(dirsName, appConfigFileStr)
-      routeTableFileStr = handleMainRouteTable(dirsName, routeTableFileStr)
-      mainEntrance = handleMainProjectConfig(dirsName, [])
-    } else {
-      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i, 'pages')))
-      subPackage = handleSubPageConfig(i, dirsName, subPackage)
-      routeTableFileStr = handleSubRouteTable(i, dirsName, routeTableFileStr)
-      entrance = handleSubProjectConfig(i, dirsName, entrance)
-    }
-  }
-  updateAppConfig(appConfigFileStr, subPackage)
-  updateRouteTable(routeTableFileStr)
-  updateProjectConfig(mainEntrance.concat(entrance))
-}
-
-main(path.resolve(BASE_PATH, 'src'))
-
-</code></pre>
 <p>脚本完成之后，每次开发页面时，只需要在 pages 目录下或者分包 pages 目录下新建目录，运行脚本命令即可自动更新 app.config 、 project.config 和 routeTable。</p>
+<p>注意:</p>
+<blockquote>
+<ul>
+<li>查找页面文件，默认 pages 下的一级目录为所有页面文件，这里需要开发者拥有良好的开发习惯，写的页面没有进行嵌套。</li>
+<li>脚本代码很简单，就不新建仓库了，完整代码已经贴到了最下面</li>
+</ul>
+</blockquote>
 <h3 id="part-3-地址参数改造">PART 3 地址参数改造</h3>
-<p>观察 PART 1 部分的代码，其实可以看到，虽然通过路由表形式缩短了一部分地址的长度，但是似乎还可以进一步的缩短地址。</p>
-<p>将参数提取出来，再拼装进去</p>
+<p>观察 PART 1 部分的代码，其实可以看到，虽然通过路由表形式缩短了一部分地址的长度，但是参数部分还可以做些文章。</p>
 <pre><code class="language-typescript">// queryParams 封装
 const covertObjToSearchParams = (searchObj: commonObjectProps = {}) =&gt; {
   let searchParams = ''
@@ -335,12 +285,11 @@ export function navigateTo(url: string, params?: commonObjectProps, opt?: common
 <p>navigateTo 调用</p>
 <pre><code class="language-typescript">navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })`
 </code></pre>
-<p>相比前文中的最开始时的路由调用，这里更加直观明了</p>
-<p>路由跳转的问题解决了。我们看一下路由参数解析。</p>
+<p>相比前文中的最开始时的路由调用，这里更加简洁明了</p>
 <h3 id="part-5-路由参数解析方法改造">PART 5 路由参数解析方法改造</h3>
 <p>Taro 中提供了 <strong>useRouter</strong> hooks去解析路由参数，但该 Hooks 解析出的参数都是字符串类型。</p>
 <p>当使用参数时，需要先导出 <strong>params</strong> 对象，然后再拿到参数值，对于一些数字、布尔类型值还只能再通过转换获得原始值。流程繁琐且复杂。怎么解决这个问题?</p>
-<p>首先初步对 useRouter 进行封装</p>
+<p>首先对 useRouter 进行初步封装</p>
 <pre><code class="language-typescript">import { useRouter as useOriginRouter } from '@tarojs/taro'
 
 export function useRouter&lt;T&gt;(): T {
@@ -349,7 +298,7 @@ export function useRouter&lt;T&gt;(): T {
 }
 </code></pre>
 <p>封装完的 useRouter 只简化了导出 params 的过程，而参数类型转换还是只能根据具体的参数进行具体转换。那这样的封装其实还是有点鸡肋。</p>
-<p>通过 queryParams 传递的参数只能是字符串形式的，所以解析参数也只能是字符串形式。因而可以通过 <strong>JSON.stringify</strong> 将参数对象转换为字符串，解析时再利用 <strong>JSON.parse</strong> 解析出保有原始数据类型的参数。</p>
+<p>通过 queryParams 传递的参数只能是字符串形式的，所以解析参数也只能解析出字符串。因而可以通过 <strong>JSON.stringify</strong> 将参数对象转换为字符串，解析时再利用 <strong>JSON.parse</strong> 解析出保有原始数据类型的参数。</p>
 <pre><code class="language-typescript">import { useRouter as useOriginRouter, navigateTo as originNavigateTo } from '@tarojs/taro'
 
 // 路由跳转
@@ -374,7 +323,7 @@ export function useRouter&lt;T&gt;(): T {
   return {} as T
 }
 </code></pre>
-<p>使用这种封装方式，虽然 URL 不直观且不利于 SEO，但在小程序环境中，用户根本不会看到 URL，且在小程序环境中，SEO根本没什么用。</p>
+<p>使用这种封装方式，虽然 URL 不直观且不利于 SEO，但在小程序环境中，用户根本不会看到 URL，且在当前小程序环境中，SEO似乎根本没什么用。</p>
 <p>使用我们封装好的代码，文章开头给出的示例可简化为如下代码:</p>
 <pre><code class="language-typescript">import { navigateTo, useRouter } from '@/app'
 
@@ -384,6 +333,228 @@ navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })
 const { roomId, appointmentId, scriptId } = useRouter()
 ...
 
+</code></pre>
+<h2 id="完整路由脚本生成和代码">完整路由脚本生成和代码</h2>
+<p>脚本代码很简单，就不新建仓库存了。</p>
+<h3 id="主脚本文件">主脚本文件</h3>
+<pre><code class="language-javascript">const path = require('path')
+const fs = require('fs')
+const { isDir, readDir, readFile, writeFile } = require('./util')
+const PROJECT_CONFIG = require('../project.config.json')
+
+const BASE_PATH = path.resolve(__dirname, '..')
+const APP_CONFIG_PATH = path.resolve(BASE_PATH, 'src/app.config.ts')
+const URL_TABLE_PATH = path.resolve(BASE_PATH, 'src/common/url.constant.ts')
+const PACKAGE_CONFIG_PATH = path.resolve(BASE_PATH, 'project.config.json')
+
+function handleMainPageConfig(dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'pages/${dir}/index'\n`)
+  fileStr = fileStr.replace(/pages[\S\s]*subPackages/, `pages: [${paths}], subPackages`)
+  return fileStr
+}
+
+function handleSubPageConfig(rootPath, dirsName, subPackage) {
+  const [, name] = rootPath.split('-')
+  subPackage.push({
+    root: rootPath,
+    name,
+    pages: dirsName.map((name) =&gt; `pages/${name}/index`),
+  })
+  return subPackage
+}
+
+function handleMainRouteTable(dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'/pages/${dir}/index'\n`)
+  for (let i = 0; i &lt; dirsName.length; i++) {
+    const current = dirsName[i]
+    const name = current
+      .split('-')
+      .map((v) =&gt; v.toUpperCase())
+      .join('_')
+    fileStr = fileStr + `${name}=${paths[i]},`
+  }
+  return fileStr
+}
+
+function handleSubRouteTable(rootPath, dirsName, fileStr) {
+  const paths = dirsName.map((dir) =&gt; `'/${rootPath}/pages/${dir}/index'\n`)
+  for (let i = 0; i &lt; dirsName.length; i++) {
+    const current = dirsName[i]
+    const name = current
+      .split('-')
+      .map((v) =&gt; v.toUpperCase())
+      .join('_')
+    fileStr = fileStr + `${name}=${paths[i]},`
+  }
+  return fileStr
+}
+
+function handleMainProjectConfig(dirsName, routes) {
+  const paths = dirsName.map((dir) =&gt; `pages/${dir}/index`)
+  return routes.concat(paths.map((_path, idx) =&gt; {
+    return {
+      id: idx + 1,
+      name: dirsName[idx],
+      pathName: _path,
+      query: '',
+    }
+  }))
+}
+
+function handleSubProjectConfig(rootPath, dirsName, routes) {
+  const paths = dirsName.map((dir) =&gt; `${rootPath}/pages/${dir}/index`)
+  return routes.concat(
+    paths.map((_path, idx) =&gt; {
+      return {
+        id: idx + 1,
+        name: dirsName[idx],
+        pathName: _path,
+        query: '',
+      }
+    }),
+  )
+}
+
+async function updateAppConfig(fileStr, subPackage) {
+  fileStr = fileStr.replace(/(subPackages[\S\s]*)window/g, `subPackages: ${JSON.stringify(subPackage)}, window`)
+  await writeFile(APP_CONFIG_PATH, fileStr)
+}
+
+async function updateRouteTable(fileStr) {
+  let routeTable = `
+    // 自动生成, pages 文件夹新建目录，运行 npm run g
+    export enum URLs {
+      ${fileStr}
+    }
+  `
+  await writeFile(URL_TABLE_PATH, routeTable)
+}
+
+async function updateProjectConfig(entrance) {
+  PROJECT_CONFIG.condition.miniprogram.list = entrance
+  await writeFile(PACKAGE_CONFIG_PATH, JSON.stringify(PROJECT_CONFIG, null, 2))
+}
+
+function sortDirs(dirsName) {
+  const indexIdx = dirsName.findIndex((dirname) =&gt; dirname === 'index')
+  if (indexIdx === -1) return dirsName.sort((a, b) =&gt; a.localeCompare(b))
+  dirsName.splice(indexIdx, 1)
+  dirsName = dirsName.sort((a, b) =&gt; a.localeCompare(b))
+  dirsName.unshift('index')
+  return dirsName
+}
+
+async function main(dirPath) {
+  const baseDirsName = await readDir(dirPath)
+  const target = baseDirsName.filter((dirName) =&gt; /^pages$|^package-\w+$/.test(dirName))
+
+  // 读取APP配置文件
+  let appConfigFileStr = await readFile(APP_CONFIG_PATH)
+  // app.config 分包配置
+  let subPackage = []
+
+  // 生成路由表文件
+  let routeTableFileStr = ''
+  
+  // project.config 项目快捷入口配置
+  let entrance = []
+  let mainEntrance = []
+
+  for await (let i of target) {
+    if (i === 'pages') {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i)))
+      appConfigFileStr = handleMainPageConfig(dirsName, appConfigFileStr)
+      routeTableFileStr = handleMainRouteTable(dirsName, routeTableFileStr)
+      mainEntrance = handleMainProjectConfig(dirsName, [])
+    } else {
+      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i, 'pages')))
+      subPackage = handleSubPageConfig(i, dirsName, subPackage)
+      routeTableFileStr = handleSubRouteTable(i, dirsName, routeTableFileStr)
+      entrance = handleSubProjectConfig(i, dirsName, entrance)
+    }
+  }
+  updateAppConfig(appConfigFileStr, subPackage)
+  updateRouteTable(routeTableFileStr)
+  updateProjectConfig(mainEntrance.concat(entrance))
+}
+
+// 主函数
+main(path.resolve(BASE_PATH, 'src'))
+
+</code></pre>
+<h3 id="工具脚本文件">工具脚本文件</h3>
+<pre><code class="language-javascript">const path = require('path')
+const fs = require('fs')
+
+// 当前路径是文件夹
+function isDir(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.stat(filePath, (err, stats) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(stats.isDirectory())
+      }
+    })
+  })
+}
+
+// 读取当前文件夹目录
+function readDir(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.readdir(filePath, 'utf8', (err, dir) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(dir)
+      }
+    })
+  })
+}
+
+// 读取文件
+function readFile(filePath) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.readFile(filePath, (err, dir) =&gt; {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(dir.toString())
+      }
+    })
+  })
+}
+
+// 写文件
+async function writeFile(filePath, fileStr) {
+  return new Promise((resolve, reject) =&gt; {
+    fs.writeFile(filePath, fileStr, (err, res) =&gt; {
+      if (err) return reject(err)
+      resolve(res)
+    })
+  })
+}
+
+// 文件夹扫描
+async function fileScanner(filePath, fn) {
+  const dir = await isDir(filePath)
+  if (dir) {
+    const dirs = await readDir(filePath)
+    for await (const name of dirs) {
+      fileScanner(path.resolve(filePath, name), fn)
+    }
+  } else {
+    await fn(filePath)
+  }
+}
+
+module.exports = {
+  isDir,
+  readDir,
+  readFile,
+  writeFile,
+  fileScanner,
+}
 </code></pre>
 
             </div>
