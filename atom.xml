@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-04-28T13:38:53.606Z</updated>
+    <updated>2021-04-28T13:40:46.898Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -202,9 +202,9 @@ setConfig({
         <link href="https://aiyou.life/post/FkN_iGcYQ/">
         </link>
         <updated>2020-09-22T13:00:12.000Z</updated>
-        <summary type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+        <summary type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。。</p>
 ]]></summary>
-        <content type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。</p>
+        <content type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。。</p>
 <!-- more -->
 <h2 id="环境">环境</h2>
 <p>基础环境: taro 3.0.5 / react 16.10.0 / typescript 4.1.0</p>
