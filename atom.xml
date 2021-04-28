@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-04-28T12:47:09.550Z</updated>
+    <updated>2021-04-28T12:52:03.312Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -24,6 +24,7 @@
 <p>在这三种写法中来回切换是痛苦的。</p>
 <h2 id="简介">简介</h2>
 <p>我们从 tailwind 中获得了灵感， 将 tailwind 的原子样式 与 JSX Prop 结合，开发了 Fower。Fower 在 JSX 组件外包装了一层，通过收集整合原子样式属性，生成 className 或者 style 属性，并将其注入到内层组件中。由于 Fower 组件本质是一个 JSX 组件，因而也获得了 VSCode 的智能提示，书写样式时，只需要打个首字母，就可以联想出所有的原子样式，回车即可填充属性，这种开发体验是相当爽的。</p>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1619614139846.png" alt="" loading="lazy"></figure>
 <p>在此基础上，Fower 通过附加各种属性后缀，支持了伪类，媒体查询，主题切换，暗黑模式等功能；提供了一些布局属性，可以快速让多子元素垂直、水平居中；也有一些功能属性，可以快速裁剪文字，省略显示；可以通过一个属性，构建出一个方形或者圆；还有功能强劲的 css 属性，让你使用各种子元素选择器。。。除了内置的这些属性，Fower 也提供了相关 API，可以让你可以定制化你自己的属性实现。</p>
 <p>我们除了对 React, Taro React, React Native 封装了组件包外，还针对 Vue, Svelte 等框架进行了部分兼容和适配，Fower 提供了 VSCode 插件，解决了在 React Like 之外的框架的智能提示。</p>
 <p>使用 Fower，基本上<strong>可以让你不用再写烦人的 CSS 文件</strong></p>
@@ -191,7 +192,8 @@ setConfig({
 });
 </code></pre>
 <h2 id="结语">结语</h2>
-<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。</p>
+<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。<br>
+<img src="https://aiyou.life/post-images/1619614152158.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
