@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>网络 | 文享日志</title>
+<title>Test | 文享日志</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -107,42 +107,128 @@
   </div>
 </div>
 
+      <script>
+        var SimpleShare = function (options) {
 
+          // get share content
+          options = options || {};
+          var url = options.url || window.location.href;
+          var title = options.title || document.title;
+          var content = options.content || '';
+          var pic = options.pic || '';
+
+          // fix content format
+          url = encodeURIComponent(url);
+          title = encodeURIComponent(title);
+          content = encodeURIComponent(content);
+          pic = encodeURIComponent(pic);
+
+          // share target url
+          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
+          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
+          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
+          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
+          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
+          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
+          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
+          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
+          var weixin = 'http://qr.topscan.com/api.php?text={url}';
+          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
+
+          // replace content functions
+          function replaceAPI(api) {
+            api = api.replace('{url}', url);
+            api = api.replace('{title}', title);
+            api = api.replace('{content}', content);
+            api = api.replace('{pic}', pic);
+
+            return api;
+          }
+
+          // share target
+          this.qzone = function () {
+            window.open(replaceAPI(qzone));
+          };
+          this.weibo = function () {
+            window.open(replaceAPI(weibo));
+          };
+          this.tqq = function () {
+            window.open(replaceAPI(tqq));
+          };
+          this.renren = function () {
+            window.open(replaceAPI(renren));
+          };
+          this.douban = function () {
+            window.open(replaceAPI(douban));
+          };
+          this.facebook = function () {
+            window.open(replaceAPI(facebook));
+          };
+          this.twitter = function () {
+            window.open(replaceAPI(twitter));
+          };
+          this.linkedin = function () {
+            window.open(replaceAPI(linkedin));
+          };
+          this.qq = function () {
+            window.open(replaceAPI(qq));
+          };
+          this.weixin = function (callback) {
+            if (!callback) {
+              window.open(replaceAPI(weixin));
+            } else {
+              callback(replaceAPI(weixin));
+            }
+          };
+        };
+      </script>
       <div class="main-container">
         <div class="content-container" data-aos="fade-up">
-          <h2 class="current-tag">标签: 网络</h2>
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://aiyou.life/post/4xGLEq7xe/">
-                  <h2 class="post-title">利用树莓派搭建个人服务器</h2>
-                </a>
-                <div class="post-date">
-                  2019-11-21
-                </div>
-                <div class="post-abstract">
-                  <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
+          <div class="post-detail">
+            <h2 class="post-title">Test</h2>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2021-04-28</span> <span>共 17 字</span></div>
+            
+            <div class="post-abstract" style="display:none">
+              
+            </div>
+            <div class="post-content">
+              <p>asdasdasd</p>
 
-                </div>
+            </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://aiyou.life/post/ZSut5c_dE/">
+                  <h3 class="post-title">
+                    Fower: 一个多平台原子类 CSS In JS 样式库
+                  </h3>
+                </a>
               </div>
-              
-                <a class="right" href="https://aiyou.life/post/4xGLEq7xe/">
-                  <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/4xGLEq7xe.png')">
-                  </div>
-                </a>
-              
-            </article>
-          
+            
 
-          <div class="pagination-container">
-  
-  
+            <script>
+              var share = new SimpleShare({
+                pic: '',
+                content: `${document.querySelector('.post-abstract').innerText}`
+              })
+            </script>
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
 </div>
 
+            
+
+          </div>
         </div>
       </div>
     </div>
-
     <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script type="application/javascript">
