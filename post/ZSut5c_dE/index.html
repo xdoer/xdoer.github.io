@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+
+<title>Fower: 一个多平台原子类 CSS In JS 样式库 | 文享日志</title>
+<meta name="description" content="">
+
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1619613979090">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://aiyou.life/styles/main.css">
+
+
+  
+    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+  
+
+  
+
+
+<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
+<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
+<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
+
+<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-151889564-1');
+</script>
+
+
+  </head>
+  <body>
+    <div id="app" class="main">
+
+      <div class="sidebar" :class="{ 'full-height': menuVisible }">
+  <div class="top-container" data-aos="fade-right">
+    <div class="top-header-container">
+      <a class="site-title-container" href="https://aiyou.life">
+        <img src="https://aiyou.life/images/avatar.png?v=1619613979090" class="site-logo">
+        <h1 class="site-title">文享日志</h1>
+      </a>
+      <div class="menu-btn" @click="menuVisible = !menuVisible">
+        <div class="line"></div>
+      </div>
+    </div>
+    <div>
+      
+        
+          <a href="/" class="site-nav">
+            首页
+          </a>
+        
+      
+        
+          <a href="/archives" class="site-nav">
+            归档
+          </a>
+        
+      
+        
+          <a href="/tags" class="site-nav">
+            标签
+          </a>
+        
+      
+        
+          <a href="/post/about" class="site-nav">
+            关于
+          </a>
+        
+      
+    </div>
+  </div>
+  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+    <div class="social-container">
+      
+        
+          <a class="social-link" href="https://github.com/LuckyHH" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+    <div class="site-description">
+      
+    </div>
+    <div class="site-footer">
+      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
+    </div>
+  </div>
+</div>
+
+      <script>
+        var SimpleShare = function (options) {
+
+          // get share content
+          options = options || {};
+          var url = options.url || window.location.href;
+          var title = options.title || document.title;
+          var content = options.content || '';
+          var pic = options.pic || '';
+
+          // fix content format
+          url = encodeURIComponent(url);
+          title = encodeURIComponent(title);
+          content = encodeURIComponent(content);
+          pic = encodeURIComponent(pic);
+
+          // share target url
+          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
+          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
+          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
+          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
+          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
+          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
+          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
+          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
+          var weixin = 'http://qr.topscan.com/api.php?text={url}';
+          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
+
+          // replace content functions
+          function replaceAPI(api) {
+            api = api.replace('{url}', url);
+            api = api.replace('{title}', title);
+            api = api.replace('{content}', content);
+            api = api.replace('{pic}', pic);
+
+            return api;
+          }
+
+          // share target
+          this.qzone = function () {
+            window.open(replaceAPI(qzone));
+          };
+          this.weibo = function () {
+            window.open(replaceAPI(weibo));
+          };
+          this.tqq = function () {
+            window.open(replaceAPI(tqq));
+          };
+          this.renren = function () {
+            window.open(replaceAPI(renren));
+          };
+          this.douban = function () {
+            window.open(replaceAPI(douban));
+          };
+          this.facebook = function () {
+            window.open(replaceAPI(facebook));
+          };
+          this.twitter = function () {
+            window.open(replaceAPI(twitter));
+          };
+          this.linkedin = function () {
+            window.open(replaceAPI(linkedin));
+          };
+          this.qq = function () {
+            window.open(replaceAPI(qq));
+          };
+          this.weixin = function (callback) {
+            if (!callback) {
+              window.open(replaceAPI(weixin));
+            } else {
+              callback(replaceAPI(weixin));
+            }
+          };
+        };
+      </script>
+      <div class="main-container">
+        <div class="content-container" data-aos="fade-up">
+          <div class="post-detail">
+            <h2 class="post-title">Fower: 一个多平台原子类 CSS In JS 样式库</h2>
+            <div class="post-date" style="display:flex;justify-content: space-between"><span>2021-04-28</span> <span>共 6611 字</span></div>
+            
+              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/ZSut5c_dE.jpeg')">
+              </div>
+            
+            <div class="post-abstract" style="display:none">
+              <p>Fower 是一个 CSS In JS 样式库。它可以让你在 React，Vue，React Native，Svelte，Taro React 小程序， Remax 小程序等框架中获得一致的开发体验。</p>
+
+            </div>
+            <div class="post-content">
+              <p>Fower 是一个 CSS In JS 样式库。它可以让你在 React，Vue，React Native，Svelte，Taro React 小程序， Remax 小程序等框架中获得一致的开发体验。</p>
+<!-- more -->
+<h2 id="前言">前言</h2>
+<p>在过去的一年半中，我们团队分别使用了 Taro React 开发小程序，React 开发 Web 程序 和使用 React Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在 React Native 中使用 StyleSheet.create 创建样式。</p>
+<p>在这三种写法中来回切换是痛苦的。</p>
+<h2 id="简介">简介</h2>
+<p>我们从 tailwind 中获得了灵感， 将 tailwind 的原子样式 与 JSX Prop 结合，开发了 Fower。Fower 在 JSX 组件外包装了一层，通过收集整合原子样式属性，生成 className 或者 style 属性，并将其注入到内层组件中。由于 Fower 组件本质是一个 JSX 组件，因而也获得了 VSCode 的智能提示，书写样式时，只需要打个首字母，就可以联想出所有的原子样式，回车即可填充属性，这种开发体验是相当爽的。</p>
+<p>在此基础上，Fower 通过附加各种属性后缀，支持了伪类，媒体查询，主题切换，暗黑模式等功能；提供了一些布局属性，可以快速让多子元素垂直、水平居中；也有一些功能属性，可以快速裁剪文字，省略显示；可以通过一个属性，构建出一个方形或者圆；还有功能强劲的 css 属性，让你使用各种子元素选择器。。。除了内置的这些属性，Fower 也提供了相关 API，可以让你可以定制化你自己的属性实现。</p>
+<p>我们除了对 React, Taro React, React Native 封装了组件包外，还针对 Vue, Svelte 等框架进行了部分兼容和适配，Fower 提供了 VSCode 插件，解决了在 React Like 之外的框架的智能提示。</p>
+<p>使用 Fower，基本上<strong>可以让你不用再写烦人的 CSS 文件</strong></p>
+<h2 id="对比">对比</h2>
+<p>相比于 Tailwind, Fower 的优势是明显的。</p>
+<blockquote>
+<ul>
+<li>VSCode 插件。Tailwind 的使用离不开 VSCode 插件。Fower 在 React Like 框架中，利用 VSCode 智能提示就可以联想出各种属性，在其他框架中，才需要安装 VSCode 插件</li>
+<li>开箱即用。Fower 只需要安装对应的框架包，即可直接使用，无需进行繁杂的配置。</li>
+<li>体积。对于类似 <code>p1</code>, <code>p2</code> 到 <code>p100</code> 这种属性，Tailwind 中枚举了每一个属性的样式，导致体积异常的庞大。Fower 在 React Like 中属于运行时库，对属性具有编程性，可以动态生成样式，所以体积非常小。在非 React Like 框架中，Fower 通过收集模板的原子属性样式也是动态生成样式。</li>
+<li>多端使用。Fower 针对市面上主流的框架进行了针对性适配，你可以在 React, Preact, Vue, Svelte, React Native, Taro React 小程序, Remax 小程序等平台使用 Fower。Tailwind 不支持在 React Native 使用，并且在 Taro, Remax 等小程序环境中没有支持。</li>
+</ul>
+</blockquote>
+<p>由于 Fower 是运行时 UI 库，所以相对于 Tailwind 有一定的运行时损耗。但对于设备算力越来越强大的今天，这点损耗可以忽略不计。但 Fower 还是尽可能的使用了各种手段提高运行效率，Fower 内部对所有遍历过的属性进行缓存，极大提高运行速度。</p>
+<h2 id="项目">项目</h2>
+<p><a href="https://fower.vercel.app/">官方文档（https://fower.vercel.app/）</a></p>
+<p><a href="https://github.com/forsigner/fower">项目地址（https://github.com/forsigner/fower）</a></p>
+<h2 id="功能一览">功能一览</h2>
+<p>下面演示了使用 Fower/React 框架包的 Box 组件编写的 demo。实际上，直接使用 div 标签也是可以用的，但需要额外的配置。</p>
+<h3 id="基本使用"><a href="https://fower.vercel.app/zh-cn/docs/basic">基本使用</a></h3>
+<p>Fower 提供了大量的原子样式属性，可以极速构建 UI。</p>
+<pre><code class="language-tsx">&lt;Box text2XL fontBold green500 className=&quot;user&quot; style={{ fontWeight: 'bold' }}&gt;
+  Hi, Fower
+&lt;/Box&gt;
+</code></pre>
+<h3 id="可编程">可编程</h3>
+<p>你可以通过为属性赋值的方式，来编写动态样式</p>
+<pre><code class="language-tsx">&lt;Box
+  text-14
+  display=&quot;block&quot;
+  color=&quot;red&quot;
+  blue={false}
+  p-10
+  m-10rem
+  bg=&quot;red&quot;
+  bgRed={true}
+  bgBlue={false}
+&gt;
+  Hi, Fower
+&lt;/Box&gt;
+</code></pre>
+<h3 id="css-属性"><a href="https://fower.vercel.app/zh-cn/docs/css-prop">CSS 属性</a></h3>
+<p>Fower 中提供了强大的 CSS 属性，实现了大部分 CSS 的功能。</p>
+<pre><code class="language-tsx">&lt;Box
+  text4XL
+  css={{
+    backgroundColor: '#edf2f7',
+    ':hover': {
+      backgroundColor: '#feebc8',
+    },
+    '.title': {
+      fontWeight: 'bold',
+    },
+    span: {
+      color: 'deeppink',
+    },
+  }}
+&gt;
+  &lt;div className=&quot;title&quot;&gt;Nested demo&lt;/div&gt;
+  &lt;span&gt;Hi, Fower!&lt;/span&gt;
+&lt;/Box&gt;
+</code></pre>
+<h3 id="伪类响应式"><a href="https://fower.vercel.app/zh-cn/docs/pseudo">伪类/响应式</a></h3>
+<p>Fower 通过后缀的方式，支持了伪类，响应式等功能</p>
+<pre><code class="language-tsx">&lt;Box text2XL text3XL--hover red--first-child fontBold green500&gt;
+  &lt;Box&gt;Hi, Fower&lt;/Box&gt;
+&lt;/Box&gt;
+&lt;Box textSM textLG--sm text4XL--md text6XL--lg&gt;
+  Lorem ipsum dolor sit amet
+&lt;/Box&gt;
+
+</code></pre>
+<h3 id="颜色助手"><a href="https://fower.vercel.app/zh-cn/docs/color-helper">颜色助手</a></h3>
+<p>颜色助手可以快速增加或减少颜色的亮度，透明度等等</p>
+<pre><code class="language-tsx">&lt;Box toEvenly toCenterY&gt;
+  &lt;Box red300&gt;normal&lt;/Box&gt;
+  &lt;Box red300--D40&gt;darken&lt;/Box&gt;
+&lt;/Box&gt;
+</code></pre>
+<h3 id="动态样式"><a href="https://fower.vercel.app/zh-cn/docs/dynamic-style">动态样式</a></h3>
+<p>对于一些动态样式需求，Fower 同样支持，且相对于传统的内联样式，原子样式属性写法更简洁和简单</p>
+<pre><code class="language-tsx">&lt;Box toEvenly toCenterY&gt;
+  &lt;Box red300 red400={false} text={7 + 7}&gt;
+    normal
+  &lt;/Box&gt;
+&lt;/Box&gt;
+</code></pre>
+<h3 id="主题"><a href="https://fower.vercel.app/zh-cn/docs/theme">主题</a></h3>
+<p>Fower 内置了主题。你可以通过 setTheme API 更改和添加配置。</p>
+<pre><code class="language-tsx">import { setTheme } from '@fower/core'
+
+setTheme({
+  spacings: {
+    10086: 110,
+  },
+  color: {
+    gray10086: '#FFFFFF'
+  }
+})
+
+&lt;Box textSM bgGray10086 bgGray10086--dark p10086&gt;
+  Lorem ipsum dolor sit amet
+&lt;/Box&gt;
+</code></pre>
+<h3 id="与第三方组件库一起使用">与第三方组件库一起使用</h3>
+<p>上文中提到 Fower 原理是通过给现有组件包装了一层，通过收集整合原子样式属性，最终将 className 或 style 属性注入到内层组件。因而与第三方组件使用时，只需要利用 styled API 包装即可。</p>
+<pre><code class="language-tsx">import { Button as AntdButton } from 'antd'
+import { styled } from '@fower/styled'
+
+const Button = styled(AntdButton)
+
+&lt;Button red300 red400={false} text={7 + 7}&gt;
+  normal
+&lt;/Button&gt;
+</code></pre>
+<h3 id="属性冲突">属性冲突</h3>
+<p>Fower 组件提供的属性与三方属性冲突时，Fower 也提供了解决方案。</p>
+<pre><code class="language-tsx">import { Button as AntdButton } from 'antd'
+import { styled } from '@fower/styled'
+
+const Button = styled(AntdButton)
+
+&lt;Button excludedProps={['block']} block&gt;
+  normal
+&lt;/Button&gt;
+</code></pre>
+<h3 id="类名">类名</h3>
+<p>Fower 同样支持了 tailwind 的用法</p>
+<pre><code class="language-tsx">&lt;Box className=&quot;toCenter square-400 bgRed400&quot;&gt;
+  &lt;Box className=&quot;white&quot;&gt;Lorem ipsum&lt;/Box&gt;
+&lt;/Box&gt;
+</code></pre>
+<h3 id="动画">动画</h3>
+<p>Fower 提供了 keyframes API，可以快速创建动画。</p>
+<pre><code class="language-tsx">import { Box } from '@fower/react';
+import { keyframes } from '@fower/core';
+
+const bounce = keyframes({
+  'from, 20%, 53%, 80%, to': {
+    transform: 'translate3d(0,0,0)',
+    padding: 10,
+  },
+    '40%, 43%': {
+    transform: 'translate3d(0, -30px, 0)',
+  },
+})
+
+&lt;Box
+  text-30
+  css={{
+    animation: `${bounce} 1s ease infinite`,
+  }}
+&gt;
+  40 Lorem ipsum dolor sit amet
+&lt;/Box&gt;
+</code></pre>
+<h3 id="扩展">扩展</h3>
+<p>Fower 提供了 <a href="https://fower.vercel.app/zh-cn/docs/add-atom">addAtom</a> API 可以快速扩展原子样式属性。但这只能在自己的项目中使用。</p>
+<p>Fower 提供了灵活的插件机制，你可以编写自己的样式 Util，供他人使用。</p>
+<pre><code class="language-tsx">import { setConfig } from '@fower/core';
+import ellipsis from 'fower-plugin-ellipsis';
+
+setConfig({
+  plugin: [ellipsis],
+});
+</code></pre>
+<h2 id="结语">结语</h2>
+<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。</p>
+
+            </div>
+            
+              <div class="tag-container">
+                
+                  <a href="https://aiyou.life/tag/rSf0tu2pz/" class="tag">
+                    React
+                  </a>
+                
+                  <a href="https://aiyou.life/tag/jp41-NU1u/" class="tag">
+                    ReactNative
+                  </a>
+                
+                  <a href="https://aiyou.life/tag/K1r5vpFd_/" class="tag">
+                    前端
+                  </a>
+                
+                  <a href="https://aiyou.life/tag/TDgBvCzI8/" class="tag">
+                    javascript
+                  </a>
+                
+                  <a href="https://aiyou.life/tag/E75leUW9b/" class="tag">
+                    typescript
+                  </a>
+                
+              </div>
+            
+            
+              <div class="next-post">
+                <div class="next">下一篇</div>
+                <a href="https://aiyou.life/post/FkN_iGcYQ/">
+                  <h3 class="post-title">
+                    Taro小程序开发提升效率的几点分享-路由篇
+                  </h3>
+                </a>
+              </div>
+            
+
+            <script>
+              var share = new SimpleShare({
+                pic: 'https://aiyou.life/post-images/ZSut5c_dE.jpeg',
+                content: `${document.querySelector('.post-abstract').innerText}`
+              })
+            </script>
+            <div class="simple-share">
+  <span>分享至:</span>
+  <div class="share-btn">
+    <a href="javascript:share.qzone()">QQ空间</a>
+    <a href="javascript:share.weibo()">微博</a>
+    <a href="javascript:share.facebook()">Facebook</a>
+    <a href="javascript:share.twitter()">Twitter</a>    
+  </div>
+</div>
+
+            
+              
+                <div id="gitalk-container" data-aos="fade-in"></div>
+              
+
+              
+            
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+<script type="application/javascript">
+
+AOS.init();
+
+hljs.initHighlightingOnLoad()
+
+var app = new Vue({
+  el: '#app',
+  data: {
+    menuVisible: false,
+  },
+})
+
+function oneWord(element) {
+  const xhr = new XMLHttpRequest();
+  xhr.open('get', 'https://v1.hitokoto.cn/');
+  xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4) {
+      element.innerText = JSON.parse(xhr.responseText).hitokoto;
+    }
+  }
+  xhr.send();
+}
+oneWord(document.querySelector('.site-description'))
+</script>
+
+
+
+  
+    <!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+    <script>
+
+      var gitalk = new Gitalk({
+        clientID: 'f9e29934c5621e13bb13',
+        clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+        repo: 'LuckyHH.github.io',
+        owner: 'LuckyHH',
+        admin: ['LuckyHH'],
+        id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+        distractionFreeMode: false,  // Facebook-like distraction free mode
+        labels: 'React,ReactNative,前端,javascript,typescript'.split(','),
+        body: `${document.querySelector('.post-abstract').innerText}\n${location.href}`
+      })
+
+      gitalk.render('gitalk-container')
+    </script>
+  
+
+  
+
+
+
+
+  </body>
+</html>
