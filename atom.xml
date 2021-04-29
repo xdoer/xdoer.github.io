@@ -2,25 +2,13 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-04-29T02:09:43.138Z</updated>
+    <updated>2021-04-29T03:10:13.144Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
-    <entry>
-        <title type="html"><![CDATA[test]]></title>
-        <id>https://aiyou.life/post/AnzXTnVfD/</id>
-        <link href="https://aiyou.life/post/AnzXTnVfD/">
-        </link>
-        <updated>2021-04-29T02:04:09.000Z</updated>
-        <content type="html"><![CDATA[<pre><code class="language-html">&lt;Box red10 className=&quot;aaa&quot; style={{ color: 'blue' }}&gt;
-    哈哈哈哈哈
-&lt;/Box&gt;
-</code></pre>
-]]></content>
-    </entry>
     <entry>
         <title type="html"><![CDATA[Fower: 一个多平台原子类 CSS In JS 样式库]]></title>
         <id>https://aiyou.life/post/ZSut5c_dE/</id>

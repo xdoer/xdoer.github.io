@@ -3,207 +3,126 @@
   <head>
     <meta charset="utf-8" >
 
-<title>ReactNative渐进式图片加载 | 文享日志</title>
+<title>ReactNative渐进式图片加载 |
+    文享日志</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1619665799634">
 
-<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1619662179214">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
 
   
-    <!-- <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" /> -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.css" integrity="sha256-5MJj8IfwScTpk3YXO1VPUpk7u3txgZVw7ekAZdHB4Ks=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
   
 
   
 
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
-<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
-<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
-<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-
-<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-151889564-1');
-</script>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
-    <div id="app" class="main">
-
-      <div class="sidebar" :class="{ 'full-height': menuVisible }">
-  <div class="top-container" data-aos="fade-right">
-    <div class="top-header-container">
-      <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1619662179214" class="site-logo">
-        <h1 class="site-title">文享日志</h1>
-      </a>
-      <div class="menu-btn" @click="menuVisible = !menuVisible">
-        <div class="line"></div>
-      </div>
-    </div>
-    <div>
-      
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://aiyou.life">文享日志</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
         
-          <a href="/" class="site-nav">
-            首页
-          </a>
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
         
-      
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
         
-          <a href="/archives" class="site-nav">
-            归档
-          </a>
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
         
-      
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
         
-          <a href="/tags" class="site-nav">
-            标签
-          </a>
-        
-      
-        
-          <a href="/post/about" class="site-nav">
-            关于
-          </a>
-        
-      
+      </ul>
     </div>
   </div>
-  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
-    <div class="social-container">
-      
-        
-          <a class="social-link" href="https://github.com/LuckyHH" target="_blank">
-            <i class="fab fa-github"></i>
-          </a>
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    </div>
-    <div class="site-description">
-      
-    </div>
-    <div class="site-footer">
-      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
-    </div>
-  </div>
-</div>
+</nav>
 
-      <script>
-        var SimpleShare = function (options) {
-
-          // get share content
-          options = options || {};
-          var url = options.url || window.location.href;
-          var title = options.title || document.title;
-          var content = options.content || '';
-          var pic = options.pic || '';
-
-          // fix content format
-          url = encodeURIComponent(url);
-          title = encodeURIComponent(title);
-          content = encodeURIComponent(content);
-          pic = encodeURIComponent(pic);
-
-          // share target url
-          var qzone = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}';
-          var weibo = 'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false';
-          var tqq = 'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96';
-          var renren = 'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}';
-          var douban = 'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}';
-          var facebook = 'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}';
-          var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}';
-          var linkedin = 'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true';
-          var weixin = 'http://qr.topscan.com/api.php?text={url}';
-          var qq = 'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}';
-
-          // replace content functions
-          function replaceAPI(api) {
-            api = api.replace('{url}', url);
-            api = api.replace('{title}', title);
-            api = api.replace('{content}', content);
-            api = api.replace('{pic}', pic);
-
-            return api;
-          }
-
-          // share target
-          this.qzone = function () {
-            window.open(replaceAPI(qzone));
-          };
-          this.weibo = function () {
-            window.open(replaceAPI(weibo));
-          };
-          this.tqq = function () {
-            window.open(replaceAPI(tqq));
-          };
-          this.renren = function () {
-            window.open(replaceAPI(renren));
-          };
-          this.douban = function () {
-            window.open(replaceAPI(douban));
-          };
-          this.facebook = function () {
-            window.open(replaceAPI(facebook));
-          };
-          this.twitter = function () {
-            window.open(replaceAPI(twitter));
-          };
-          this.linkedin = function () {
-            window.open(replaceAPI(linkedin));
-          };
-          this.qq = function () {
-            window.open(replaceAPI(qq));
-          };
-          this.weixin = function (callback) {
-            if (!callback) {
-              window.open(replaceAPI(weixin));
-            } else {
-              callback(replaceAPI(weixin));
-            }
-          };
-        };
-      </script>
-      <div class="main-container">
-        <div class="content-container" data-aos="fade-up">
-          <div class="post-detail">
-            <h2 class="post-title">ReactNative渐进式图片加载</h2>
-            <div class="post-date" style="display:flex;justify-content: space-between"><span>2020-09-06</span> <span>共 2687 字</span></div>
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+          <article class="article">
+            <h1>ReactNative渐进式图片加载</h1>
+            <p class="article-meta">
+              2020-09-06 
+              <a
+                href="https://aiyou.life/tag/rSf0tu2pz/"
+                class="badge success"
+              >
+                React
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/jp41-NU1u/"
+                class="badge success"
+              >
+                ReactNative
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/K1r5vpFd_/"
+                class="badge "
+              >
+                前端
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/E75leUW9b/"
+                class="badge secondary"
+              >
+                typescript
+              </a>
+              
+            </p>
             
-              <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/FEu-GtOkz.jpg')">
-              </div>
+            <img src="https://aiyou.life/post-images/FEu-GtOkz.jpg" alt="ReactNative渐进式图片加载" />
             
-            <div class="post-abstract" style="display:none">
-              <p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
-
-            </div>
-            <div class="post-content">
-              <p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
+            <div class="post-content"><p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
 <!-- more -->
 <h2 id="原理">原理</h2>
 <p>首先给图片一个固定宽高的容器，容器中有两个透明度为0的 Image 元素， 其中一个加载缩略图，一个为原图，监听图片加载，调整透明度，给过渡动画。</p>
@@ -289,82 +208,191 @@ const styles = StyleSheet.create({
 })
 
 </code></pre>
-
+</div>
+          </article>
+          <div class="simple-share">
+            <a class="share-item" href="javascript:share.qzone()">QQ空间</a>
+            <a class="share-item" href="javascript:share.weibo()">微博</a>
+            <a class="share-item" href="javascript:share.facebook()"
+              >Facebook</a
+            >
+            <a class="share-item" href="javascript:share.twitter()">Twitter</a>
+          </div>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+          <div class="next-post">
+            <div class="next">
+              下一篇
             </div>
-            
-              <div class="tag-container">
-                
-                  <a href="https://aiyou.life/tag/rSf0tu2pz/" class="tag">
-                    React
-                  </a>
-                
-                  <a href="https://aiyou.life/tag/jp41-NU1u/" class="tag">
-                    ReactNative
-                  </a>
-                
-                  <a href="https://aiyou.life/tag/K1r5vpFd_/" class="tag">
-                    前端
-                  </a>
-                
-                  <a href="https://aiyou.life/tag/E75leUW9b/" class="tag">
-                    typescript
-                  </a>
-                
-              </div>
-            
-            
-              <div class="next-post">
-                <div class="next">下一篇</div>
-                <a href="https://aiyou.life/post/qo35dDzbQ/">
-                  <h3 class="post-title">
-                    多行文本溢出省略
-                  </h3>
-                </a>
-              </div>
-            
+            <a href="https://aiyou.life/post/qo35dDzbQ/">
+              <h3 class="post-title">多行文本溢出省略</h3>
+            </a>
+          </div>
+          
+        </div>
+         
+        <div class="paper" data-aos="fade-in">
+          <div id="gitalk-container"></div>
+        </div>
+          
+      </div>
 
-            <script>
-              var share = new SimpleShare({
-                pic: 'https://aiyou.life/post-images/FEu-GtOkz.jpg',
-                content: `${document.querySelector('.post-abstract').innerText}`
-              })
-            </script>
-            <div class="simple-share">
-  <span>分享至:</span>
-  <div class="share-btn">
-    <a href="javascript:share.qzone()">QQ空间</a>
-    <a href="javascript:share.weibo()">微博</a>
-    <a href="javascript:share.facebook()">Facebook</a>
-    <a href="javascript:share.twitter()">Twitter</a>    
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img src="https://aiyou.life/images/avatar.png?v=1619665799634" class="no-responsive avatar">
+    <div class="text-muted"></div>
+    <div class="social-container">
+      
+        
+          <a href="https://github.com/xdoer" target="_blank">
+            <i class="fab fa-github"></i>
+          </a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/ZSut5c_dE/">Fower: 一个多平台原子类 CSS In JS 样式库</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/FkN_iGcYQ/">Taro小程序开发提升效率的几点分享-路由篇</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/FEu-GtOkz/">ReactNative渐进式图片加载</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/qo35dDzbQ/">多行文本溢出省略</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/-d73T0KeE/">TS学习笔记</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/GHHpY-82B/">我的学生👨‍🎓时代-初中篇</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/YNnCC51T0/">我的学生👨‍🎓时代-小学篇</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/6AOKgckv2/">我的学生👨‍🎓时代-幼儿园篇</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/4xGLEq7xe/">利用树莓派搭建个人服务器</a>
+            </li>
+          
+        
+          
+            <li>
+              <a href="https://aiyou.life/post/kokne79MF/">关于提高setTimeout与setInterval精确度的探索</a>
+            </li>
+          
+        
+          
+        
+          
+        
+          
+        
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
+      
+        <a href="https://aiyou.life/tag/rSf0tu2pz/" class="badge ">
+          React
+        </a>
+      
+        <a href="https://aiyou.life/tag/jp41-NU1u/" class="badge success">
+          ReactNative
+        </a>
+      
+        <a href="https://aiyou.life/tag/K1r5vpFd_/" class="badge warning">
+          前端
+        </a>
+      
+        <a href="https://aiyou.life/tag/TDgBvCzI8/" class="badge ">
+          javascript
+        </a>
+      
+        <a href="https://aiyou.life/tag/E75leUW9b/" class="badge warning">
+          typescript
+        </a>
+      
+        <a href="https://aiyou.life/tag/TfrzxMzWY/" class="badge warning">
+          小程序
+        </a>
+      
+        <a href="https://aiyou.life/tag/g_6wyy_ol/" class="badge ">
+          网络
+        </a>
+      
+        <a href="https://aiyou.life/tag/X7Cdzy-Hu/" class="badge secondary">
+          博客
+        </a>
+      
+    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
   </div>
 </div>
 
-            
-              
-                <div id="gitalk-container" data-aos="fade-in"></div>
-              
-
-              
-            
-
-          </div>
-        </div>
-      </div>
     </div>
-    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+
 <script type="application/javascript">
   AOS.init()
 
   hljs.initHighlightingOnLoad()
+</script>
 
-  var app = new Vue({
-    el: '#app',
-    data: {
-      menuVisible: false,
-    },
-  })
-
+<script type="application/javascript">
+  // 一言
   function oneWord(element) {
     if (!element) return
     const xhr = new XMLHttpRequest()
@@ -376,31 +404,131 @@ const styles = StyleSheet.create({
     }
     xhr.send()
   }
-  oneWord(document.querySelector('.site-description'))
+  oneWord(document.querySelector('.text-muted'))
+</script>
+
+<script type="application/javascript">
+  // 分享
+  var SimpleShare = function (options) {
+    // get share content
+    options = options || {}
+    var url = options.url || window.location.href
+    var title = options.title || document.title
+    var content = options.content || ''
+    var pic = options.pic || ''
+
+    // fix content format
+    url = encodeURIComponent(url)
+    title = encodeURIComponent(title)
+    content = encodeURIComponent(content)
+    pic = encodeURIComponent(pic)
+
+    // share target url
+    var qzone =
+      'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}'
+    var weibo =
+      'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false'
+    var tqq =
+      'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96'
+    var renren =
+      'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}'
+    var douban =
+      'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}'
+    var facebook =
+      'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}'
+    var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}'
+    var linkedin =
+      'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true'
+    var weixin = 'http://qr.topscan.com/api.php?text={url}'
+    var qq =
+      'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}'
+
+    // replace content functions
+    function replaceAPI(api) {
+      api = api.replace('{url}', url)
+      api = api.replace('{title}', title)
+      api = api.replace('{content}', content)
+      api = api.replace('{pic}', pic)
+
+      return api
+    }
+
+    // share target
+    this.qzone = function () {
+      window.open(replaceAPI(qzone))
+    }
+    this.weibo = function () {
+      window.open(replaceAPI(weibo))
+    }
+    this.tqq = function () {
+      window.open(replaceAPI(tqq))
+    }
+    this.renren = function () {
+      window.open(replaceAPI(renren))
+    }
+    this.douban = function () {
+      window.open(replaceAPI(douban))
+    }
+    this.facebook = function () {
+      window.open(replaceAPI(facebook))
+    }
+    this.twitter = function () {
+      window.open(replaceAPI(twitter))
+    }
+    this.linkedin = function () {
+      window.open(replaceAPI(linkedin))
+    }
+    this.qq = function () {
+      window.open(replaceAPI(qq))
+    }
+    this.weixin = function (callback) {
+      if (!callback) {
+        window.open(replaceAPI(weixin))
+      } else {
+        callback(replaceAPI(weixin))
+      }
+    }
+  }
+  var share = new SimpleShare()
 </script>
 
 
 
-<!-- <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gitalk/1.5.0/gitalk.min.js"></script>
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 <script>
-  var gitalkElement = document.querySelector('.post-abstract')
-  if (gitalkElement) {
-    var gitalk = new Gitalk({
-      clientID: 'f9e29934c5621e13bb13',
-      clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
-      repo: 'xdoer.github.io',
-      owner: 'xdoer',
-      admin: ['xdoer'],
-      id: location.pathname.substring(0, 49), // Ensure uniqueness and length less than 50
-      distractionFreeMode: false, // Facebook-like distraction free mode
-      labels: 'React,ReactNative,前端,typescript'.split(','),
-      body: `${gitalkElement.innerText}\n${location.href}`,
-    })
-    gitalk.render('gitalk-container')
-  }
+  var gitalk = new Gitalk({
+    clientID: 'f9e29934c5621e13bb13',
+    clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+    repo: 'xdoer.github.io',
+    owner: 'xdoer',
+    admin: ['xdoer'],
+    id: location.pathname.substring(0, 49), // Ensure uniqueness and length less than 50
+    distractionFreeMode: false, // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
 </script>
   
+<script>
+  // 点击文章内部图片查看大图
+  const contentImagesEles = [...document.querySelectorAll('.post-content img')]
+  const maskEle = document.querySelector('prev-mask')
+  const containerEle = document.querySelector('image-container')
+  const imgCloseEle = document.querySelector('img-close')
+  const imgBigEle = document.querySelector('img-big')
+
+  contentImagesEles.forEach((ele) => {
+    ele.addEventListener('click', () => {
+      const { currentSrc } = ele
+      imgBigEle.attributes.currentSrc = currentSrc
+      mask.style.display = 'block'
+    })
+  })
+
+  imgCloseEle.addEventListener('click', () => {
+    mask.style.display = 'none'
+  })
+</script>
 
   </body>
 </html>
