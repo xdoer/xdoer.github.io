@@ -10,7 +10,7 @@
 
 <!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1619617673656">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1619662179214">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
@@ -45,7 +45,7 @@
   <div class="top-container" data-aos="fade-right">
     <div class="top-header-container">
       <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1619617673656" class="site-logo">
+        <img src="https://aiyou.life/images/avatar.png?v=1619662179214" class="site-logo">
         <h1 class="site-title">文享日志</h1>
       </a>
       <div class="menu-btn" @click="menuVisible = !menuVisible">
@@ -121,7 +121,7 @@
                   2021-04-28
                 </div>
                 <div class="post-abstract">
-                  <p>Fower 是一个 CSS In JS 样式库。它可以让你在 React，Vue，React Native，Svelte，Taro React 小程序， Remax 小程序等框架中获得一致的开发体验。</p>
+                  <p>在过去的一年半中，我们团队分别使用了 Taro  html 开发小程序， html 开发 Web 程序 和使用  html Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在  html Native 中使用 StyleSheet.create 创建样式。</p>
 
                 </div>
               </div>
@@ -167,31 +167,30 @@
     <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script type="application/javascript">
+  AOS.init()
 
-AOS.init();
+  hljs.initHighlightingOnLoad()
 
-hljs.initHighlightingOnLoad()
+  var app = new Vue({
+    el: '#app',
+    data: {
+      menuVisible: false,
+    },
+  })
 
-var app = new Vue({
-  el: '#app',
-  data: {
-    menuVisible: false,
-  },
-})
-
-function oneWord(element) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('get', 'https://v1.hitokoto.cn/');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      element.innerText = JSON.parse(xhr.responseText).hitokoto;
+  function oneWord(element) {
+    if (!element) return
+    const xhr = new XMLHttpRequest()
+    xhr.open('get', 'https://v1.hitokoto.cn/')
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        element.innerText = JSON.parse(xhr.responseText).hitokoto
+      }
     }
+    xhr.send()
   }
-  xhr.send();
-}
-oneWord(document.querySelector('.site-description'))
+  oneWord(document.querySelector('.site-description'))
 </script>
-
 
 
 

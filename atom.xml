@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-04-28T13:47:56.212Z</updated>
+    <updated>2021-04-29T02:09:43.138Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,12 +10,15 @@
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
     <entry>
-        <title type="html"><![CDATA[Test]]></title>
-        <id>https://aiyou.life/post/WK0yXvF4V/</id>
-        <link href="https://aiyou.life/post/WK0yXvF4V/">
+        <title type="html"><![CDATA[test]]></title>
+        <id>https://aiyou.life/post/AnzXTnVfD/</id>
+        <link href="https://aiyou.life/post/AnzXTnVfD/">
         </link>
-        <updated>2021-04-28T13:47:47.000Z</updated>
-        <content type="html"><![CDATA[<p>asdasdasd</p>
+        <updated>2021-04-29T02:04:09.000Z</updated>
+        <content type="html"><![CDATA[<pre><code class="language-html">&lt;Box red10 className=&quot;aaa&quot; style={{ color: 'blue' }}&gt;
+    哈哈哈哈哈
+&lt;/Box&gt;
+</code></pre>
 ]]></content>
     </entry>
     <entry>
@@ -24,27 +27,25 @@
         <link href="https://aiyou.life/post/ZSut5c_dE/">
         </link>
         <updated>2021-04-28T12:41:50.000Z</updated>
-        <summary type="html"><![CDATA[<p>Fower 是一个 CSS In JS 样式库。它可以让你在 React，Vue，React Native，Svelte，Taro React 小程序， Remax 小程序等框架中获得一致的开发体验。</p>
+        <summary type="html"><![CDATA[<p>在过去的一年半中，我们团队分别使用了 Taro  html 开发小程序， html 开发 Web 程序 和使用  html Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在  html Native 中使用 StyleSheet.create 创建样式。</p>
 ]]></summary>
-        <content type="html"><![CDATA[<p>Fower 是一个 CSS In JS 样式库。它可以让你在 React，Vue，React Native，Svelte，Taro React 小程序， Remax 小程序等框架中获得一致的开发体验。</p>
+        <content type="html"><![CDATA[<p>在过去的一年半中，我们团队分别使用了 Taro  html 开发小程序， html 开发 Web 程序 和使用  html Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在  html Native 中使用 StyleSheet.create 创建样式。</p>
 <!-- more -->
-<h2 id="前言">前言</h2>
-<p>在过去的一年半中，我们团队分别使用了 Taro React 开发小程序，React 开发 Web 程序 和使用 React Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在 React Native 中使用 StyleSheet.create 创建样式。</p>
 <p>在这三种写法中来回切换是痛苦的。</p>
 <h2 id="简介">简介</h2>
-<p>我们从 tailwind 中获得了灵感， 将 tailwind 的原子样式 与 JSX Prop 结合，开发了 Fower。Fower 在 JSX 组件外包装了一层，通过收集整合原子样式属性，生成 className 或者 style 属性，并将其注入到内层组件中。由于 Fower 组件本质是一个 JSX 组件，因而也获得了 VSCode 的智能提示，书写样式时，只需要打个首字母，就可以联想出所有的原子样式，回车即可填充属性，这种开发体验是相当爽的。</p>
+<p>我们从 tailwind 中获得了灵感， 将 tailwind 的原子样式 与  html Prop 结合，开发了 Fower。Fower 在  html 组件外包装了一层，通过收集整合原子样式属性，生成 className 或者 style 属性，并将其注入到内层组件中。由于 Fower 组件本质是一个  html 组件，因而也获得了 VSCode 的智能提示，书写样式时，只需要打个首字母，就可以联想出所有的原子样式，回车即可填充属性，这种开发体验是相当爽的。</p>
 <figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1619614139846.png" alt="" loading="lazy"></figure>
 <p>在此基础上，Fower 通过附加各种属性后缀，支持了伪类，媒体查询，主题切换，暗黑模式等功能；提供了一些布局属性，可以快速让多子元素垂直、水平居中；也有一些功能属性，可以快速裁剪文字，省略显示；可以通过一个属性，构建出一个方形或者圆；还有功能强劲的 css 属性，让你使用各种子元素选择器。。。除了内置的这些属性，Fower 也提供了相关 API，可以让你可以定制化你自己的属性实现。</p>
-<p>我们除了对 React, Taro React, React Native 封装了组件包外，还针对 Vue, Svelte 等框架进行了部分兼容和适配，Fower 提供了 VSCode 插件，解决了在 React Like 之外的框架的智能提示。</p>
+<p>我们除了对  html, Taro  html,  html Native 封装了组件包外，还针对 Vue, Svelte 等框架进行了部分兼容和适配，Fower 提供了 VSCode 插件，解决了在  html Like 之外的框架的智能提示。</p>
 <p>使用 Fower，基本上<strong>可以让你不用再写烦人的 CSS 文件</strong></p>
 <h2 id="对比">对比</h2>
 <p>相比于 Tailwind, Fower 的优势是明显的。</p>
 <blockquote>
 <ul>
-<li>VSCode 插件。Tailwind 的使用离不开 VSCode 插件。Fower 在 React Like 框架中，利用 VSCode 智能提示就可以联想出各种属性，在其他框架中，才需要安装 VSCode 插件</li>
+<li>VSCode 插件。Tailwind 的使用离不开 VSCode 插件。Fower 在  html Like 框架中，利用 VSCode 智能提示就可以联想出各种属性，在其他框架中，才需要安装 VSCode 插件</li>
 <li>开箱即用。Fower 只需要安装对应的框架包，即可直接使用，无需进行繁杂的配置。</li>
-<li>体积。对于类似 <code>p1</code>, <code>p2</code> 到 <code>p100</code> 这种属性，Tailwind 中枚举了每一个属性的样式，导致体积异常的庞大。Fower 在 React Like 中属于运行时库，对属性具有编程性，可以动态生成样式，所以体积非常小。在非 React Like 框架中，Fower 通过收集模板的原子属性样式也是动态生成样式。</li>
-<li>多端使用。Fower 针对市面上主流的框架进行了针对性适配，你可以在 React, Preact, Vue, Svelte, React Native, Taro React 小程序, Remax 小程序等平台使用 Fower。Tailwind 不支持在 React Native 使用，并且在 Taro, Remax 等小程序环境中没有支持。</li>
+<li>体积。对于类似 <code>p1</code>, <code>p2</code> 到 <code>p100</code> 这种属性，Tailwind 中枚举了每一个属性的样式，导致体积异常的庞大。Fower 在  html Like 中属于运行时库，对属性具有编程性，可以动态生成样式，所以体积非常小。在非  html Like 框架中，Fower 通过收集模板的原子属性样式也是动态生成样式。</li>
+<li>多端使用。Fower 针对市面上主流的框架进行了针对性适配，你可以在  html, P html, Vue, Svelte,  html Native, Taro  html 小程序, Remax 小程序等平台使用 Fower。Tailwind 不支持在  html Native 使用，并且在 Taro, Remax 等小程序环境中没有支持。</li>
 </ul>
 </blockquote>
 <p>由于 Fower 是运行时 UI 库，所以相对于 Tailwind 有一定的运行时损耗。但对于设备算力越来越强大的今天，这点损耗可以忽略不计。但 Fower 还是尽可能的使用了各种手段提高运行效率，Fower 内部对所有遍历过的属性进行缓存，极大提高运行速度。</p>
@@ -52,16 +53,16 @@
 <p><a href="https://fower.vercel.app/">官方文档（https://fower.vercel.app/）</a></p>
 <p><a href="https://github.com/forsigner/fower">项目地址（https://github.com/forsigner/fower）</a></p>
 <h2 id="功能一览">功能一览</h2>
-<p>下面演示了使用 Fower/React 框架包的 Box 组件编写的 demo。实际上，直接使用 div 标签也是可以用的，但需要额外的配置。</p>
+<p>下面演示了使用 Fower/ html 框架包的 Box 组件编写的 demo。实际上，直接使用 Box 标签也是可以用的，但需要额外的配置。</p>
 <h3 id="基本使用"><a href="https://fower.vercel.app/zh-cn/docs/basic">基本使用</a></h3>
 <p>Fower 提供了大量的原子样式属性，可以极速构建 UI。</p>
-<pre><code class="language-tsx">&lt;Box text2XL fontBold green500 className=&quot;user&quot; style={{ fontWeight: 'bold' }}&gt;
+<pre><code class="language-html">&lt;Box text2XL fontBold green500 className=&quot;user&quot; style={{ fontWeight: 'bold' }}&gt;
   Hi, Fower
 &lt;/Box&gt;
 </code></pre>
 <h3 id="可编程">可编程</h3>
 <p>你可以通过为属性赋值的方式，来编写动态样式</p>
-<pre><code class="language-tsx">&lt;Box
+<pre><code class="language-html">&lt;Box
   text-14
   display=&quot;block&quot;
   color=&quot;red&quot;
@@ -77,7 +78,7 @@
 </code></pre>
 <h3 id="css-属性"><a href="https://fower.vercel.app/zh-cn/docs/css-prop">CSS 属性</a></h3>
 <p>Fower 中提供了强大的 CSS 属性，实现了大部分 CSS 的功能。</p>
-<pre><code class="language-tsx">&lt;Box
+<pre><code class="language-html">&lt;Box
   text4XL
   css={{
     backgroundColor: '#edf2f7',
@@ -92,30 +93,29 @@
     },
   }}
 &gt;
-  &lt;div className=&quot;title&quot;&gt;Nested demo&lt;/div&gt;
+  &lt;Box className=&quot;title&quot;&gt;Nested demo&lt;/Box&gt;
   &lt;span&gt;Hi, Fower!&lt;/span&gt;
 &lt;/Box&gt;
 </code></pre>
 <h3 id="伪类响应式"><a href="https://fower.vercel.app/zh-cn/docs/pseudo">伪类/响应式</a></h3>
 <p>Fower 通过后缀的方式，支持了伪类，响应式等功能</p>
-<pre><code class="language-tsx">&lt;Box text2XL text3XL--hover red--first-child fontBold green500&gt;
+<pre><code class="language-html">&lt;Box text2XL text3XL--hover red--first-child fontBold green500&gt;
   &lt;Box&gt;Hi, Fower&lt;/Box&gt;
 &lt;/Box&gt;
 &lt;Box textSM textLG--sm text4XL--md text6XL--lg&gt;
   Lorem ipsum dolor sit amet
 &lt;/Box&gt;
-
 </code></pre>
 <h3 id="颜色助手"><a href="https://fower.vercel.app/zh-cn/docs/color-helper">颜色助手</a></h3>
 <p>颜色助手可以快速增加或减少颜色的亮度，透明度等等</p>
-<pre><code class="language-tsx">&lt;Box toEvenly toCenterY&gt;
+<pre><code class="language-html">&lt;Box toEvenly toCenterY&gt;
   &lt;Box red300&gt;normal&lt;/Box&gt;
   &lt;Box red300--D40&gt;darken&lt;/Box&gt;
 &lt;/Box&gt;
 </code></pre>
 <h3 id="动态样式"><a href="https://fower.vercel.app/zh-cn/docs/dynamic-style">动态样式</a></h3>
 <p>对于一些动态样式需求，Fower 同样支持，且相对于传统的内联样式，原子样式属性写法更简洁和简单</p>
-<pre><code class="language-tsx">&lt;Box toEvenly toCenterY&gt;
+<pre><code class="language-html">&lt;Box toEvenly toCenterY&gt;
   &lt;Box red300 red400={false} text={7 + 7}&gt;
     normal
   &lt;/Box&gt;
@@ -123,7 +123,7 @@
 </code></pre>
 <h3 id="主题"><a href="https://fower.vercel.app/zh-cn/docs/theme">主题</a></h3>
 <p>Fower 内置了主题。你可以通过 setTheme API 更改和添加配置。</p>
-<pre><code class="language-tsx">import { setTheme } from '@fower/core'
+<pre><code class="language-html">import { setTheme } from '@fower/core'
 
 setTheme({
   spacings: {
@@ -140,7 +140,7 @@ setTheme({
 </code></pre>
 <h3 id="与第三方组件库一起使用">与第三方组件库一起使用</h3>
 <p>上文中提到 Fower 原理是通过给现有组件包装了一层，通过收集整合原子样式属性，最终将 className 或 style 属性注入到内层组件。因而与第三方组件使用时，只需要利用 styled API 包装即可。</p>
-<pre><code class="language-tsx">import { Button as AntdButton } from 'antd'
+<pre><code class="language-html">import { Button as AntdButton } from 'antd'
 import { styled } from '@fower/styled'
 
 const Button = styled(AntdButton)
@@ -151,7 +151,7 @@ const Button = styled(AntdButton)
 </code></pre>
 <h3 id="属性冲突">属性冲突</h3>
 <p>Fower 组件提供的属性与三方属性冲突时，Fower 也提供了解决方案。</p>
-<pre><code class="language-tsx">import { Button as AntdButton } from 'antd'
+<pre><code class="language-html">import { Button as AntdButton } from 'antd'
 import { styled } from '@fower/styled'
 
 const Button = styled(AntdButton)
@@ -162,13 +162,13 @@ const Button = styled(AntdButton)
 </code></pre>
 <h3 id="类名">类名</h3>
 <p>Fower 同样支持了 tailwind 的用法</p>
-<pre><code class="language-tsx">&lt;Box className=&quot;toCenter square-400 bgRed400&quot;&gt;
+<pre><code class="language-html">&lt;Box className=&quot;toCenter square-400 bgRed400&quot;&gt;
   &lt;Box className=&quot;white&quot;&gt;Lorem ipsum&lt;/Box&gt;
 &lt;/Box&gt;
 </code></pre>
 <h3 id="动画">动画</h3>
 <p>Fower 提供了 keyframes API，可以快速创建动画。</p>
-<pre><code class="language-tsx">import { Box } from '@fower/react';
+<pre><code class="language-html">import { Box } from '@fower/ html';
 import { keyframes } from '@fower/core';
 
 const bounce = keyframes({
@@ -193,7 +193,7 @@ const bounce = keyframes({
 <h3 id="扩展">扩展</h3>
 <p>Fower 提供了 <a href="https://fower.vercel.app/zh-cn/docs/add-atom">addAtom</a> API 可以快速扩展原子样式属性。但这只能在自己的项目中使用。</p>
 <p>Fower 提供了灵活的插件机制，你可以编写自己的样式 Util，供他人使用。</p>
-<pre><code class="language-tsx">import { setConfig } from '@fower/core';
+<pre><code class="language-html">import { setConfig } from '@fower/core';
 import ellipsis from 'fower-plugin-ellipsis';
 
 setConfig({
@@ -201,8 +201,8 @@ setConfig({
 });
 </code></pre>
 <h2 id="结语">结语</h2>
-<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。<br>
-<img src="https://aiyou.life/post-images/1619614152158.png" alt="" loading="lazy"></p>
+<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。</p>
+<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1619618374404.png" alt="" loading="lazy"></figure>
 ]]></content>
     </entry>
     <entry>
