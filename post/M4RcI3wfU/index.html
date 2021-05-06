@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>多行文本溢出省略 |
+<title>PreQuest: 为你的 Http 提供模块化，可插拔的解决方案 |
     文享日志</title>
 <meta name="description" content="">
 
@@ -87,167 +87,164 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>多行文本溢出省略</h1>
+            <h1>PreQuest: 为你的 Http 提供模块化，可插拔的解决方案</h1>
             <p class="article-meta">
-              2020-09-05 
+              2021-05-06 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge warning"
+                class="badge success"
               >
                 前端
               </a>
               
+              <a
+                href="https://aiyou.life/tag/g_6wyy_ol/"
+                class="badge secondary"
+              >
+                网络
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/E75leUW9b/"
+                class="badge secondary"
+              >
+                typescript
+              </a>
+              
             </p>
             
-            <img src="https://aiyou.life/post-images/qo35dDzbQ.jpeg" alt="多行文本溢出省略" />
+            <img src="https://aiyou.life/post-images/M4RcI3wfU.png" alt="PreQuest: 为你的 Http 提供模块化，可插拔的解决方案" />
             
-            <div class="post-content"><p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
+            <div class="post-content"><p>是否有一种方式，从底向上的，针对不同的请求内核可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
 <!-- more -->
-<h1 id="单行文本省略">单行文本省略</h1>
-<p>单行文本省略较为简单，且兼容性较好。</p>
-<p>要实现单行文本省略，下面CSS属性缺一不可</p>
-<pre><code class="language-css">width: 100px;  // 固定宽度
-overflow: hidden;   // 溢出隐藏
-white-space: nowrap;    // 文字不换行
-text-overflow: ellipsis;    // 文字溢出截断
+<h2 id="前言">前言</h2>
+<p>最近想写一个可以适配多平台的请求库，在研究 xhr 和 fetch 发现二者的参数、响应、回调函数等差别很大。想到如果请求库想要抹平底层请求内核差异，需要统一的传参和响应格式，那么势必会在请求库内部做大量的判断，这样不但费时费力，还会屏蔽掉底层请求内核的特有功能。</p>
+<p>阅读 axios 和 umi-request 时源码时想到，请求库其实基本都包含了拦截器、中间件和快捷请求等几个通用的，与具体请求过程无关的功能。然后通过传参，让用户接触底层请求内核。问题在于，请求库内置多个底层请求内核，内核支持的参数是不一样的，上层库可能做一些处理，抹平一些参数的差异化，但对于底层内核的特有的功能，要么放弃，要么只能在参数列表中加入一些具体内核的特有的参数。比如在 axios 中，它的请求配置参数列表中，罗列了一些 <a href="https://axios-http.com/docs/req_config">browser only</a>的参数，那对于只需要在 node 环境中运行的 axios 来说，参数多少有些冗余，并且如果 axios 要支持其他请求内核(比如小程序)，那么参数冗余也将越来越大，扩展性也差。</p>
+<p>换个思路来想，既然实现一个适配多平台的统一的请求库有这些问题，那么是否可以从底向上的，针对不同的请求内核，提供一种方式可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
+<p><strong>PreQuest 就是这样一个项目。它可以基于不同的请求内核，提供一致的全局配置、中间件、快捷请求、拦截器等功能的体验。</strong></p>
+<h2 id="设计原理">设计原理</h2>
+<p>PreQuest 核心代码非常简单。它内置了经典的 koa 洋葱模型，并且为不同的请求方式提供了快捷入口，同时预留了一个底层内核的适配器接口，和适配器的配置入口。使用时，只需要传入一个适配器，就可以使用。</p>
+<p>为了最小化的不侵入开发者请求库的配置参数，PreQuest 没有内置诸如 baseURL, header 这样通用的配置项，但考虑到这些配置项大部分请求库都支持，因而 PreQuest 提供了 helper 包，来处理通用化配置。此外需要注意的是，PreQuest 考虑到开发者可能有在中间件修改请求路径和方式的需求，所以将由快捷请求<code>eg:request.get('/api')</code>产生的 <strong>path</strong> 和 <strong>method</strong> 两个字段混入到配置参数中。</p>
+<p>中间件模型可以满足大部分的业务需求，比如: 请求头添加 token，输入日志，错误处理，加解密请求等等。PreQuest 项目也会提供一些解决方案，开发者只需要安装对应的包，并将其注入到中间件模型中即可使用。</p>
+<h2 id="example">Example</h2>
+<p>以适配微信小程序平台为例。</p>
+<h3 id="小程序请求库">小程序请求库</h3>
+<p>首先看一下小程序平台请求 Demo。可以看到功能比较简陋，当你想做一些登录添加 Token，错误处理等功能，还要花一些时间去考虑和处理。</p>
+<pre><code class="language-ts">wx.request({
+  url: 'test.php',
+  data: {
+    x: '',
+    y: '',
+  },
+  header: {
+    'content-type': 'application/json',
+  },
+  success(res) {
+    console.log(res.data)
+  },
+})
 </code></pre>
-<h1 id="多行文本省略">多行文本省略</h1>
-<p>当接到这个需求的时候，考虑到我们产品运行在微信小程序，而小程序在IOS和安卓平台都是用了webkit内核, 因而下面的代码应当在两个平台都可以很好运行。</p>
-<p>webkit 内核的浏览器可以原生实现多行文本溢出省略。</p>
-<pre><code class="language-css">display: -webkit-box；
--webkit-box-orient: vertical;
--webkit-line-clamp: 2;
-overflow: hidden；
-text-overflow: ellipsis；
+<p>使用 PreQuest 进行封装</p>
+<pre><code class="language-ts">import { PreQuest } from '@prequest/core'
+
+function adapter(opt) {
+  // 这里的 path 与 method 由 PreQuest 注入，也可以由用户传入覆盖
+  const { path, method, baseURL, ...options } = opt
+  const url = baseURL + path
+  return new Promise((resolve, reject) =&gt; {
+    wx.request({
+      ...options,
+      url,
+      method,
+      success: resolve,
+      fail: reject,
+    })
+  })
+}
+
+function createPreQuest(opt) {
+  return PreQuest.createInstance(adapter, opt)
+}
 </code></pre>
-<p>然而事实并非如此。实际上面代码在安卓可以运行，但在IOS下则空白。<br>
-<img src="https://aiyou.life/post-images/1599296417880.png" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">line-clamp兼容性</div>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599295340251.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">微信小程序运行环境</div>
-<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599296818625.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">IOS WkWebView 基于 Webkit</div>
-<p>找了半天资料，也没有找到原因。猜想可能 WkWebView 中的 webkit 版本太低的缘故。</p>
-<p>既然上面的代码不能使用，只能尝试其他办法。</p>
-<h2 id="js-方式">JS 方式</h2>
-<p>JS计算裁剪的方式被排除了</p>
-<ul>
-<li>第一，这有悖于行为与展示相分离的理念</li>
-<li>第二，要考虑汉字，英文字母，图标，全角半角符号等才能相对准确算出文字占用几行，要不要裁切</li>
-<li>第三，我们的使用场景中要解析富文本，对于HTML标签，链接地址等要考虑的较多，实现方案较为复杂</li>
+<p>使用</p>
+<pre><code class="language-ts">// 全局配置项
+PreQuest.defaults.baseURL = 'http://localhost:3000'
+
+// 实例配置项
+const opt = { baseURL: 'http://localhost:3001' }
+const prequest = createPreQuest(opt)
+
+// 中间件
+prequest.use(async (ctx, next) =&gt; {
+  console.log(ctx.request) // 修改请求参数
+  await next()
+  console.log(ctx.response) // 拦截修改响应
+})
+
+// 调用
+prequest.request({ path: '/api', method: 'post', data: { a: 1 } })
+prequest.post('/api', { data: { a: 1 } })
+</code></pre>
+<p>实际上，如果 wx.request 方法由用户端传入的话，那么这个请求库可以适配绝大部分小程序框架，和一些类小程序框架(快应用)。详情请查阅<a href="https://github.com/xdoer/PreQuest/blob/main/packages/miniprogram/src/index.ts">@prequest/miniprogram</a></p>
+<h3 id="拦截器">拦截器</h3>
+<p>拦截器是处理请求前参数和请求后的响应数据的一个工具。其实中间件模型也可以处理这样的功能，但为了方便习惯使用 axios 的用户，PreQuest 也提供了拦截器功能。</p>
+<p>封装</p>
+<pre><code class="language-ts">import { PreQuest } from '@prequest/core'
+import { InterceptorMiddleware } from '@prequest/interceptor'
+
+function adapter(opt) {
+  // ...some code
+}
+
+// 全局拦截器注册
+const interceptor = new InterceptorMiddleware()
+PreQuest.use(interceptor.run)
+PreQuest.interceptor = interceptor
+
+export function createPreQuest(opt) {
+  const instance = PreQuest.createInstance(adapter, opt)
+  // 实例拦截器
+  const interceptor = new InterceptorMiddleware()
+  instance.use(interceptor.run)
+  instance.interceptor = interceptor
+
+  return instance
+}
+</code></pre>
+<p>使用</p>
+<pre><code class="language-ts">const instance = createPreQuest()
+instance.interceptor.request.use(
+  opt =&gt; modify(opt),
+  e =&gt; handle(e)
+)
+</code></pre>
+<h3 id="graphql">GraphQL</h3>
+<p>GraphQL 请求实则是一个 http post 请求的语法糖</p>
+<pre><code class="language-ts">import { createPreQuest } from '@prequest/fetch'
+import { graphql } from '@prequest/graphql'
+
+const query = `
+  {
+    me {
+      name
+    }
+  }
+`
+// 传入一个 PreQuest 的实例
+const request = graphql(createPreQuest({ path: '/graphql' }))
+
+request(query, { name: 'prequest' }).then(res =&gt; console.log(res))
+</code></pre>
+<h2 id="todo">TODO</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-8400015"><label class="task-list-item-label" for="task-item-8400015"> 全局中间件</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-5244855"><label class="task-list-item-label" for="task-item-5244855"> 全局配置</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-1585267"><label class="task-list-item-label" for="task-item-1585267"> GraphQL 支持</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-1003589"><label class="task-list-item-label" for="task-item-1003589"> 小程序 适配器（支持各平台小程序、支持快应用）</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-2041610"><label class="task-list-item-label" for="task-item-2041610"> 完善 fetch 适配器</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-202917"><label class="task-list-item-label" for="task-item-202917"> 完善 xhr 适配器</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-3929522"><label class="task-list-item-label" for="task-item-3929522"> 完善 Node 端适配器</label></li>
 </ul>
-<h2 id="css-方式">CSS 方式</h2>
-<h3 id="方法一">方法一</h3>
-<p>很容易写下下面这些代码，缺点是固定高度，文字数量必须超过两行，当文字只有一行或两行时，都会显示末尾的省略号。且文字超过两行，末尾的省略号有可能遮挡住一半的字符。这样的效果不是我们想要的。</p>
-<pre><code class="language-css">.container {
-    position: 'relative';
-    width: 200px;
-    height: 40px;
-    line-height: 20px;
-    overflow: hidden;
-}
-.container::after {
-    content: '...';
-    display: 'block';
-    position: 'absolute';
-    right: 0;
-    bottom: 0;
-}
-</code></pre>
-<h3 id="方法二">方法二</h3>
-<p>CSS 处理的难点在于知道有没有换行，思考良久后无果，从网上找了找资料，发现一种很巧妙的办法。解决了一部分问题。</p>
-<p>该方法利用浮动元素特性实现。原理很简单，但想法很独特。下面给出一个限定两行的例子。</p>
-<h4 id="第一步创建如图布局">第一步：创建如图布局</h4>
-<figure data-type="image" tabindex="3"><img src="https://aiyou.life/post-images/1599306945438.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第一步</div>
-<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;baseline&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;text&quot;&gt;这是一段很长的文本这是一段很长的文本这是一段很长的文本这是一段很长的文本&lt;/div&gt;
-    &lt;div class=&quot;omit&quot;&gt;...&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<pre><code class="language-less">.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    .baseline {
-        float: left;
-        width: 20px;
-        height: 40px;
-        background: yellow;
-    }
-    .text {
-        float: right;
-        width: calc(100% - 20px);
-        background: blueviolet;
-        word-break: break-all;
-    }
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
-    }
-}
-</code></pre>
-<h4 id="第二步省略号归位">第二步：省略号归位</h4>
-<figure data-type="image" tabindex="4"><img src="https://aiyou.life/post-images/1599314322562.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第二步</div>
-<pre><code class="language-less">...
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
-        + position: relative;
-        + left: 100%;
-        + transform: translate(-100%, -100%);
-    }
-...
-</code></pre>
-<p>这里利用 position: relative 相对父元素将自己定位到了父元素的宽度外，之后利用 transform 向上向左移动了一个自己的宽高。当只有一行时，省略号移出了视线之外，当两行时，省略号回归了正确的位置。</p>
-<h4 id="第三步隐藏多余元素">第三步：隐藏多余元素</h4>
-<figure data-type="image" tabindex="5"><img src="https://aiyou.life/post-images/1599315200026.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第三步</div>
-<pre><code class="language-less">...
-.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    ++ overflow: hidden;
-    ...
-    .text {
-        float: right;
-        -- width: calc(100% - 20px);
-        ++ width: 100%;
-        ++ margin-left: -20px;
-        background: blueviolet;
-        word-break: break-all;
-    }
-...
-</code></pre>
-<p>这里使用 margin-left 为负，盖住了 baseline 元素。这样保证了基本布局不变，且达到了影藏无关元素的作用。由于在父元素中设定了 overflow: hidden, 清除浮动，所以父元素的背景颜色显示出来了。</p>
-<h4 id="局限性">局限性</h4>
-<figure data-type="image" tabindex="6"><img src="https://aiyou.life/post-images/1599316233622.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">局限</div>
-使用该种方式，局限在于固定高度。baseline 元素必须设定为固定高度，因而撑起了父元素的高度。
-<h4 id="注意">注意</h4>
-<ul>
-<li>container 元素中 maxHeight/Height 必须是 LineHeight 的整数倍。倍数表示限制几行</li>
-<li>container 元素中 maxHeight/Height 要与 baseline 元素的 height 保持一致</li>
-<li>baseline 元素宽度要与 emit 元素宽度保持一致</li>
-<li>emit 元素高度要为 container 元素的行高</li>
-</ul>
-<h4 id="应用案例">应用案例</h4>
-<figure data-type="image" tabindex="7"><img src="https://aiyou.life/post-images/1599318337342.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">指尖探案小程序评论</div>
-<p>对比App Store中的评论，可以看出我们的实现还是相对完美<br>
-<img src="https://aiyou.life/post-images/1599318937357.jpg" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">AppStore评论</div>
-<h2 id="参考">参考</h2>
-<p><a href="https://juejin.im/post/5dc15b35f265da4d432a3d10#heading-9">可能是最全的 “文本溢出截断省略” 方案合集</a></p>
 </div>
           </article>
           <div class="simple-share">
@@ -265,8 +262,8 @@ text-overflow: ellipsis；
             <div class="next">
               下一篇
             </div>
-            <a href="https://aiyou.life/post/-d73T0KeE/">
-              <h3 class="post-title">TS学习笔记</h3>
+            <a href="https://aiyou.life/post/ZSut5c_dE/">
+              <h3 class="post-title">Fower: 一个多平台原子类 CSS In JS 样式库</h3>
             </a>
           </div>
           
@@ -353,14 +350,14 @@ text-overflow: ellipsis；
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge "
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge "
+        class="badge secondary"
       >
         React
       </a>
@@ -374,21 +371,21 @@ text-overflow: ellipsis；
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge success"
+        class="badge "
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge secondary"
+        class="badge warning"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge warning"
+        class="badge "
       >
         博客
       </a>

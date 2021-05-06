@@ -2,13 +2,153 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-04-29T06:16:53.864Z</updated>
+    <updated>2021-05-06T08:03:28.349Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[PreQuest: 为你的 Http 提供模块化，可插拔的解决方案]]></title>
+        <id>https://aiyou.life/post/M4RcI3wfU/</id>
+        <link href="https://aiyou.life/post/M4RcI3wfU/">
+        </link>
+        <updated>2021-05-06T07:32:44.000Z</updated>
+        <summary type="html"><![CDATA[<p>是否有一种方式，从底向上的，针对不同的请求内核可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>是否有一种方式，从底向上的，针对不同的请求内核可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
+<!-- more -->
+<h2 id="前言">前言</h2>
+<p>最近想写一个可以适配多平台的请求库，在研究 xhr 和 fetch 发现二者的参数、响应、回调函数等差别很大。想到如果请求库想要抹平底层请求内核差异，需要统一的传参和响应格式，那么势必会在请求库内部做大量的判断，这样不但费时费力，还会屏蔽掉底层请求内核的特有功能。</p>
+<p>阅读 axios 和 umi-request 时源码时想到，请求库其实基本都包含了拦截器、中间件和快捷请求等几个通用的，与具体请求过程无关的功能。然后通过传参，让用户接触底层请求内核。问题在于，请求库内置多个底层请求内核，内核支持的参数是不一样的，上层库可能做一些处理，抹平一些参数的差异化，但对于底层内核的特有的功能，要么放弃，要么只能在参数列表中加入一些具体内核的特有的参数。比如在 axios 中，它的请求配置参数列表中，罗列了一些 <a href="https://axios-http.com/docs/req_config">browser only</a>的参数，那对于只需要在 node 环境中运行的 axios 来说，参数多少有些冗余，并且如果 axios 要支持其他请求内核(比如小程序)，那么参数冗余也将越来越大，扩展性也差。</p>
+<p>换个思路来想，既然实现一个适配多平台的统一的请求库有这些问题，那么是否可以从底向上的，针对不同的请求内核，提供一种方式可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
+<p><strong>PreQuest 就是这样一个项目。它可以基于不同的请求内核，提供一致的全局配置、中间件、快捷请求、拦截器等功能的体验。</strong></p>
+<h2 id="设计原理">设计原理</h2>
+<p>PreQuest 核心代码非常简单。它内置了经典的 koa 洋葱模型，并且为不同的请求方式提供了快捷入口，同时预留了一个底层内核的适配器接口，和适配器的配置入口。使用时，只需要传入一个适配器，就可以使用。</p>
+<p>为了最小化的不侵入开发者请求库的配置参数，PreQuest 没有内置诸如 baseURL, header 这样通用的配置项，但考虑到这些配置项大部分请求库都支持，因而 PreQuest 提供了 helper 包，来处理通用化配置。此外需要注意的是，PreQuest 考虑到开发者可能有在中间件修改请求路径和方式的需求，所以将由快捷请求<code>eg:request.get('/api')</code>产生的 <strong>path</strong> 和 <strong>method</strong> 两个字段混入到配置参数中。</p>
+<p>中间件模型可以满足大部分的业务需求，比如: 请求头添加 token，输入日志，错误处理，加解密请求等等。PreQuest 项目也会提供一些解决方案，开发者只需要安装对应的包，并将其注入到中间件模型中即可使用。</p>
+<h2 id="example">Example</h2>
+<p>以适配微信小程序平台为例。</p>
+<h3 id="小程序请求库">小程序请求库</h3>
+<p>首先看一下小程序平台请求 Demo。可以看到功能比较简陋，当你想做一些登录添加 Token，错误处理等功能，还要花一些时间去考虑和处理。</p>
+<pre><code class="language-ts">wx.request({
+  url: 'test.php',
+  data: {
+    x: '',
+    y: '',
+  },
+  header: {
+    'content-type': 'application/json',
+  },
+  success(res) {
+    console.log(res.data)
+  },
+})
+</code></pre>
+<p>使用 PreQuest 进行封装</p>
+<pre><code class="language-ts">import { PreQuest } from '@prequest/core'
+
+function adapter(opt) {
+  // 这里的 path 与 method 由 PreQuest 注入，也可以由用户传入覆盖
+  const { path, method, baseURL, ...options } = opt
+  const url = baseURL + path
+  return new Promise((resolve, reject) =&gt; {
+    wx.request({
+      ...options,
+      url,
+      method,
+      success: resolve,
+      fail: reject,
+    })
+  })
+}
+
+function createPreQuest(opt) {
+  return PreQuest.createInstance(adapter, opt)
+}
+</code></pre>
+<p>使用</p>
+<pre><code class="language-ts">// 全局配置项
+PreQuest.defaults.baseURL = 'http://localhost:3000'
+
+// 实例配置项
+const opt = { baseURL: 'http://localhost:3001' }
+const prequest = createPreQuest(opt)
+
+// 中间件
+prequest.use(async (ctx, next) =&gt; {
+  console.log(ctx.request) // 修改请求参数
+  await next()
+  console.log(ctx.response) // 拦截修改响应
+})
+
+// 调用
+prequest.request({ path: '/api', method: 'post', data: { a: 1 } })
+prequest.post('/api', { data: { a: 1 } })
+</code></pre>
+<p>实际上，如果 wx.request 方法由用户端传入的话，那么这个请求库可以适配绝大部分小程序框架，和一些类小程序框架(快应用)。详情请查阅<a href="https://github.com/xdoer/PreQuest/blob/main/packages/miniprogram/src/index.ts">@prequest/miniprogram</a></p>
+<h3 id="拦截器">拦截器</h3>
+<p>拦截器是处理请求前参数和请求后的响应数据的一个工具。其实中间件模型也可以处理这样的功能，但为了方便习惯使用 axios 的用户，PreQuest 也提供了拦截器功能。</p>
+<p>封装</p>
+<pre><code class="language-ts">import { PreQuest } from '@prequest/core'
+import { InterceptorMiddleware } from '@prequest/interceptor'
+
+function adapter(opt) {
+  // ...some code
+}
+
+// 全局拦截器注册
+const interceptor = new InterceptorMiddleware()
+PreQuest.use(interceptor.run)
+PreQuest.interceptor = interceptor
+
+export function createPreQuest(opt) {
+  const instance = PreQuest.createInstance(adapter, opt)
+  // 实例拦截器
+  const interceptor = new InterceptorMiddleware()
+  instance.use(interceptor.run)
+  instance.interceptor = interceptor
+
+  return instance
+}
+</code></pre>
+<p>使用</p>
+<pre><code class="language-ts">const instance = createPreQuest()
+instance.interceptor.request.use(
+  opt =&gt; modify(opt),
+  e =&gt; handle(e)
+)
+</code></pre>
+<h3 id="graphql">GraphQL</h3>
+<p>GraphQL 请求实则是一个 http post 请求的语法糖</p>
+<pre><code class="language-ts">import { createPreQuest } from '@prequest/fetch'
+import { graphql } from '@prequest/graphql'
+
+const query = `
+  {
+    me {
+      name
+    }
+  }
+`
+// 传入一个 PreQuest 的实例
+const request = graphql(createPreQuest({ path: '/graphql' }))
+
+request(query, { name: 'prequest' }).then(res =&gt; console.log(res))
+</code></pre>
+<h2 id="todo">TODO</h2>
+<ul class="contains-task-list">
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-8400015"><label class="task-list-item-label" for="task-item-8400015"> 全局中间件</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-5244855"><label class="task-list-item-label" for="task-item-5244855"> 全局配置</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-1585267"><label class="task-list-item-label" for="task-item-1585267"> GraphQL 支持</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" checked="" disabled="" type="checkbox" id="task-item-1003589"><label class="task-list-item-label" for="task-item-1003589"> 小程序 适配器（支持各平台小程序、支持快应用）</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-2041610"><label class="task-list-item-label" for="task-item-2041610"> 完善 fetch 适配器</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-202917"><label class="task-list-item-label" for="task-item-202917"> 完善 xhr 适配器</label></li>
+<li class="task-list-item"><input class="task-list-item-checkbox" disabled="" type="checkbox" id="task-item-3929522"><label class="task-list-item-label" for="task-item-3929522"> 完善 Node 端适配器</label></li>
+</ul>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Fower: 一个多平台原子类 CSS In JS 样式库]]></title>
         <id>https://aiyou.life/post/ZSut5c_dE/</id>
