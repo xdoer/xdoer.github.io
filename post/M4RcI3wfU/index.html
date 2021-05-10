@@ -8,7 +8,7 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1620560867562">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1620652899991">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -92,7 +92,7 @@
               2021-05-06 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge secondary"
+                class="badge "
               >
                 前端
               </a>
@@ -106,7 +106,7 @@
               
               <a
                 href="https://aiyou.life/tag/E75leUW9b/"
-                class="badge warning"
+                class="badge secondary"
               >
                 typescript
               </a>
@@ -309,6 +309,128 @@ interceptor.request.use(
 // 注册到中间中
 instance.use(interceptor.register)
 </code></pre>
+<h3 id="类型请求">类型请求</h3>
+<p>这里我把类似 <code>instance.get('/api')</code> 这样的请求叫做类型请求。库中集成类型请求的话，难免会对外部传入的adapter 函数的参数进行污染。因为需要为请求方式 <code>get</code> 和路径 <code>/api</code> 分配键名，并且将其混入到参数中，通常在中间件中会有修改路径的需求。</p>
+<p>实现很简单，只需要遍历 HTTP 请求类型，并将其挂在 this 下即可</p>
+<pre><code class="language-ts">class PreQuest {
+    constructor(private adapter) {
+        this.mount()
+    }
+    
+    // 挂载所有类型的别名请求
+    mount() {
+       methods.forEach(method =&gt; {
+           this[method] = (path, opt) =&gt; {
+             // 混入 path 和 method 参数
+             return this.request({ path, method, ...opt })
+           }
+       })
+    }
+    
+    // ...some code
+
+    request(opt) {
+        // ...some code
+    }
+}
+
+</code></pre>
+<h3 id="简单请求">简单请求</h3>
+<p>axios 中，可以直接使用下面这种形式进行调用</p>
+<pre><code class="language-ts">axios('http://localhost:3000/api').then(res =&gt; console.log(res))
+</code></pre>
+<p>我将这种请求方式称之为简单请求。</p>
+<p>我们这里怎么实现这种写法的请求方式呢？</p>
+<p>不使用 class ，使用传统函数类写法的话比较好实现，只需要判断函数是否是 new 调用，然后在函数内部执行不同的逻辑即可。</p>
+<p>demo 如下</p>
+<pre><code class="language-ts">function PreQuest() {
+    if(!(this instanceof PreQuest)) {
+        console.log('不是new 调用')
+        return // ...some code
+    }
+   
+   console.log('new调用') 
+   
+   //... some code
+}
+
+// new 调用
+const instance = new PreQuest(adapter)
+instance.get('/api').then(res =&gt; console.log(res))
+
+// 简单调用
+PreQuest('/api').then(res =&gt; console.log(res))
+</code></pre>
+<p>class 写法的话，不能进行函数调用。我们可以在 class 实例上做文章。</p>
+<p>首先初始化一个实例，看一下用法</p>
+<pre><code class="language-ts">const prequest = new PreQuest(adapter)
+
+prequest.get('http://localhost:3000/api')
+
+prequest('http://localhost:3000/api')
+</code></pre>
+<p>通过 new 实例化出来的是一个对象，对象是不能够当做函数来执行，所以不能用 new 的形式来创建对象。</p>
+<p>再看一下 axios 中生成实例的方法 <code>axios.create</code>, 可以从中得到灵感，如果 <code>.create</code> 方法返回的是一个函数，函数上挂上了所有 new 出来对象上的方法，这样的话，就可以实现我们的需求。</p>
+<p>简单设计一下:</p>
+<p>方式一: 拷贝原型上的方法</p>
+<pre><code class="language-ts">class PreQuest {
+
+    static create(adapter) {
+        const instance = new PreQuest(adapter)
+        
+        function inner(opt) {
+           return instance.request(opt)
+        }
+        
+        for(let key in instance) {
+            inner[key] = instance[key]
+        }
+        
+        return inner
+    }
+}
+</code></pre>
+<p><strong>注意: 在某些版本的 es 中，<code>for in</code> 循环遍历不出 class 生成实例原型上的方法。</strong></p>
+<p>方式二: 还可以使用 Proxy 代理一个空函数，来劫持访问。</p>
+<pre><code class="language-ts">class PreQuest {
+    
+    // ...some code
+
+    static create(adapter) {
+        const instance = new PreQuest(adapter)
+       
+        return new Proxy(function (){}, {
+          get(_, name) {
+            return Reflect.get(instance, name)
+          },
+          apply(_, __, args) {
+            return Reflect.apply(instance.request, instance, args)
+          },
+        })
+    }
+}
+</code></pre>
+<p>上面两种方法的缺点在于，通过 <code>create</code> 方法返回的将不再是 <code>PreQuest</code> 的实例，即</p>
+<pre><code class="language-ts">const prequest = PreQuest.create(adapter)
+
+prequest instanceof PreQuest  // false
+</code></pre>
+<p>个人目前还没有想到，判断 <code>prequest</code> 是不是 <code>PreQuest</code> 实例有什么用，并且也没有想到好的解决办法。有解决方案的请在评论里告诉我。</p>
+<p>使用 <code>.create</code> 创建 '实例' 的方式可能不符合直觉，我们还可以通过 Proxy 劫持 new 操作。</p>
+<p>Demo如下:</p>
+<pre><code class="language-ts">class InnerPreQuest {
+  create() {
+     // ...some code
+  }
+}
+
+const PreQuest = new Proxy(InnerPreQuest, {
+    construct(_, args) {
+        return () =&gt; InnerPreQuest.create(...args)
+    }
+})
+</code></pre>
+<p>在编写代码的过程中，我选择劫持了 <a href="(https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/core/src/index.ts#L44)"><code>adapter</code> 函数</a>，这产生了很多意想不到的效果。。。你可以思考几分钟，然后看一下<a href="https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/wrapper/README_zh-CN.md">这个文档</a>和<a href="https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/wrapper/src/index.ts">源码</a></p>
 <h2 id="实战">实战</h2>
 <p>以微信小程序为例。小程序中自带的 <code>wx.request</code> 并不好用。使用上面我们封装的代码，可以很容易的打造出一个小程序请求库。</p>
 <h3 id="封装小程序原生请求">封装小程序原生请求</h3>
@@ -329,7 +451,7 @@ instance.use(interceptor.register)
 
 </code></pre>
 <h3 id="调用">调用</h3>
-<pre><code class="language-ts">const instance = new PreQuest(adapter)
+<pre><code class="language-ts">const instance = PreQuest.create(adapter)
 
 // 中间件模式
 instance.use(async (ctx, next) =&gt; {
@@ -351,9 +473,52 @@ instance.interecptor.request.use(
 )
 
 instance.request({ path: '/api', baseURL: 'http://localhost:3000' })
+
+instance.get('http://localhost:3000/api')
+
+instance.post('/api', { baseURL: 'http://loclahost:3000' })
 </code></pre>
-<h3 id="其它">其它</h3>
-<p>获取 <code>wx.request</code> 请求实例、兼容多个小程序平台等请参阅 <a href="https://github.com/xdoer/PreQuest/tree/main/packages/miniprogram">@prequest/miniprogram</a></p>
+<h3 id="获取原生请求实例">获取原生请求实例</h3>
+<p>首先看一下在小程序中怎样中断请求</p>
+<pre><code class="language-ts">const request = wx.request({
+    // ...some code
+})
+
+request.abort()
+</code></pre>
+<p>使用我们封装的这一层，将拿不到原生请求实例。</p>
+<p>那么怎么办呢？我们可以从传参中入手</p>
+<pre><code class="language-ts">function adapter(opt) {
+    const { getWxInstance } = opt
+    
+    return new Promise(() =&gt; {
+        
+        getWxInstance(
+            wx.request(
+               // some code
+            )
+        )
+        
+    })
+}
+</code></pre>
+<p>用法如下:</p>
+<pre><code class="language-ts">const instance = PreQuest.create(adapter)
+
+let nativeRequest
+instance.post('http://localhost:3000/api', {
+    getWxInstance(instance) {
+      nativeRequest = instance
+    }
+})
+
+setTimeout(() =&gt; {
+    nativeRequest.abort()
+})
+</code></pre>
+<p>需要注意的是：因为 <code>wx.request</code> 的执行是在 n 个中间件、拦截器之后执行的，里面存在大量异步任务，所以通过上面拿到的 <code>nativeRequest</code> 只能在异步中执行。</p>
+<h3 id="兼容多平台小程序">兼容多平台小程序</h3>
+<p>查看了几个小程序平台和快应用，发现请求方式都是小程序的那一套，那其实我们完全可以将 <code>wx.request</code> 拿出来，创建实例的时候再传进去。</p>
 <h2 id="结语">结语</h2>
 <p>上面的内容中，我们基本实现了一个与请求内核无关的请求库，并且设计了两种拦截请求和响应的方式，我们可以根据自己的需求和喜好自由选择。</p>
 <p>这种内核装卸的方式非常容易扩展。当面对一个 axios 不支持的平台时，也不用费劲的去找开源好用的请求库了。我相信很多人在开发小程序的时候，基本都有去找 axios-miniprogram 的解决方案。通过我们的 PreQuest 项目，可以体验到类似 axios 的能力。</p>
@@ -394,7 +559,7 @@ instance.request({ path: '/api', baseURL: 'http://localhost:3000' })
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1620560867562"
+      src="https://aiyou.life/images/avatar.png?v=1620652899991"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -452,7 +617,7 @@ instance.request({ path: '/api', baseURL: 'http://localhost:3000' })
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge warning"
+        class="badge success"
       >
         前端
       </a>
@@ -466,35 +631,35 @@ instance.request({ path: '/api', baseURL: 'http://localhost:3000' })
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge success"
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge "
+        class="badge warning"
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge secondary"
+        class="badge "
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge warning"
+        class="badge secondary"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge secondary"
+        class="badge warning"
       >
         小程序
       </a>
