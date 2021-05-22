@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-05-10T13:21:42.691Z</updated>
+    <updated>2021-05-22T06:19:14.989Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -332,7 +332,6 @@ const PreQuest = new Proxy(InnerPreQuest, {
     }
 })
 </code></pre>
-<p>在编写代码的过程中，我选择劫持了 <a href="(https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/core/src/index.ts#L44)"><code>adapter</code> 函数</a>，这产生了很多意想不到的效果。。。你可以思考几分钟，然后看一下<a href="https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/wrapper/README_zh-CN.md">这个文档</a>和<a href="https://github.com/xdoer/PreQuest/blob/92e06ebbd384a51573dca9ef45feceb8d0cb8c47/packages/wrapper/src/index.ts">源码</a></p>
 <h2 id="实战">实战</h2>
 <p>以微信小程序为例。小程序中自带的 <code>wx.request</code> 并不好用。使用上面我们封装的代码，可以很容易的打造出一个小程序请求库。</p>
 <h3 id="封装小程序原生请求">封装小程序原生请求</h3>
