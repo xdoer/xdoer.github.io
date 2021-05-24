@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-05-22T06:19:14.989Z</updated>
+    <updated>2021-05-24T02:36:48.552Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -390,34 +390,32 @@ request.abort()
 <p>使用我们封装的这一层，将拿不到原生请求实例。</p>
 <p>那么怎么办呢？我们可以从传参中入手</p>
 <pre><code class="language-ts">function adapter(opt) {
-    const { getWxInstance } = opt
+    const { getNativeRequestInstance } = opt
+    
+    let resolvePromise: any
+    getNativeRequestInstance(new Promise(resolve =&gt; (resolvePromise = resolve)))
     
     return new Promise(() =&gt; {
-        
-        getWxInstance(
-            wx.request(
-               // some code
-            )
+        const nativeInstance = wx.request(
+           // some code
         )
         
+        resolvePromise(nativeInstance)
     })
 }
 </code></pre>
 <p>用法如下:</p>
 <pre><code class="language-ts">const instance = PreQuest.create(adapter)
 
-let nativeRequest
 instance.post('http://localhost:3000/api', {
-    getWxInstance(instance) {
-      nativeRequest = instance
+    getNativeRequestInstance(promise) {
+      promise.then(instance =&gt; {
+          instance.abort()
+      })
     }
 })
-
-setTimeout(() =&gt; {
-    nativeRequest.abort()
-})
 </code></pre>
-<p>需要注意的是：因为 <code>wx.request</code> 的执行是在 n 个中间件、拦截器之后执行的，里面存在大量异步任务，所以通过上面拿到的 <code>nativeRequest</code> 只能在异步中执行。</p>
+<p>需要注意的是：因为 <code>wx.request</code> 的执行是在 n 个中间件、拦截器之后执行的，里面存在大量异步任务，所以通过上面拿到的 <code>instance</code> 只能在异步中执行。</p>
 <h3 id="兼容多平台小程序">兼容多平台小程序</h3>
 <p>查看了几个小程序平台和快应用，发现请求方式都是小程序的那一套，那其实我们完全可以将 <code>wx.request</code> 拿出来，创建实例的时候再传进去。</p>
 <h2 id="结语">结语</h2>
