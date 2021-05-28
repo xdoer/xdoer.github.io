@@ -8,7 +8,7 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1621823803598">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622225327513">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -92,7 +92,7 @@
               2021-05-06 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge warning"
+                class="badge secondary"
               >
                 前端
               </a>
@@ -168,9 +168,7 @@ prequest.use(async (ctx, next) =&gt; {
 })
 </code></pre>
 <p>实现中间件基本模型？</p>
-<pre><code class="language-ts">const compose =  require('koa-compose')
-
-class Middleware {
+<pre><code class="language-ts">class Middleware {
     // 中间件列表
     cbs = []
     
@@ -182,8 +180,23 @@ class Middleware {
     
     // 执行中间件
     exec(ctx, next){
-        // 中间件执行细节不是重点，所以直接使用 koa-compose 库
-        return compose(this.cbs)(ctx, next)
+
+        let times = -1
+    
+        const dispatch = (pointer = 0): Promise&lt;any&gt; =&gt; {
+            if (cbs.length &lt; pointer) return Promise.resolve()
+
+            const fn = this.cbs[pointer] || next
+
+            if (pointer &lt;= times) throw new Error('next function only can be called once')
+             // 确保每个中间价中 next 方法只调用一次
+             times = pointer
+
+            // 洋葱模型
+             return fn(ctx, () =&gt; dispatch(++pointer))
+        }
+
+        return dispatch()
     }
 }
 </code></pre>
@@ -430,6 +443,101 @@ const PreQuest = new Proxy(InnerPreQuest, {
     }
 })
 </code></pre>
+<h3 id="请求锁">请求锁</h3>
+<p>如何实现在请求接口前，先拿到 token 再去请求？</p>
+<p>下面的例子中，页面同时发起多个请求</p>
+<pre><code class="language-ts">const prequest = PreQuest.create(adapter)
+
+prequest('/api/1').catch(e =&gt; e)     // auth fail
+prequest('/api/2').catch(e =&gt; e)    // auth fail
+prequest('/api/3').catch(e =&gt; e)    // auth fail
+</code></pre>
+<p>首先很容易想到，我们可以使用中间件为其添加 token</p>
+<pre><code class="language-ts">prequest.use(async (ctx, next) =&gt; {
+    ctx.request.headers['token'] = token
+    await next()
+})
+</code></pre>
+<p>但 token 值从何而来？token 需要请求接口得来，并且需要重新创建请求实例，以避免重新走添加 token 的中间件的逻辑。</p>
+<p>简单实现一下</p>
+<pre><code class="language-ts">const tokenRequest = PreQuest.create(adapter)
+
+let token = null
+prequest.use(async (ctx, next) =&gt; {
+    if(!token) {
+        token = await tokenRequest('/token')
+    }
+    ctx.request.headers['token'] = token
+    await next()
+})
+</code></pre>
+<p>这里使用了 token 变量，来避免每次请求接口，都去调接口拿 token。</p>
+<p>代码乍一看没有问题，但仔细一想，当同时请求多个接口，tokenRequest 请求还没有得到响应时，后面的请求又都走到这个中间件，此时 token 值为空，会造成多次调用 tokenRequest。那么如何解决这个问题？</p>
+<p>很容易想到，可以加个锁机制来实现</p>
+<pre><code class="language-ts">let token = null
+let pending = false
+prequest.use(async (ctx, next) =&gt; {
+    if(!token) {
+        if(pending) return
+        pending = true
+        token = await tokenRequest('/token')
+        pending = flase
+    }
+    ctx.request.headers['token'] = token
+    await next()
+})
+</code></pre>
+<p>这里我们加了 pending 来判断 tokenRequest 的执行，成功解决了 tokenRequest 执行多次的问题，但又引入了新的问题，在执行 tokenRequest 时，后面到来的请求应当怎么处理？上面的代码，直接 return 掉了，请求将被丢弃。实际上，我们希望，请求可以在这里暂停，当拿到 token 时，再请求后面的中间件。</p>
+<p>请求暂停，我们也可以很容想到使用 async、await 或者 promise 来实现。但在这里如何用呢？</p>
+<p>我从 axios 的 <a href="https://github.com/axios/axios/blob/e9965bfafc82d8b42765705061b9ebe2d5532493/lib/cancel/CancelToken.js#L17">cancelToken</a> 实现中得到了灵感。axios 中，利用 promise 简单实现了一个状态机，将 Promise 中的 resolve 赋值到外部局部变量，实现对 promise 流程的控制。</p>
+<p>简单实现一下</p>
+<pre><code class="language-ts">let token = null
+let pending = false
+let resolvePromise
+let promise = new Promise((resolve) =&gt; resolvePromise = resolve)
+
+prequest.use(async (ctx, next) =&gt; {
+    if(!token) {
+        if(pending) {
+            // promise 控制流程
+            await promise
+                .then(token =&gt; {
+                    ctx.request.headers['token'] = token
+                })
+                .then(() =&gt; next())
+        }
+        pending = true
+        token = await tokenRequest('/token')
+        // 调用 resolve，使得 promise 可以执行剩余的流程
+        resolvePromise(token)
+        pending = flase
+    } 
+
+    ctx.request.headers['token'] = token
+    await next()
+})
+</code></pre>
+<p>当执行 tokenRequest 时，其余请求的接口，都会进入到一个 promise 控制的流程中，当 token 得到后，通过外部 resolve, 控制 promise 继续执行，以此设置请求头，和执行剩余中间件。</p>
+<p>这种方式虽然实现了需求，但代码丑陋不美观。</p>
+<p>有没有一种简单方便的方式暂停和恢复请求？</p>
+<p>可以想这样一种调用方式。</p>
+<pre><code class="language-ts">let token = null
+prequest.use(async (ctx, next) =&gt; {
+    if(!token) {
+        // 暂停 prequest 中的所有请求
+        prequest.lock()
+        token = await tokenRequest('/token')
+        // 恢复请求
+        prequest.unlock()
+    } 
+
+    ctx.request.headers['token'] = token
+    await next()
+})
+</code></pre>
+<p>代码简洁明了且直观。</p>
+<p>那么怎么实现？我们可以在 prequest 对象中维持一个锁状态，通过 <code>lock</code> 和 <code>unlock</code> 方法切换状态。当 <code>lock</code> 时，中间件执行前添加一个 promise 状态机。<code>unlock</code> 时，resolve 状态机，使得下面中间件可继续执行。</p>
+<p><a href="https://github.com/xdoer/PreQuest/blob/e92f31172b266376359553df336d191a233aa2ac/packages/core/src/Middleware.ts#L22">代码</a></p>
 <h2 id="实战">实战</h2>
 <p>以微信小程序为例。小程序中自带的 <code>wx.request</code> 并不好用。使用上面我们封装的代码，可以很容易的打造出一个小程序请求库。</p>
 <h3 id="封装小程序原生请求">封装小程序原生请求</h3>
@@ -556,7 +664,7 @@ instance.post('http://localhost:3000/api', {
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1621823803598"
+      src="https://aiyou.life/images/avatar.png?v=1622225327513"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -614,35 +722,35 @@ instance.post('http://localhost:3000/api', {
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge "
+        class="badge success"
       >
         前端
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge success"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge warning"
+        class="badge secondary"
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge warning"
+        class="badge secondary"
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge "
+        class="badge success"
       >
         ReactNative
       </a>
@@ -656,14 +764,14 @@ instance.post('http://localhost:3000/api', {
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge "
+        class="badge secondary"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge secondary"
+        class="badge success"
       >
         博客
       </a>
