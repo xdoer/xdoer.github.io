@@ -7,173 +7,419 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622364485380">
 
-<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1600828932513">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 
 
-
-<!-- <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js" integrity="sha256-chlNFSVx3TdcQ2Xlw7SvnbLAavAQLO0Y/LBiWX04viY=" crossorigin="anonymous"></script>
-<!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.10/highlight.min.js" integrity="sha256-1zu+3BnLYV9LdiY85uXMzii3bdrkelyp37e0ZyTAQh0=" crossorigin="anonymous"></script> -->
-<!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/styles/default.min.css"> -->
-<script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.16.2/build/highlight.min.js"></script>
-
-<!-- <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" /> -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" integrity="sha256-GqiEX9BuR1rv5zPU5Vs2qS/NSHl1BJyBcjQYJ6ycwD4=" crossorigin="anonymous" />
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-151889564-1"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'UA-151889564-1');
-</script>
+<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
-    <div id="app" class="main">
+    <nav class="navbar border fixed split-nav">
+  <div class="nav-brand">
+    <h3><a href="https://aiyou.life">文享日志</a></h3>
+  </div>
+  <div class="collapsible">
+    <input id="collapsible1" type="checkbox" name="collapsible1">
+    <button>
+      <label for="collapsible1">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+      </label>
+    </button>
+    <div class="collapsible-body">
+      <ul class="inline">
+        
+          <li>
+            
+              <a href="/" class="menu">
+                首页
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/archives" class="menu">
+                归档
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/tags" class="menu">
+                标签
+              </a>
+            
+          </li>
+        
+          <li>
+            
+              <a href="/post/about" class="menu">
+                关于
+              </a>
+            
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
 
-      <div class="sidebar" :class="{ 'full-height': menuVisible }">
-  <div class="top-container" data-aos="fade-right">
-    <div class="top-header-container">
-      <a class="site-title-container" href="https://aiyou.life">
-        <img src="https://aiyou.life/images/avatar.png?v=1600828932513" class="site-logo">
-        <h1 class="site-title">文享日志</h1>
+
+    <div id="top" class="row site">
+      <div class="sm-12 md-8 col">
+        <div class="paper">
+  <article class="article">
+    <h2 class="article-title">
+      <a href="https://aiyou.life/post/aanhFpuGI/">TS中函数传参绕过编译器检查的探究</a>
+    </h2>
+    <p class="article-meta">
+      2019-11-05
+      
+        <a href="https://aiyou.life/tag/E75leUW9b/" class="badge ">
+          typescript
+        </a>
+      
+    </p>
+    <p class="text-lead">
+      <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
+
+    </p>
+    <div class="row">
+      <a href="https://aiyou.life/post/aanhFpuGI/" class="readmore-link">
+        <button>
+          Read More
+        </button>
       </a>
-      <div class="menu-btn" @click="menuVisible = !menuVisible">
-        <div class="line"></div>
+    </div>
+  </article>
+
+</div>
+
+        <div class="row flex-edges">
+  
+    <a href="https://aiyou.life/" class="paper-btn">
+      上一页
+    </a>
+  
+  
+</div>
+
       </div>
-    </div>
-    <div>
-      
-        
-          <a href="/" class="site-nav">
-            首页
-          </a>
-        
-      
-        
-          <a href="/archives" class="site-nav">
-            归档
-          </a>
-        
-      
-        
-          <a href="/tags" class="site-nav">
-            标签
-          </a>
-        
-      
-        
-          <a href="/post/about" class="site-nav">
-            关于
-          </a>
-        
-      
-    </div>
-  </div>
-  <div class="bottom-container" data-aos="flip-up" data-aos-offset="0">
+
+      <div class="sm-12 md-4 col sidebar">
+  <div class="paper info-container">
+    <img
+      src="https://aiyou.life/images/avatar.png?v=1622364485380"
+      class="no-responsive avatar"
+    />
+    <div class="text-muted"></div>
     <div class="social-container">
+       
+      <a href="https://github.com/xdoer" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+               
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      最新文章
+    </div>
+    <div class="row">
+      <ul>
+         
+        <li>
+          <a href="https://aiyou.life/post/_4XYWTWTx/">想到的一些很好的面试题</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/M4RcI3wfU/">由封装一个请求库所想到的</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/ZSut5c_dE/">Fower: 一个多平台原子类 CSS In JS 样式库</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/FkN_iGcYQ/">Taro小程序开发提升效率的几点分享-路由篇</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/FEu-GtOkz/">ReactNative渐进式图片加载</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/qo35dDzbQ/">多行文本溢出省略</a>
+        </li>
+          
+        <li>
+          <a href="https://aiyou.life/post/-d73T0KeE/">TS学习笔记</a>
+        </li>
+                         
+      </ul>
+    </div>
+  </div>
+  <div class="paper">
+    <div class="sidebar-title">
+      标签列表
+    </div>
+    <div class="row">
       
-        
-          <a class="social-link" href="https://github.com/LuckyHH" target="_blank">
-            <i class="fab fa-github"></i>
-          </a>
-        
+      <a
+        href="https://aiyou.life/tag/TDgBvCzI8/"
+        class="badge secondary"
+      >
+        javascript
+      </a>
       
-        
+      <a
+        href="https://aiyou.life/tag/K1r5vpFd_/"
+        class="badge "
+      >
+        前端
+      </a>
       
-        
+      <a
+        href="https://aiyou.life/tag/g_6wyy_ol/"
+        class="badge "
+      >
+        网络
+      </a>
       
-        
+      <a
+        href="https://aiyou.life/tag/E75leUW9b/"
+        class="badge success"
+      >
+        typescript
+      </a>
       
-        
+      <a
+        href="https://aiyou.life/tag/rSf0tu2pz/"
+        class="badge success"
+      >
+        React
+      </a>
+      
+      <a
+        href="https://aiyou.life/tag/jp41-NU1u/"
+        class="badge warning"
+      >
+        ReactNative
+      </a>
+      
+      <a
+        href="https://aiyou.life/tag/TfrzxMzWY/"
+        class="badge secondary"
+      >
+        小程序
+      </a>
+      
+      <a
+        href="https://aiyou.life/tag/X7Cdzy-Hu/"
+        class="badge success"
+      >
+        博客
+      </a>
       
     </div>
-    <div class="site-description">
-      
-    </div>
-    <div class="site-footer">
-      Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | <a class="rss" href="https://aiyou.life/atom.xml" target="_blank">RSS</a>
-    </div>
+  </div>
+  <div class="paper">
+    Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> |
+    <a class="rss" href="https://aiyou.life/atom.xml" target="_blank"
+      >RSS</a
+    >
   </div>
 </div>
 
+    </div>
+    <div><style>
+  .prev-mask {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+  .img-container {
+    width: 80%;
+  }
+</style>
 
-      <div class="main-container">
-        <div class="content-container" data-aos="fade-up">
-          
-            <article class="post-item">
-              <div class="left">
-                <a href="https://aiyou.life/post/aanhFpuGI/">
-                  <h2 class="post-title">TS中函数传参绕过编译器检查的探究</h2>
-                </a>
-                <div class="post-date">
-                  2019-11-05
-                </div>
-                <div class="post-abstract">
-                  <p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
+<div class="prev-mask">
+  <div class="img-container">
+    <div class="img-close">
+      <img class="img-big" />
+    </div>
+  </div>
+</div>
+<script>
+  // 点击文章内部图片查看大图
+  const contentImagesEles = [...document.querySelectorAll('.post-content img')]
+  const maskEle = document.querySelector('prev-mask')
+  const containerEle = document.querySelector('image-container')
+  const imgCloseEle = document.querySelector('img-close')
+  const imgBigEle = document.querySelector('img-big')
 
-                </div>
-              </div>
-              
-                <a class="right" href="https://aiyou.life/post/aanhFpuGI/">
-                  <div class="feature-container" style="background-image: url('https://aiyou.life/post-images/aanhFpuGI.png')">
-                  </div>
-                </a>
-              
-            </article>
-          
+  contentImagesEles.forEach((ele) => {
+    ele.addEventListener('click', () => {
+      const { currentSrc } = ele
+      imgBigEle.attributes.currentSrc = currentSrc
+      mask.style.display = 'block'
+    })
+  })
 
-          <div class="pagination-container">
-  
-    <a href="https://aiyou.life/" class="prev"><i class="icon-arrow-ios-back-outline"></i> 上一页</a>
-  
-  
+  imgCloseEle.addEventListener('click', () => {
+    mask.style.display = 'none'
+  })
+</script>
 </div>
 
-        </div>
-      </div>
-    </div>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 
-    <!-- <script src="https://unpkg.com/aos@next/dist/aos.js"></script> -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
 <script type="application/javascript">
+  AOS.init()
 
-AOS.init();
+  hljs.initHighlightingOnLoad()
+</script>
 
-hljs.initHighlightingOnLoad()
+<script type="application/javascript">
+  // 一言
+  function oneWord(element) {
+    if (!element) return
+    const xhr = new XMLHttpRequest()
+    xhr.open('get', 'https://v1.hitokoto.cn/')
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        element.innerText = JSON.parse(xhr.responseText).hitokoto
+      }
+    }
+    xhr.send()
+  }
+  oneWord(document.querySelector('.text-muted'))
+</script>
 
-var app = new Vue({
-  el: '#app',
-  data: {
-    menuVisible: false,
-  },
-})
+<script type="application/javascript">
+  // 分享
+  var SimpleShare = function (options) {
+    // get share content
+    options = options || {}
+    var url = options.url || window.location.href
+    var title = options.title || document.title
+    var content = options.content || ''
+    var pic = options.pic || ''
 
-function oneWord(element) {
-  const xhr = new XMLHttpRequest();
-  xhr.open('get', 'https://v1.hitokoto.cn/');
-  xhr.onreadystatechange = function () {
-    if (xhr.readyState === 4) {
-      element.innerText = JSON.parse(xhr.responseText).hitokoto;
+    // fix content format
+    url = encodeURIComponent(url)
+    title = encodeURIComponent(title)
+    content = encodeURIComponent(content)
+    pic = encodeURIComponent(pic)
+
+    // share target url
+    var qzone =
+      'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url={url}&title={title}&pics={pic}&summary={content}'
+    var weibo =
+      'http://service.weibo.com/share/share.php?url={url}&title={title}&pic={pic}&searchPic=false'
+    var tqq =
+      'http://share.v.t.qq.com/index.php?c=share&a=index&url={url}&title={title}&appkey=801cf76d3cfc44ada52ec13114e84a96'
+    var renren =
+      'http://widget.renren.com/dialog/share?resourceUrl={url}&srcUrl={url}&title={title}&description={content}'
+    var douban =
+      'http://www.douban.com/share/service?href={url}&name={title}&text={content}&image={pic}'
+    var facebook =
+      'https://www.facebook.com/sharer/sharer.php?u={url}&t={title}&pic={pic}'
+    var twitter = 'https://twitter.com/intent/tweet?text={title}&url={url}'
+    var linkedin =
+      'https://www.linkedin.com/shareArticle?title={title}&summary={content}&mini=true&url={url}&ro=true'
+    var weixin = 'http://qr.topscan.com/api.php?text={url}'
+    var qq =
+      'http://connect.qq.com/widget/shareqq/index.html?url={url}&desc={title}&pics={pic}'
+
+    // replace content functions
+    function replaceAPI(api) {
+      api = api.replace('{url}', url)
+      api = api.replace('{title}', title)
+      api = api.replace('{content}', content)
+      api = api.replace('{pic}', pic)
+
+      return api
+    }
+
+    // share target
+    this.qzone = function () {
+      window.open(replaceAPI(qzone))
+    }
+    this.weibo = function () {
+      window.open(replaceAPI(weibo))
+    }
+    this.tqq = function () {
+      window.open(replaceAPI(tqq))
+    }
+    this.renren = function () {
+      window.open(replaceAPI(renren))
+    }
+    this.douban = function () {
+      window.open(replaceAPI(douban))
+    }
+    this.facebook = function () {
+      window.open(replaceAPI(facebook))
+    }
+    this.twitter = function () {
+      window.open(replaceAPI(twitter))
+    }
+    this.linkedin = function () {
+      window.open(replaceAPI(linkedin))
+    }
+    this.qq = function () {
+      window.open(replaceAPI(qq))
+    }
+    this.weixin = function (callback) {
+      if (!callback) {
+        window.open(replaceAPI(weixin))
+      } else {
+        callback(replaceAPI(weixin))
+      }
     }
   }
-  xhr.send();
-}
-oneWord(document.querySelector('.site-description'))
+  var share = new SimpleShare()
 </script>
 
 
+<script>
+  // 点击文章内部图片查看大图
+  const contentImagesEles = [...document.querySelectorAll('.post-content img')]
+  const maskEle = document.querySelector('prev-mask')
+  const containerEle = document.querySelector('image-container')
+  const imgCloseEle = document.querySelector('img-close')
+  const imgBigEle = document.querySelector('img-big')
 
+  contentImagesEles.forEach((ele) => {
+    ele.addEventListener('click', () => {
+      const { currentSrc } = ele
+      imgBigEle.attributes.currentSrc = currentSrc
+      mask.style.display = 'block'
+    })
+  })
+
+  imgCloseEle.addEventListener('click', () => {
+    mask.style.display = 'none'
+  })
+</script>
 
   </body>
 </html>
