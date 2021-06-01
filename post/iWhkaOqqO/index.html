@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>多行文本溢出省略 |
+<title>写一个倒计时😢？ |
     文享日志</title>
 <meta name="description" content="">
 
@@ -87,167 +87,280 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>多行文本溢出省略</h1>
+            <h1>写一个倒计时😢？</h1>
             <p class="article-meta">
-              2020-09-05 
+              2021-06-01 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge success"
+                class="badge "
               >
                 前端
               </a>
               
             </p>
             
-            <img src="https://aiyou.life/post-images/qo35dDzbQ.jpeg" alt="多行文本溢出省略" />
-            
-            <div class="post-content"><p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
+            <div class="post-content"><p>如何写一个高性能、易扩展、易用的计时器？</p>
 <!-- more -->
-<h1 id="单行文本省略">单行文本省略</h1>
-<p>单行文本省略较为简单，且兼容性较好。</p>
-<p>要实现单行文本省略，下面CSS属性缺一不可</p>
-<pre><code class="language-css">width: 100px;  // 固定宽度
-overflow: hidden;   // 溢出隐藏
-white-space: nowrap;    // 文字不换行
-text-overflow: ellipsis;    // 文字溢出截断
+<p>某日，接到了产品需求，说要加一个抢购列表页面，列表中每一项要加一个抢购倒计时，没多想，使用 <code>setInterval</code> 快速实现了。</p>
+<p>随着列表中项目越来越多，各个项目的倒计时越来越不准，且页面变的越来越卡。</p>
+<p>其实很容易想到，n 多个 <code>setInterval</code> 实例同时运行，阻塞了 JS 线程，导致页面越来越卡，计时器计时出现了偏差。那么如何用一个 <code>setInterval</code> 实例，进行多个倒计时呢?</p>
+<p>首先看一下 <code>setInterval</code> 用法:</p>
+<pre><code class="language-ts">setInterval(() =&gt; {
+    // callback
+}, 1000)
 </code></pre>
-<h1 id="多行文本省略">多行文本省略</h1>
-<p>当接到这个需求的时候，考虑到我们产品运行在微信小程序，而小程序在IOS和安卓平台都是用了webkit内核, 因而下面的代码应当在两个平台都可以很好运行。</p>
-<p>webkit 内核的浏览器可以原生实现多行文本溢出省略。</p>
-<pre><code class="language-css">display: -webkit-box；
--webkit-box-orient: vertical;
--webkit-line-clamp: 2;
-overflow: hidden；
-text-overflow: ellipsis；
-</code></pre>
-<p>然而事实并非如此。实际上面代码在安卓可以运行，但在IOS下则空白。<br>
-<img src="https://aiyou.life/post-images/1599296417880.png" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">line-clamp兼容性</div>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599295340251.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">微信小程序运行环境</div>
-<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599296818625.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">IOS WkWebView 基于 Webkit</div>
-<p>找了半天资料，也没有找到原因。猜想可能 WkWebView 中的 webkit 版本太低的缘故。</p>
-<p>既然上面的代码不能使用，只能尝试其他办法。</p>
-<h2 id="js-方式">JS 方式</h2>
-<p>JS计算裁剪的方式被排除了</p>
-<ul>
-<li>第一，这有悖于行为与展示相分离的理念</li>
-<li>第二，要考虑汉字，英文字母，图标，全角半角符号等才能相对准确算出文字占用几行，要不要裁切</li>
-<li>第三，我们的使用场景中要解析富文本，对于HTML标签，链接地址等要考虑的较多，实现方案较为复杂</li>
-</ul>
-<h2 id="css-方式">CSS 方式</h2>
-<h3 id="方法一">方法一</h3>
-<p>很容易写下下面这些代码，缺点是固定高度，文字数量必须超过两行，当文字只有一行或两行时，都会显示末尾的省略号。且文字超过两行，末尾的省略号有可能遮挡住一半的字符。这样的效果不是我们想要的。</p>
-<pre><code class="language-css">.container {
-    position: 'relative';
-    width: 200px;
-    height: 40px;
-    line-height: 20px;
-    overflow: hidden;
-}
-.container::after {
-    content: '...';
-    display: 'block';
-    position: 'absolute';
-    right: 0;
-    bottom: 0;
-}
-</code></pre>
-<h3 id="方法二">方法二</h3>
-<p>CSS 处理的难点在于知道有没有换行，思考良久后无果，从网上找了找资料，发现一种很巧妙的办法。解决了一部分问题。</p>
-<p>该方法利用浮动元素特性实现。原理很简单，但想法很独特。下面给出一个限定两行的例子。</p>
-<h4 id="第一步创建如图布局">第一步：创建如图布局</h4>
-<figure data-type="image" tabindex="3"><img src="https://aiyou.life/post-images/1599306945438.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第一步</div>
-<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;baseline&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;text&quot;&gt;这是一段很长的文本这是一段很长的文本这是一段很长的文本这是一段很长的文本&lt;/div&gt;
-    &lt;div class=&quot;omit&quot;&gt;...&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<pre><code class="language-less">.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    .baseline {
-        float: left;
-        width: 20px;
-        height: 40px;
-        background: yellow;
+<p>如果在 <code>setInterval</code> 中执行多个回调函数，那么就可以实现我们的需求。</p>
+<p>简单实现一下:</p>
+<pre><code class="language-ts">class Timer {
+    private timerId
+    private cbs = []
+    private cbId = 0
+
+    constructor(delay) {
+        this.delay = delay
     }
-    .text {
-        float: right;
-        width: calc(100% - 20px);
-        background: blueviolet;
-        word-break: break-all;
+
+    private start() {
+        this.timerId = setInterval(() =&gt; {
+            this.cbs.forEach(item =&gt; {
+                item.cb()
+            })
+        }, this.delay)
     }
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
+
+    private stop() {
+        clearInterval(this.timerId)
+    }
+
+    add(cb) {
+        const id = this.cbId++
+        this.cbs.push({ cb, id })
+        if(!this.timerId) this.start()
+        return id
+    }
+
+    remove(cbId) {
+        const cbIdx = this.cbs.findIndex(({ id }) =&gt; id === cbId)
+        this.cbs.splice(cbIdx, 1)
+        if(!this.cbs.length) this.stop()
     }
 }
 </code></pre>
-<h4 id="第二步省略号归位">第二步：省略号归位</h4>
-<figure data-type="image" tabindex="4"><img src="https://aiyou.life/post-images/1599314322562.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第二步</div>
-<pre><code class="language-less">...
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
-        + position: relative;
-        + left: 100%;
-        + transform: translate(-100%, -100%);
-    }
-...
+<p>使用时，只需要 new 一个 Timer 实例，在需要倒计时的地方，通过 add 添加回调函数即可自动启动计时器，删除时，调用 remove 方法，删除完所有注册的回调函数，计时器自动停止。</p>
+<pre><code class="language-ts">const timer = new Timer()
+
+const timerId = timer.add(() =&gt; {})
+timer.remove(timerId)
 </code></pre>
-<p>这里利用 position: relative 相对父元素将自己定位到了父元素的宽度外，之后利用 transform 向上向左移动了一个自己的宽高。当只有一行时，省略号移出了视线之外，当两行时，省略号回归了正确的位置。</p>
-<h4 id="第三步隐藏多余元素">第三步：隐藏多余元素</h4>
-<figure data-type="image" tabindex="5"><img src="https://aiyou.life/post-images/1599315200026.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第三步</div>
-<pre><code class="language-less">...
-.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    ++ overflow: hidden;
-    ...
-    .text {
-        float: right;
-        -- width: calc(100% - 20px);
-        ++ width: 100%;
-        ++ margin-left: -20px;
-        background: blueviolet;
-        word-break: break-all;
-    }
-...
+<p>改造后的倒计时性能无疑好了许多，页面不再卡顿。但是倒计时还是越来越不准，setInterval 函数会将回调函数间隔插入 JS 线程中，但线程如果正在执行耗时任务，插入的回调函数将偏移其应当在的位置。</p>
+<p>使用递归 <code>setTimeout</code> ，不断修正将回调函数插入线程的时间，即可获得相对准确的倒计时。</p>
+<p>简单实现一下:</p>
+<pre><code class="language-ts">let count = 0 // 递归次数
+let now = Date.now() // 初始执行时间
+
+function countdown() {
+    const offset = Date.now() - (now + count * 1000)
+    const nextTime = 1000 - offset
+    count++
+
+    setTimeout(() =&gt; {
+        countdown()
+    }, nextTime)
+}
+countdown()
 </code></pre>
-<p>这里使用 margin-left 为负，盖住了 baseline 元素。这样保证了基本布局不变，且达到了影藏无关元素的作用。由于在父元素中设定了 overflow: hidden, 清除浮动，所以父元素的背景颜色显示出来了。</p>
-<h4 id="局限性">局限性</h4>
-<figure data-type="image" tabindex="6"><img src="https://aiyou.life/post-images/1599316233622.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">局限</div>
-使用该种方式，局限在于固定高度。baseline 元素必须设定为固定高度，因而撑起了父元素的高度。
-<h4 id="注意">注意</h4>
-<ul>
-<li>container 元素中 maxHeight/Height 必须是 LineHeight 的整数倍。倍数表示限制几行</li>
-<li>container 元素中 maxHeight/Height 要与 baseline 元素的 height 保持一致</li>
-<li>baseline 元素宽度要与 emit 元素宽度保持一致</li>
-<li>emit 元素高度要为 container 元素的行高</li>
-</ul>
-<h4 id="应用案例">应用案例</h4>
-<figure data-type="image" tabindex="7"><img src="https://aiyou.life/post-images/1599318337342.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">指尖探案小程序评论</div>
-<p>对比App Store中的评论，可以看出我们的实现还是相对完美<br>
-<img src="https://aiyou.life/post-images/1599318937357.jpg" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">AppStore评论</div>
-<h2 id="参考">参考</h2>
-<p><a href="https://juejin.im/post/5dc15b35f265da4d432a3d10#heading-9">可能是最全的 “文本溢出截断省略” 方案合集</a></p>
+<p>这里我们记录了初始执行时间，和 countdown 递归执行的次数，根据这两者，我们可以计算出偏移时间和下次 <code>setTimeout</code> 的时间。</p>
+<p>改造后，虽然倒计时准确了许多。但，又回到了上面的问题，列表项越多， <code>setTimeout</code> 实例越多，页面也会越来越卡。</p>
+<p>我们可以使用 <code>setTimeout</code> 模拟 <code>setinterval</code>，并将其替换到上面我们的 <code>Timer</code> 类中。即可解决问题。</p>
+<pre><code class="language-ts">function setTimeoutInterval(cb, interval = 1000) {
+  let count = 0
+  let now = Date.now()
+  let timerId = null
+
+  function countdown() {
+    const offset = Date.now() - (now + count * interval)
+    const nextTime = interval - offset
+    count++
+
+    cb(timerId)
+
+    timerId = setTimeout(() =&gt; {
+      countdown()
+    }, nextTime)
+  }
+
+  countdown()
+}
+</code></pre>
+<p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传入。</p>
+<p>用法如下:</p>
+<pre><code class="language-ts">let i = 0
+setTimeoutInterval((timerId) =&gt; {
+    if(i++ &lt; 10) {
+        console.log(i)
+    } else {
+        clearTimeout(timerId)
+    }
+}, 1000)
+</code></pre>
+<p>将其替换到 <code>Timer</code> 类中</p>
+<pre><code class="language-ts">class Timer {
+    // some code
+    private start() {
+        setTimeoutInterval((timerId) =&gt; {
+            this.timerId = timerId
+            this.cbs.forEach(item =&gt; {
+                item.cb()
+            })
+        }, 1000)
+    }
+    // some code
+}
+</code></pre>
+<p>改造后的倒计时性能良好，且因为只有一个计时实例，页面也不会卡顿。</p>
+<p>对于一些秒杀抢购场景，这种倒计时是有问题的，因为本地时间与服务器时间有偏差，如果抢购单纯由前端倒计时来控制，那么很容易出现用户修改本机时间，页面就出现了购买按钮可以直接购买的 bug。由本地计时引起的 bug，在目前市面上的 APP 上很常见，除了抢购场景外，接口防重放机制中会校验客户端请求携带的时间戳，通常约定，如果客户端请求的时间戳与服务端时间偏差在 60s 之外，则该请求无效，所以在修改本机时间后，打开某些 APP，会看到空白页面。</p>
+<p>解决办法很简单。</p>
+<p>打开应用后，首先将客户端与服务端的偏移时间存到本地，秒杀倒计时的时候，将偏移时间加上即可。这样的话，无论客户端时间是提前还是之后，都对应用没有影响。</p>
+<p>简单写个 demo:</p>
+<pre><code class="language-ts">// 首先获取偏移时间
+prequest('/api').then(res =&gt; {
+    // nginx 服务器，可以从响应头拿到时间
+    const date = res.headers.Date
+    const offsetTime = Date.now() - new Date(date).getTime()
+    localStorage.setItem('offsetTime', offsetTime)
+})
+
+// 封装获取时间方法
+function getNow() {
+    const offset = localStorage.getItem('offsetTime)
+    return Date.now() + Number.parseInt(offset)
+}
+</code></pre>
+<p>回到我们的计时器代码，只需要将其中的 <code>Date.now()</code> 方法替换成 这里的 <code>getNow()</code> 即可。</p>
+<p>到目前为止，上面的代码已经可以应对大部分计时场景，但对于秒杀场景来说，本地运行的倒计时可能还是不够可靠，可以设计间歇性请求接口获取服务端时间，更新倒计时，来获得更高计时精确度。</p>
+<p>首先大致设计获取服务端时间方法</p>
+<pre><code class="language-ts">async function getServerTime() {
+    const start = Date.now()    // 开启请求时间
+    const serverTime = await prequest('/api').then(res =&gt; ...)
+    const endTime = Date.now()
+    return serverTime + (endTime - startTime) / 2
+}
+</code></pre>
+<p>这里考虑了请求网络消耗的时间。</p>
+<p>其次考虑我们倒计时，当每次拿到服务端时间后，加上 <code>interval</code> 时间，判断是否和目标时间相等即可。</p>
+<p>demo如下</p>
+<pre><code class="language-ts">let now = Date.now()
+let interval = 1000
+setInterval(() =&gt; {
+    if (now + interval &gt;=  endTime) {
+        // some code
+    }
+}, interval)
+
+setInterval(() =&gt; {
+    getServerTime(res).then(res =&gt; now = res)
+}, 5000)
+</code></pre>
+<p>这里我们维护了两个计时器，一个负责请求接口更新 <code>now</code> 数据，一个进行正常倒计时，写我们的业务逻辑。</p>
+<p>当有 n 多个这样的倒计时实例，代码将不可维护。可以改造一下代码，使用类似事件发布订阅的模式来解决这个问题。</p>
+<p>首先实现一个 <code>manager</code> 来实现事件发布订阅的逻辑</p>
+<pre><code class="language-ts">class CountDowmManager {
+    queue = []
+    tiemrId = null
+
+    constructor({ getRemoteDate, interval }) {
+        this.getRemoteDate = getRemoteDate
+        this.interval = interval
+    }
+
+    private start() {
+        this.timerId = timer.add(() =&gt; {
+            this.getNow()
+        }, this.interval)
+    }
+
+    private stop() {
+        timer.remove(this.timerId)
+    }
+
+    on (countdown) {
+        this.queue.push(countdown)
+        if(!this.timerId) this.start()
+    }
+
+    off(countdown) {
+        this.queue.splice(this.queue.findIndex(i =&gt; i === countdown), 1)
+        if(!this.queue.length) this.stop()
+    }
+
+    private async getNow() {
+        try {
+            const start = Date.now()
+            const nowStr = await this.opt.getRemoteDate()
+            const end = Date.now()
+            this.queue.forEach((instance) =&gt; (instance.now = new Date(nowStr).getTime() + (end - start) / 2)
+        } catch (e) {
+            console.log('fix time fail', e)
+        }
+    }
+}
+</code></pre>
+<p>在 <code>CountDownManager</code> 类中，维护了一个 <code>countdown</code> 实例的队列，每隔 <code>interval</code> 个时间，会请求接口，更新所有实例的 <code>now</code> 值。同时设计将获取服务器时间的函数由参数传入，已满足不同场景的不同需求。</p>
+<p>接着，设计倒计时</p>
+<pre><code class="language-ts">class CountDown {
+    now = Date.now()
+    timerId = null
+
+   // ... some code
+    start() {
+        this.timerId = timer.add(() =&gt; {
+            this.now += interval
+
+            if (this.now &gt;= endTime) {
+                // some code
+                return
+            }
+        })
+    }
+
+    // some code
+}
+</code></pre>
+<p>用法如下:</p>
+<pre><code class="language-ts">const manager = new CountDownManager()
+
+const instance1 = new CountDown()
+const instance2 = new CountDown()
+
+manager.on(instance1) 
+manager.on(instance2)
+</code></pre>
+<p>上面的 <code>CounDown</code>  代码中，只考虑了使用 <code>server</code> 更新时间的场景，其实我们也可以将上面使用本地时间进行的倒计时，整合到 <code>countDown</code> 类中。其次，可以设计将 <code>manager</code> 作为参数，传入到 <code>countdown</code> 实例，这样做的好处在于，我们不需要手动的注册和移除 <code>countdown</code> 实例，将 <code>managr</code> 当参数传入，在初始化实例时，就可以自动将当前实例注册；当倒计时结束，自动将当前实例移除。我们还可以根据是否传入 <code>manager</code> 来判断是否需要使用服务端来更新时间。</p>
+<p>改造一下代码</p>
+<pre><code class="language-ts">class CountDown() {
+
+    constructor({ manager, ...opt }) {
+        this.manager = manager
+        manager ? this.useServerToCountDown(...opt) : this.useLocalToCountDown(...opt)
+    }
+
+    useServerToCountDown() {
+        // ...some code
+        this.manager.on(this)
+    }
+
+    // ...some code
+
+    clear() {
+        timer.clear(this.timer)
+        if(this.manager) {
+            this.manager.off(this)
+        }
+    }
+}
+</code></pre>
+<p>至此，我们就完成了一个高性能，好扩展，易用的计时器了。</p>
+<p>完整代码请查阅 <a href="https://github.com/xdoer/CountDown">CountDown</a></p>
 </div>
           </article>
           <div class="simple-share">
@@ -265,8 +378,8 @@ text-overflow: ellipsis；
             <div class="next">
               下一篇
             </div>
-            <a href="https://aiyou.life/post/-d73T0KeE/">
-              <h3 class="post-title">TS学习笔记</h3>
+            <a href="https://aiyou.life/post/_4XYWTWTx/">
+              <h3 class="post-title">想到的一些很好的面试题</h3>
             </a>
           </div>
           
@@ -362,21 +475,21 @@ text-overflow: ellipsis；
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge secondary"
+        class="badge success"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge "
+        class="badge warning"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge "
+        class="badge secondary"
       >
         typescript
       </a>
