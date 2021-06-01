@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-01T14:03:35.676Z</updated>
+    <updated>2021-06-01T14:05:44.909Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -23,13 +23,13 @@
 <p>随着列表中项目越来越多，各个项目的倒计时越来越不准，且页面变的越来越卡。</p>
 <p>其实很容易想到，n 多个 <code>setInterval</code> 实例同时运行，阻塞了 JS 线程，导致页面越来越卡，计时器计时出现了偏差。那么如何用一个 <code>setInterval</code> 实例，进行多个倒计时呢?</p>
 <p>首先看一下 <code>setInterval</code> 用法:</p>
-<pre><code class="language-ts">setInterval(() =&gt; {
+<pre><code class="language-js">setInterval(() =&gt; {
     // callback
 }, 1000)
 </code></pre>
 <p>如果在 <code>setInterval</code> 中执行多个回调函数，那么就可以实现我们的需求。</p>
 <p>简单实现一下:</p>
-<pre><code class="language-ts">class Timer {
+<pre><code class="language-js">class Timer {
     private timerId
     private cbs = []
     private cbId = 0
@@ -65,7 +65,7 @@
 }
 </code></pre>
 <p>使用时，只需要 new 一个 Timer 实例，在需要倒计时的地方，通过 add 添加回调函数即可自动启动计时器，删除时，调用 remove 方法，删除完所有注册的回调函数，计时器自动停止。</p>
-<pre><code class="language-ts">const timer = new Timer()
+<pre><code class="language-js">const timer = new Timer()
 
 const timerId = timer.add(() =&gt; {})
 timer.remove(timerId)
@@ -73,7 +73,7 @@ timer.remove(timerId)
 <p>改造后的倒计时性能无疑好了许多，页面不再卡顿。但是倒计时还是越来越不准，setInterval 函数会将回调函数间隔插入 JS 线程中，但线程如果正在执行耗时任务，插入的回调函数将偏移其应当在的位置。</p>
 <p>使用递归 <code>setTimeout</code> ，不断修正将回调函数插入线程的时间，即可获得相对准确的倒计时。</p>
 <p>简单实现一下:</p>
-<pre><code class="language-ts">let count = 0 // 递归次数
+<pre><code class="language-js">let count = 0 // 递归次数
 let now = Date.now() // 初始执行时间
 
 function countdown() {
@@ -90,7 +90,7 @@ countdown()
 <p>这里我们记录了初始执行时间，和 countdown 递归执行的次数，根据这两者，我们可以计算出偏移时间和下次 <code>setTimeout</code> 的时间。</p>
 <p>改造后，虽然倒计时准确了许多。但，又回到了上面的问题，列表项越多， <code>setTimeout</code> 实例越多，页面也会越来越卡。</p>
 <p>我们可以使用 <code>setTimeout</code> 模拟 <code>setinterval</code>，并将其替换到上面我们的 <code>Timer</code> 类中。即可解决问题。</p>
-<pre><code class="language-ts">function setTimeoutInterval(cb, interval = 1000) {
+<pre><code class="language-js">function setTimeoutInterval(cb, interval = 1000) {
   let count = 0
   let now = Date.now()
   let timerId = null
@@ -112,7 +112,7 @@ countdown()
 </code></pre>
 <p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传入。</p>
 <p>用法如下:</p>
-<pre><code class="language-ts">let i = 0
+<pre><code class="language-js">let i = 0
 setTimeoutInterval((timerId) =&gt; {
     if(i++ &lt; 10) {
         console.log(i)
@@ -122,7 +122,7 @@ setTimeoutInterval((timerId) =&gt; {
 }, 1000)
 </code></pre>
 <p>将其替换到 <code>Timer</code> 类中</p>
-<pre><code class="language-ts">class Timer {
+<pre><code class="language-js">class Timer {
     // some code
     private start() {
         setTimeoutInterval((timerId) =&gt; {
@@ -140,7 +140,7 @@ setTimeoutInterval((timerId) =&gt; {
 <p>解决办法很简单。</p>
 <p>打开应用后，首先将客户端与服务端的偏移时间存到本地，秒杀倒计时的时候，将偏移时间加上即可。这样的话，无论客户端时间是提前还是之后，都对应用没有影响。</p>
 <p>简单写个 demo:</p>
-<pre><code class="language-ts">// 首先获取偏移时间
+<pre><code class="language-js">// 首先获取偏移时间
 prequest('/api').then(res =&gt; {
     // nginx 服务器，可以从响应头拿到时间
     const date = res.headers.Date
@@ -157,7 +157,7 @@ function getNow() {
 <p>回到我们的计时器代码，只需要将其中的 <code>Date.now()</code> 方法替换成 这里的 <code>getNow()</code> 即可。</p>
 <p>到目前为止，上面的代码已经可以应对大部分计时场景，但对于秒杀场景来说，本地运行的倒计时可能还是不够可靠，可以设计间歇性请求接口获取服务端时间，更新倒计时，来获得更高计时精确度。</p>
 <p>首先大致设计获取服务端时间方法</p>
-<pre><code class="language-ts">async function getServerTime() {
+<pre><code class="language-js">async function getServerTime() {
     const start = Date.now()    // 开启请求时间
     const serverTime = await prequest('/api').then(res =&gt; ...)
     const endTime = Date.now()
@@ -167,7 +167,7 @@ function getNow() {
 <p>这里考虑了请求网络消耗的时间。</p>
 <p>其次考虑我们倒计时，当每次拿到服务端时间后，加上 <code>interval</code> 时间，判断是否和目标时间相等即可。</p>
 <p>demo如下</p>
-<pre><code class="language-ts">let now = Date.now()
+<pre><code class="language-js">let now = Date.now()
 let interval = 1000
 setInterval(() =&gt; {
     if (now + interval &gt;=  endTime) {
@@ -182,7 +182,7 @@ setInterval(() =&gt; {
 <p>这里我们维护了两个计时器，一个负责请求接口更新 <code>now</code> 数据，一个进行正常倒计时，写我们的业务逻辑。</p>
 <p>当有 n 多个这样的倒计时实例，代码将不可维护。可以改造一下代码，使用类似事件发布订阅的模式来解决这个问题。</p>
 <p>首先实现一个 <code>manager</code> 来实现事件发布订阅的逻辑</p>
-<pre><code class="language-ts">class CountDowmManager {
+<pre><code class="language-js">class CountDowmManager {
     queue = []
     tiemrId = null
 
@@ -225,7 +225,7 @@ setInterval(() =&gt; {
 </code></pre>
 <p>在 <code>CountDownManager</code> 类中，维护了一个 <code>countdown</code> 实例的队列，每隔 <code>interval</code> 个时间，会请求接口，更新所有实例的 <code>now</code> 值。同时设计将获取服务器时间的函数由参数传入，已满足不同场景的不同需求。</p>
 <p>接着，设计倒计时</p>
-<pre><code class="language-ts">class CountDown {
+<pre><code class="language-js">class CountDown {
     now = Date.now()
     timerId = null
 
@@ -245,7 +245,7 @@ setInterval(() =&gt; {
 }
 </code></pre>
 <p>用法如下:</p>
-<pre><code class="language-ts">const manager = new CountDownManager()
+<pre><code class="language-js">const manager = new CountDownManager()
 
 const instance1 = new CountDown()
 const instance2 = new CountDown()
@@ -255,7 +255,7 @@ manager.on(instance2)
 </code></pre>
 <p>上面的 <code>CounDown</code>  代码中，只考虑了使用 <code>server</code> 更新时间的场景，其实我们也可以将上面使用本地时间进行的倒计时，整合到 <code>countDown</code> 类中。其次，可以设计将 <code>manager</code> 作为参数，传入到 <code>countdown</code> 实例，这样做的好处在于，我们不需要手动的注册和移除 <code>countdown</code> 实例，将 <code>managr</code> 当参数传入，在初始化实例时，就可以自动将当前实例注册；当倒计时结束，自动将当前实例移除。我们还可以根据是否传入 <code>manager</code> 来判断是否需要使用服务端来更新时间。</p>
 <p>改造一下代码</p>
-<pre><code class="language-ts">class CountDown() {
+<pre><code class="language-js">class CountDown() {
 
     constructor({ manager, ...opt }) {
         this.manager = manager
