@@ -8,7 +8,7 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622616411060">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622638301959">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -92,7 +92,7 @@
               2021-06-01 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge "
+                class="badge secondary"
               >
                 前端
               </a>
@@ -213,7 +213,7 @@ countdown()
 <p>这里我们记录了初始执行时间，和 countdown 递归执行的次数，根据这两者，我们可以计算出偏移时间和下次 <code>setTimeout</code> 的时间。</p>
 <p>改造后，虽然倒计时准确了许多。但，又回到了上面的问题，列表项越多， <code>setTimeout</code> 实例越多，页面也会越来越卡。</p>
 <p>我们可以使用 <code>setTimeout</code> 模拟 <code>setinterval</code>，并将其替换到上面我们的 <code>Timer</code> 类中。即可解决问题。</p>
-<pre><code class="language-js">function timeoutInterval(cb, interval = 1000) {
+<pre><code class="language-js">function timeoutInterval(cb, interval = 1000， getTimerId) {
   let count = 0
   let now = Date.now()
   let timerId = null
@@ -225,9 +225,10 @@ countdown()
 
     timerId = setTimeout(() =&gt; {
       countdown()
+      cb()
     }, nextTime)
 
-    cb(timerId)
+    getTimerId(timerId)
   }
 
   countdown()
@@ -236,24 +237,31 @@ countdown()
 <p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传出。</p>
 <p>用法如下:</p>
 <pre><code class="language-js">let i = 0
-timeoutInterval((timerId) =&gt; {
-    if(i++ &lt; 10) {
-        console.log(i)
-    } else {
-        clearTimeout(timerId)
+timeoutInterval(
+    () =&gt; {
+    // do something
+    }, 
+    1000,
+    (timerId) =&gt; {
+        this.timerId = timerId
     }
-}, 1000)
+)
 </code></pre>
 <p>将其替换到 <code>Timer</code> 类中</p>
 <pre><code class="language-js">class Timer {
     // some code
     private start() {
-        timeoutInterval((timerId) =&gt; {
-            this.timerId = timerId
-            this.cbs.forEach(item =&gt; {
-                item.cb()
-            })
-        }, 1000)
+        timeoutInterval(
+            () =&gt; {
+                this.cbs.forEach(item =&gt; {
+                    item.cb()
+                })
+            }, 
+            1000,
+            (timerId) =&gt; {
+                this.timerId = timerId
+            }
+        )
     }
     // some code
 }
@@ -436,7 +444,7 @@ manager.on(instance2)
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1622616411060"
+      src="https://aiyou.life/images/avatar.png?v=1622638301959"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -524,21 +532,21 @@ manager.on(instance2)
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge warning"
+        class="badge success"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge success"
+        class="badge secondary"
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge warning"
+        class="badge secondary"
       >
         React
       </a>
@@ -552,14 +560,14 @@ manager.on(instance2)
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge warning"
+        class="badge success"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge secondary"
+        class="badge "
       >
         博客
       </a>

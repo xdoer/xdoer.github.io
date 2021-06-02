@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-02T06:46:53.652Z</updated>
+    <updated>2021-06-02T12:51:44.988Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -131,7 +131,7 @@ countdown()
 <p>这里我们记录了初始执行时间，和 countdown 递归执行的次数，根据这两者，我们可以计算出偏移时间和下次 <code>setTimeout</code> 的时间。</p>
 <p>改造后，虽然倒计时准确了许多。但，又回到了上面的问题，列表项越多， <code>setTimeout</code> 实例越多，页面也会越来越卡。</p>
 <p>我们可以使用 <code>setTimeout</code> 模拟 <code>setinterval</code>，并将其替换到上面我们的 <code>Timer</code> 类中。即可解决问题。</p>
-<pre><code class="language-js">function timeoutInterval(cb, interval = 1000) {
+<pre><code class="language-js">function timeoutInterval(cb, interval = 1000， getTimerId) {
   let count = 0
   let now = Date.now()
   let timerId = null
@@ -143,9 +143,10 @@ countdown()
 
     timerId = setTimeout(() =&gt; {
       countdown()
+      cb()
     }, nextTime)
 
-    cb(timerId)
+    getTimerId(timerId)
   }
 
   countdown()
@@ -154,24 +155,31 @@ countdown()
 <p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传出。</p>
 <p>用法如下:</p>
 <pre><code class="language-js">let i = 0
-timeoutInterval((timerId) =&gt; {
-    if(i++ &lt; 10) {
-        console.log(i)
-    } else {
-        clearTimeout(timerId)
+timeoutInterval(
+    () =&gt; {
+    // do something
+    }, 
+    1000,
+    (timerId) =&gt; {
+        this.timerId = timerId
     }
-}, 1000)
+)
 </code></pre>
 <p>将其替换到 <code>Timer</code> 类中</p>
 <pre><code class="language-js">class Timer {
     // some code
     private start() {
-        timeoutInterval((timerId) =&gt; {
-            this.timerId = timerId
-            this.cbs.forEach(item =&gt; {
-                item.cb()
-            })
-        }, 1000)
+        timeoutInterval(
+            () =&gt; {
+                this.cbs.forEach(item =&gt; {
+                    item.cb()
+                })
+            }, 
+            1000,
+            (timerId) =&gt; {
+                this.timerId = timerId
+            }
+        )
     }
     // some code
 }
