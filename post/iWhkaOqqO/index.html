@@ -8,7 +8,7 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622615375273">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1622616224380">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -92,7 +92,7 @@
               2021-06-01 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge "
+                class="badge warning"
               >
                 前端
               </a>
@@ -148,11 +148,11 @@
 </code></pre>
 <p>问题又来了，不同的回调函数，可能需要不同的计时间隔，这怎么处理呢？</p>
 <p>可以通过一个计数器，计算 <code>setInterval</code> 的执行次数，执行次数 * 间隔时间就是执行总时间，有了执行总时间就好办了，只需要进行余运算即可。</p>
-<p>首先 cb 对象数据结构</p>
+<p>首先设计 cb 对象数据结构</p>
 <pre><code class="language-js">interface CallBack {
-    id: number
-    cb: () =&gt; any
-    interval: number
+    id: number   // 回调 id
+    cb: () =&gt; any   // 回调函数
+    interval: number    // 执行回调间隔
 }
 </code></pre>
 <p>再来实现demo:</p>
@@ -170,9 +170,9 @@ let cbs: CallBack[] = []
 // some code
 </code></pre>
 <p>上面 demo 中写死了执行间隔为 1000ms，那对于注册了 500ms 执行的回调函数来讲，会延迟 500ms 后才执行。我们可以遍历所有 cbs，从中获取最小的 interval 当做 delay 即可。</p>
-<pre><code class="language-ts">// some code
-let min = this.cbs[0].interval
-let delay = this.cbs.reduce((min, cur) =&gt;  cur.interval &lt; min ? cur.interval : min,min)
+<pre><code class="language-js">// some code
+const min = this.cbs[0].interval
+const delay = this.cbs.reduce((min, cur) =&gt;  cur.interval &lt; min ? cur.interval : min,min)
 // some code
 </code></pre>
 <p>使用时，只需要 new 一个 Timer 实例，在需要倒计时的地方，通过 add 添加回调函数即可自动启动计时器，删除时，调用 remove 方法，删除完所有注册的回调函数，计时器自动停止。</p>
@@ -182,8 +182,15 @@ const timerId = timer.add(() =&gt; {}, 1000)
 timer.remove(timerId)
 </code></pre>
 <p>或者再改造一下，实现类似 <code>setTimeout</code> 和 <code>setInterval</code> 的调用方式</p>
-<pre><code class="language-ts">const setTimeoutInterval = timer.add.bind(timer)
+<pre><code class="language-js">const setTimeoutInterval = timer.add.bind(timer)
 const clearTimeoutInterval = timer.remove.bind(timer)
+</code></pre>
+<p>调用</p>
+<pre><code class="language-js">const timer = setTimeoutInterval(() =&gt; {
+    // some code
+})
+
+clearTimeoutInterval(timerId)
 </code></pre>
 <p>改造后的倒计时性能无疑好了许多，页面不再卡顿。且无论添加多少个计时回调，它运行的都是同一个计时实例。</p>
 <p>使用 <code>setInterval</code> 的计时还是越来越不准，<code>setInterval</code> 会将回调函数间隔插入 JS 线程中，但线程如果正在执行耗时任务，插入的回调函数将偏移其应当在的位置，滞后执行，下一次插入的位置，参照了滞后插入的位置，所以导致运行时间越长，偏差越大。</p>
@@ -429,7 +436,7 @@ manager.on(instance2)
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1622615375273"
+      src="https://aiyou.life/images/avatar.png?v=1622616224380"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -503,7 +510,7 @@ manager.on(instance2)
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge success"
+        class="badge secondary"
       >
         前端
       </a>
@@ -517,35 +524,35 @@ manager.on(instance2)
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge warning"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge success"
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge success"
+        class="badge secondary"
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge secondary"
+        class="badge warning"
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge success"
+        class="badge secondary"
       >
         小程序
       </a>
