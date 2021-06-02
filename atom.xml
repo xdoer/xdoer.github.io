@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-02T03:52:34.914Z</updated>
+    <updated>2021-06-02T06:01:14.738Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -21,7 +21,7 @@
 <!-- more -->
 <p>某日，接到了产品需求，说要加一个抢购列表页面，列表中每一项要加一个抢购倒计时，没多想，使用 <code>setInterval</code> 快速实现了。</p>
 <p>随着列表中项目越来越多，各个项目的倒计时越来越不准，且页面变的越来越卡。</p>
-<p>其实很容易想到，n 多个 <code>setInterval</code> 实例同时运行，阻塞了 JS 线程，导致页面越来越卡，计时器计时出现了偏差。那么如何用一个 <code>setInterval</code> 实例，进行多个倒计时呢?</p>
+<p>其实很容易想到，n 多个 <code>setInterval</code> 实例同时运行，阻塞了 JS 线程，导致页面越来越卡，计时器计时出现了偏差。有没有办法用一个 <code>setInterval</code> 实例，进行多个倒计时呢?</p>
 <p>首先看一下 <code>setInterval</code> 用法:</p>
 <pre><code class="language-js">setInterval(() =&gt; {
     // callback
@@ -64,13 +64,39 @@
     }
 }
 </code></pre>
+<p>问题又来了，不同的回调函数，可能需要不同的计时间隔，这怎么处理呢？</p>
+<p>可以通过一个计数器，计算 <code>setInterval</code> 的执行次数，执行次数 * 间隔时间就是执行总时间，有了执行总时间就好办了，只需要进行余运算即可。</p>
+<p>demo如下:</p>
+<pre><code class="language-ts">// some code
+let count = 0
+let delay = 1000
+ setInterval(() =&gt; {
+    this.cbs.forEach(({ cb, interval }) =&gt; {
+        if(!(count * delay % interval)) {
+            cb()
+        }
+    })
+}, delay)
+// some code
+</code></pre>
+<p>上面 demo 中写死了执行间隔为 1000ms，那对于注册了 500ms 执行的回调函数来讲，会延迟 500ms 后才执行。我们可以遍历所有 cbs，从中获取最小的 interval 当做 delay 即可。</p>
+<pre><code class="language-ts">// some code
+let min = this.cbs[0].interval
+let delay = this.cbs.reduce((min, cur) =&gt;  cur.interval &lt; min ? cur.interval : min,min)
+// some code
+</code></pre>
 <p>使用时，只需要 new 一个 Timer 实例，在需要倒计时的地方，通过 add 添加回调函数即可自动启动计时器，删除时，调用 remove 方法，删除完所有注册的回调函数，计时器自动停止。</p>
 <pre><code class="language-js">const timer = new Timer()
 
-const timerId = timer.add(() =&gt; {})
+const timerId = timer.add(() =&gt; {}, 1000)
 timer.remove(timerId)
 </code></pre>
-<p>改造后的倒计时性能无疑好了许多，页面不再卡顿。但是倒计时还是越来越不准，setInterval 函数会将回调函数间隔插入 JS 线程中，但线程如果正在执行耗时任务，插入的回调函数将偏移其应当在的位置。</p>
+<p>或者再改造一下，实现类似 <code>setTimeout</code> 和 <code>setInterval</code> 的调用方式</p>
+<pre><code class="language-ts">const setTimeoutInterval = timer.add.bind(timer)
+const clearTimeoutInterval = timer.remove.bind(timer)
+</code></pre>
+<p>改造后的倒计时性能无疑好了许多，页面不再卡顿。且无论添加多少个计时回调，它运行的都是同一个计时实例。</p>
+<p>使用 <code>setInterval</code> 的计时还是越来越不准，<code>setInterval</code> 会将回调函数间隔插入 JS 线程中，但线程如果正在执行耗时任务，插入的回调函数将偏移其应当在的位置，滞后执行，下一次插入的位置，参照了滞后插入的位置，所以导致运行时间越长，偏差越大。</p>
 <p>使用递归 <code>setTimeout</code> ，不断修正将回调函数插入线程的时间，即可获得相对准确的倒计时。</p>
 <p>简单实现一下:</p>
 <pre><code class="language-js">let count = 0 // 递归次数
@@ -90,7 +116,7 @@ countdown()
 <p>这里我们记录了初始执行时间，和 countdown 递归执行的次数，根据这两者，我们可以计算出偏移时间和下次 <code>setTimeout</code> 的时间。</p>
 <p>改造后，虽然倒计时准确了许多。但，又回到了上面的问题，列表项越多， <code>setTimeout</code> 实例越多，页面也会越来越卡。</p>
 <p>我们可以使用 <code>setTimeout</code> 模拟 <code>setinterval</code>，并将其替换到上面我们的 <code>Timer</code> 类中。即可解决问题。</p>
-<pre><code class="language-js">function setTimeoutInterval(cb, interval = 1000) {
+<pre><code class="language-js">function timeoutInterval(cb, interval = 1000) {
   let count = 0
   let now = Date.now()
   let timerId = null
@@ -110,10 +136,10 @@ countdown()
   countdown()
 }
 </code></pre>
-<p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传入。</p>
+<p>这里值得注意的是，由于我们这里使用递归 <code>setTimeout</code>, 所以每次生成的 <code>timeId</code> 都是不一样的，所以设计将其通过 <code>cb</code> 回调函数的参数传出。</p>
 <p>用法如下:</p>
 <pre><code class="language-js">let i = 0
-setTimeoutInterval((timerId) =&gt; {
+timeoutInterval((timerId) =&gt; {
     if(i++ &lt; 10) {
         console.log(i)
     } else {
@@ -125,7 +151,7 @@ setTimeoutInterval((timerId) =&gt; {
 <pre><code class="language-js">class Timer {
     // some code
     private start() {
-        setTimeoutInterval((timerId) =&gt; {
+        timeoutInterval((timerId) =&gt; {
             this.timerId = timerId
             this.cbs.forEach(item =&gt; {
                 item.cb()
@@ -136,6 +162,7 @@ setTimeoutInterval((timerId) =&gt; {
 }
 </code></pre>
 <p>改造后的倒计时性能良好，且因为只有一个计时实例，页面也不会卡顿。</p>
+<p>具体实现请查阅代码: <a href="https://github.com/xdoer/TimeoutInterval">TimeoutInterval</a></p>
 <p>对于一些秒杀抢购场景，这种倒计时是有问题的，因为本地时间与服务器时间有偏差，如果抢购单纯由前端倒计时来控制，那么很容易出现用户修改本机时间，页面就出现了购买按钮可以直接购买的 bug。由本地计时引起的 bug，在目前市面上的 APP 上很常见，除了抢购场景外，接口防重放机制中会校验客户端请求携带的时间戳，通常约定，如果客户端请求的时间戳与服务端时间偏差在 60s 之外，则该请求无效，所以在修改本机时间后，打开某些 APP，会看到空白页面。</p>
 <p>解决办法很简单。</p>
 <p>打开应用后，首先将客户端与服务端的偏移时间存到本地，秒杀倒计时的时候，将偏移时间加上即可。这样的话，无论客户端时间是提前还是之后，都对应用没有影响。</p>
