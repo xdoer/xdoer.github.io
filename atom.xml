@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-02T06:06:26.247Z</updated>
+    <updated>2021-06-02T06:15:56.911Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -742,7 +742,7 @@ prequest('/api/3').catch(e =&gt; e)    // auth fail
 </code></pre>
 <p>首先很容易想到，我们可以使用中间件为其添加 token</p>
 <pre><code class="language-ts">prequest.use(async (ctx, next) =&gt; {
-    ctx.request.headers['token'] = token
+    ctx.request.headers['Authorization'] = `bearer ${token}`
     await next()
 })
 </code></pre>
@@ -755,7 +755,7 @@ prequest.use(async (ctx, next) =&gt; {
     if(!token) {
         token = await tokenRequest('/token')
     }
-    ctx.request.headers['token'] = token
+    ctx.request.headers['Authorization'] = `bearer ${token}`
     await next()
 })
 </code></pre>
@@ -771,7 +771,7 @@ prequest.use(async (ctx, next) =&gt; {
         token = await tokenRequest('/token')
         pending = flase
     }
-    ctx.request.headers['token'] = token
+    ctx.request.headers['Authorization'] = `bearer ${token}`
     await next()
 })
 </code></pre>
@@ -788,20 +788,17 @@ prequest.use(async (ctx, next) =&gt; {
     if(!token) {
         if(pending) {
             // promise 控制流程
-            await promise
-                .then(token =&gt; {
-                    ctx.request.headers['token'] = token
-                })
-                .then(() =&gt; next())
+            token = await promise
+        } else {
+            pending = true
+            token = await tokenRequest('/token')
+            // 调用 resolve，使得 promise 可以执行剩余的流程
+            resolvePromise(token)
+            pending = flase
         }
-        pending = true
-        token = await tokenRequest('/token')
-        // 调用 resolve，使得 promise 可以执行剩余的流程
-        resolvePromise(token)
-        pending = flase
     } 
 
-    ctx.request.headers['token'] = token
+    ctx.request.headers['Authorization'] = `bearer ${token}`
     await next()
 })
 </code></pre>
