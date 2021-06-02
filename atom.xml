@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-02T06:15:56.911Z</updated>
+    <updated>2021-06-02T06:29:45.135Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -66,12 +66,20 @@
 </code></pre>
 <p>问题又来了，不同的回调函数，可能需要不同的计时间隔，这怎么处理呢？</p>
 <p>可以通过一个计数器，计算 <code>setInterval</code> 的执行次数，执行次数 * 间隔时间就是执行总时间，有了执行总时间就好办了，只需要进行余运算即可。</p>
-<p>demo如下:</p>
-<pre><code class="language-ts">// some code
+<p>首先 cb 对象数据结构</p>
+<pre><code class="language-js">interface CallBack {
+    id: number
+    cb: () =&gt; any
+    interval: number
+}
+</code></pre>
+<p>再来实现demo:</p>
+<pre><code class="language-js">// some code
 let count = 0
 let delay = 1000
+let cbs: CallBack[] = []
  setInterval(() =&gt; {
-    this.cbs.forEach(({ cb, interval }) =&gt; {
+    cbs.forEach(({ cb, interval }) =&gt; {
         if(!(count * delay % interval)) {
             cb()
         }
