@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-06-26T08:06:51.141Z</updated>
+    <updated>2021-06-26T08:09:25.353Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -15,9 +15,12 @@
         <link href="https://aiyou.life/post/_UNWTwtWx/">
         </link>
         <updated>2021-06-26T07:53:18.000Z</updated>
-        <content type="html"><![CDATA[<h2 id="前言">前言</h2>
-<p>微信小程序提供了很多类似 <code>wx.showModal</code>、<code>wx.showLoading</code> 这类 API，这类 API 虽然方便使用，但是样式丑陋，往往不满足我们的需求。</p>
+        <summary type="html"><![CDATA[<p>微信小程序提供了很多类似 <code>wx.showModal</code>、<code>wx.showLoading</code> 这类 API，这类 API 虽然方便使用，但是样式丑陋，往往不满足我们的需求。</p>
 <p>有没有办法让我们的自定义弹窗、loading 等可以通过类似微信的这种 API 进行随心所欲的调用呢？</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>微信小程序提供了很多类似 <code>wx.showModal</code>、<code>wx.showLoading</code> 这类 API，这类 API 虽然方便使用，但是样式丑陋，往往不满足我们的需求。</p>
+<p>有没有办法让我们的自定义弹窗、loading 等可以通过类似微信的这种 API 进行随心所欲的调用呢？</p>
+<!-- more -->
 <p>首先放一下效果图:<br>
 <img src="https://aiyou.life/post-images/1624694046612.gif" alt="" loading="lazy"><br>
 可以看到只在 Index 页面写了一个按钮，就可以触发打开弹窗。</p>
