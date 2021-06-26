@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" >
 
-<title>TS中函数传参绕过编译器检查的探究 |
+<title>Taro 自定义 showModal |
     文享日志</title>
 <meta name="description" content="">
 
@@ -87,144 +87,282 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>TS中函数传参绕过编译器检查的探究</h1>
+            <h1>Taro 自定义 showModal</h1>
             <p class="article-meta">
-              2019-11-05 
+              2021-06-26 
               <a
-                href="https://aiyou.life/tag/E75leUW9b/"
-                class="badge success"
+                href="https://aiyou.life/tag/rSf0tu2pz/"
+                class="badge secondary"
               >
-                typescript
+                React
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/TfrzxMzWY/"
+                class="badge secondary"
+              >
+                小程序
+              </a>
+              
+              <a
+                href="https://aiyou.life/tag/K1r5vpFd_/"
+                class="badge warning"
+              >
+                前端
               </a>
               
             </p>
             
-            <img src="https://aiyou.life/post-images/aanhFpuGI.png" alt="TS中函数传参绕过编译器检查的探究" />
-            
-            <div class="post-content"><p>在TypeScript中文网接口一章中，对于函数传参<strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。本文将对这个问题进行探究。</p>
-<!-- more -->
-<h2 id="缘起">缘起</h2>
-<p>问题源于TypeScript中<a href="https://www.tslang.cn/docs/handbook/interfaces.html">接口</a>一章额外的类型检查一节关于最后一种绕过编译器检查的描述</p>
-<p>原问题请查看<a href="https://segmentfault.com/q/1010000018219694?_ea=7267273">TypeScript绕过编译器检查的一点困惑</a></p>
-<p>先看示例代码</p>
-<pre><code class="language-typescript">interface SquareConfig {
-  color?: string;
-  width?: number;
+            <div class="post-content"><h2 id="前言">前言</h2>
+<p>微信小程序提供了很多类似 <code>wx.showModal</code>、<code>wx.showLoading</code> 这类 API，这类 API 虽然方便使用，但是样式丑陋，往往不满足我们的需求。</p>
+<p>有没有办法让我们的自定义弹窗、loading 等可以通过类似微信的这种 API 进行随心所欲的调用呢？</p>
+<p>首先放一下效果图:<br>
+<img src="https://aiyou.life/post-images/1624694046612.gif" alt="" loading="lazy"><br>
+可以看到只在 Index 页面写了一个按钮，就可以触发打开弹窗。</p>
+<p>接着总结一下全文:</p>
+<blockquote>
+<ul>
+<li>利用脚本将每个弹窗文件生成一个弹窗配置</li>
+<li>根据弹窗配置，弹窗 wrapper 组件 map 每一个弹窗</li>
+<li>使用 webpack-loader 将 wrapper 组件注入到每个页面</li>
+<li>使用 chokidar 监听弹窗文件的创建，自动运行脚本，更新弹窗配置</li>
+<li>设计 API 式的调用风格</li>
+</ul>
+</blockquote>
+<p>下文涉及的技术栈为: Taro ReactHook TypeScript。可能不具有通用性，但如果能为您带来一些思考和感悟也是极好的。</p>
+<h2 id="目标">目标</h2>
+<p>首先观察一下特点：</p>
+<pre><code class="language-ts">wx.showModal({
+  title: &quot;提示&quot;,
+  content: &quot;操作不合法&quot;,
+});
+</code></pre>
+<blockquote>
+<ul>
+<li>1、API 式调用.</li>
+<li>2、全局性.在小程序任意地方都可以调用</li>
+</ul>
+</blockquote>
+<h2 id="api-式的调用">API 式的调用</h2>
+<p>当进行这样一个调用时，我们需要将数据和状态，通过一定的方式，传入到某个组件中，组件再进行响应。传递数据的方式有 props 与 context。传递 props 方案首先排除了，因为你不可能每个组件要传入弹窗的 props，那么使用 context 方案呢？使用 context 需要在应用顶层提供一个 Provider，将所有弹窗数据和显隐状态，与修改数据的方法传入 Provider 中，在 Consumer 中 map 出所有弹窗数据，在需要打开或关闭弹窗的地方，使用 <code>this.context</code> 或者 <code>useContext</code> 拿到修改数据方法，然后才能控制弹窗状态。</p>
+<p>下面提供了一份使用 context 方案的伪代码</p>
+<pre><code class="language-tsx">const ModalContext = createContext(null)
+
+&lt;!---- app.tsx 入口文件 ----&gt;
+export default function (props) {
+  const [config, setConfig] = useState(modals)
+  return (
+    &lt;ModalContext.Provider value={{config, setConfig}}&gt;
+      {props.children}
+    &lt;/ModalContext.Provider&gt;
+  )
 }
 
-function createSquare(config: SquareConfig): {color: string; area: number} {
-  let newSquare = {color: &quot;white&quot;, area: 100};
-  if (config.color) {
-    newSquare.color = config.color;
+&lt;!---- wrapper.tsx 弹窗 wrapper 组件----&gt;
+// 这里设计的是 n 多个 modal 实例，原因是将 loading、actionSheet 等统称为 modal.
+export function Wrapper() {
+  return (
+    &lt;ModalContext.Consumer&gt;
+      {
+        ({config}) =&gt; {
+          return (
+            &lt;&gt;
+              {
+                config.map(c =&gt; {
+                  return (
+                    &lt;Modal data={c} /&gt;
+                  )
+                })
+              }
+            &lt;/Modal&gt;
+          )
+        }
+      }
+    &lt;/ModalContext.Consumer&gt;
+  )
+}
+
+&lt;!---- index.tsx 首页文件----&gt;
+export default function () {
+  const { setConfig } = useContext(ModalContext)
+
+  return (
+    &lt;View&gt;
+      {/* 这里就不细写了，原理大家可以看懂 */}
+      &lt;View onClick={() =&gt; setConfig((d) =&gt; { name: 'a' ,visible: true, data: 1 })}&gt;打开 A 弹窗&lt;/View&gt;
+      &lt;Wrapper /&gt;
+    &lt;/View&gt;
+  )
+}
+</code></pre>
+<p>对于 wrapper 组件，需要引入到每一个页面文件，调用弹窗时使用 <code>useContext</code> 也可以接受，但一定注意优化，任何一处 <code>setConfig</code> 都会导致引入 <code>useContext(ModalContext)</code> 的组件或页面重新渲染。</p>
+<p>怎么避免这个问题？</p>
+<p>如果能将顶层的 <code>setConfig</code> 存到外部，每次从外部文件引入 setConfig 方法调用、不直接使用 useContext，并配合 memo 就可以解决这个问题</p>
+<p>伪代码如下:</p>
+<pre><code class="language-ts">&lt;!---- useStore 自定义 hook ----&gt;
+export let setModalConfig
+
+export function useStore(initValue) {
+  const [config, setConfig] = useState(initValue)
+  setModalConfig = setConfig
+  return [config, setConfig]
+}
+
+&lt;!---- app.tsx 入口文件 ----&gt;
+export default function (props) {
+  const [config, setConfig] = useStore(modals)
+  return (
+    &lt;ModalContext.Provider value={{config, setConfig}}&gt;
+      {props.children}
+    &lt;/ModalContext.Provider&gt;
+  )
+}
+</code></pre>
+<p>如果将每一个 <code>useState</code> 的 <code>data</code> 和 <code>setData</code> 存到外部，并为其分配一个标识，那么我们就可以在任意地方根据标识拿到 useState 中的数据和方法。</p>
+<p>基于此，我们封装了一套简单易用的状态管理工具 <a href="https://github.com/forsigner/stook">stook</a></p>
+<p>简易实现如下:</p>
+<pre><code class="language-ts">export const stores[] = []
+
+// 外部修改 hook 状态
+export function mutate(key, value) {
+  const cacheIdx = stores.findIndex(store =&gt; store.key === key)
+  stores[cacheIdx].cbs.forEach(cb =&gt; cb(value))
+}
+
+// 外部获取 hooks 状态
+export function getState(key) {
+  const cacheIdx = stores.findIndex(store =&gt; store.key === key)
+  return stores[cacheIdx].value
+}
+
+export function useStore(key, initValue?: any) {
+    const cache = stores.find(store =&gt; store.key === key)
+    // 对于一个相同 key 的 useState, 首先尝试使用缓存数据初始化
+    const [state, setState] = useState(cache?.value || initValue)
+
+    // 防止同一个 setState 被缓存多次
+    if (!cache?.cbs.find(cb =&gt; cb === setState)) {
+      if (!cache) {
+        // 对于同名的 key, value应当是相同的，需要将每一个修改状态的函数保存
+        stores.push({ key, value: state, cbs: [setState] })
+      } else {
+        cache.cbs.push(setState)
+      }
+    }
+
+    useEffect(() =&gt; {
+      // 组件或页面卸载
+      return () =&gt; {
+        const cacheIdx = stores.findIndex(store =&gt; store.key === key)
+        const idx = stores[cacheIdx]!.cbs.findIndex(cb =&gt; cb === setState)
+        cache!.cbs.splice(idx, 1)
+        if (!cache?.cbs.length) {
+          stores.splice(cacheIdx, 1)
+        }
+      }
+    }, [key, setState])
+
+    return [
+      state,
+      function (value) {
+        let newValue = value
+        if (typeof value === 'function') {
+          newValue = value(state)
+        }
+        const cache = stores.find(store =&gt; store.key === key)!
+        cache.value = newValue
+        cache.cbs.forEach(cb =&gt; cb(value))
+      }
+    ]
+}
+</code></pre>
+<p>根据我们设计的状态管理工具，那么可以完全摒弃 context 的方案了。</p>
+<pre><code class="language-tsx">&lt;!---- app.tsx 入口文件 ----&gt;
+export default function (props) {
+  return props.children
+}
+
+&lt;!---- wrapper.tsx 弹窗 wrapper 组件----&gt;
+export function Wrapper() {
+  const [modalConfig] = useStore('modal', config)
+  return (
+    &lt;&gt;
+      {
+        ({ modalConfig }) =&gt; {
+          return (
+            &lt;&gt;
+              {
+                modalConfig.map(c =&gt; {
+                  return (
+                    &lt;Modal data={c} /&gt;
+                  )
+                })
+              }
+            &lt;/&gt;
+          )
+        }
+      }
+    &lt;/&gt;
+  )
+}
+
+&lt;!---- index.tsx 首页文件----&gt;
+export default function () {
+  return (
+    &lt;View&gt;
+      &lt;View onClick={() =&gt; mutate('modal', (d) =&gt; {})}&gt;打开 A 弹窗&lt;/View&gt;
+      &lt;Wrapper /&gt;
+    &lt;/View&gt;
+  )
+}
+</code></pre>
+<p>有了这些基础，通过 API 式的调用弹窗就好实现了很多</p>
+<pre><code class="language-ts">class Service {
+  openCommonModal(data) {
+    mutate(&quot;modal&quot;, (config) =&gt; {
+      const commonConfig = config.find(({ name }) =&gt; name === &quot;common&quot;);
+      commonConfig.visible = true;
+      commonConfig.data = data;
+      return [...config];
+    });
   }
-  if (config.width) {
-    newSquare.area = config.width * config.width;
-  }
-  return newSquare;
 }
-
-[标注1]
-createSquare({ color: 'red', width: 100, height: 12 });    // 错误
-
-let param = { height: 200, width: 100, color: 'red' };
-
-createSquare(param);    // 正确
-
-[标注2]
-let param = {}
-
-createSquare(param)  // 正确
-
-let param1 = { height: 200 }
-
-createSquare(param1)  // 错误
-
-let param2 = { height: 200 } as SquareConfig
-
-createSquare(param2)  // 正确
-
-let param3 = { height: 200, color: &quot;red&quot; }
-
-createSquare(param3)  // 正确
-
+export const service = new Service();
 </code></pre>
-<p>原文中对 <strong>为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查</strong> 的原因只给了一个简单的回答:&quot;因为 squareOptions不会经过额外属性检查，所以编译器不会报错&quot;.解释的如此简单，让人迷糊。</p>
-<p>这里引出两个问题:</p>
-<p>1.看 标注1 代码。为什么将一个对象赋值给一个另一个变量，再将变量传入函数就可以绕过编译器检查。而直接将对象作为参数传递到函数就会引起错误？</p>
-<p>2.看 标注2 代码。对比来看，为什么传入 param1 参数就会引起错误？</p>
-<h2 id="解题思路">解题思路</h2>
-<p>首先看代码中的函数</p>
-<pre><code class="language-typescript">function createSquare(config: SquareConfig): {color: string; area: number} {
-  ...
-}
+<p>这样的话，就可以通过 <code>service.openCommonModal</code> 的方式打开弹窗了.</p>
+<h2 id="全局调用">全局调用</h2>
+<p>小程序中没有办法定义一个全局组件，只能将组件引入到每一个页面中。借助 webpack-loader，我们可以实现每个页面自动注入组件的能力。</p>
+<p>我们设计了一个 webpack-loader，来完成这样的事情 <a href="https://github.com/xdoer/taro-inject-component-loader">taro-inject-component-loader</a></p>
+<p>注入后的每一个页面，都引入了弹窗组件，因而可以在任意地方进行 service 弹窗的调用。</p>
+<h2 id="自动化">自动化</h2>
+<p>上面我们一直使用了一个叫做 config 的东西，config 类似路由表文件，是一个 Modal 组件和名称的映射表</p>
+<pre><code class="language-ts">const config = [
+  {
+    name: &quot;common&quot;,
+    component: CommonModal,
+  },
+];
 </code></pre>
-<p>函数要求我们传入的参数是 SquareConfig 类型的。</p>
-<p>函数参数<code>{color: &quot;red&quot;, width: 100 }</code>可以定义为合法的 SquareConfig 类型，所以是正确的</p>
-<p>函数参数<code>{color: &quot;red&quot;, width: 100, height: 100 }</code>不可以定义为合法的 SquareConfig 类型，所以引起错误</p>
-<p>对上面的描述感觉迷糊的话，请接着往下看...</p>
-<p>再看下面的代码</p>
-<pre><code class="language-typescript">const test1:SquareConfig = {  // 正确
-  color: &quot;red&quot;,
-  width: 100
-}
-
-const test2:SquareConfig = {   // 出错
-  color: &quot;red&quot;,
-  width: 100,
-  height: 100
-}
+<p>为了方便维护，建议将所有的 modal 文件放置到一个文件夹下。</p>
+<pre><code class="language-text">|---src
+|----|----modals
+|----|------|------common.tsx
+|----|------|------loading.tsx
+|----|------|------actionSheet.tsx
 </code></pre>
-<p>代码很简单，也很容易明白为什么。SquareConfig 只定义 color 和 width, 传入 height 肯定出错。。</p>
-<p><code>function createSquare(config: SquareConfig)</code>括号中实际进行了一次定义变量的过程,相当于如下代码:</p>
-<pre><code class="language-typescript">const t: SquareConfig = config
-function createSquare(t){
-  ...
-}
-</code></pre>
-<p>所以，当函数中传参 <code>{ color: 'red', width: 100, height: 12 }</code>时</p>
-<p>定义变量都没走通的话，那肯定会报错啦</p>
-<p>那为什么将一个对象赋值给一个另一个变量，再将变量传入函数就正确了呢?接着往下看</p>
-<p>其实就是 object 转换为 SquareConfig 的问题。具体的内容还需要学习一下 类型兼容 那一章节,没看到那里，就先不具体聊了。</p>
-<pre><code class="language-typescript">let a1 = {}
-let t1: SquareConfig = a1   // 正确
-createSquare(t1)
-
-let a2 = { width: 10}
-let t2: SquareConfig = a2   // 正确
-createSquare(t2)
-
-let a3 = { height: 10 }
-let t3: SquareConfig = a3   // 错误
-createSquare(t3)
-
-let a4 = { width: 10, color: &quot;red&quot;}
-let t4: SquareConfig = a4   // 正确
-createSquare(t4)
-
-let a5 = { width: 10, color: &quot;red&quot;, height: 10}
-let t5: SquareConfig = a5   // 正确
-createSquare(t5)
-</code></pre>
-<p>转化要求 类型兼容。object 与 SquareConfig 类型兼容，所以可以转化。转化成功与否在于 object 中是否有与 SquareConfig 公共项。</p>
-<p>至此就解释通了 标注1 和标注2 的问题啦.</p>
-<h2 id="总结">总结</h2>
-<p>研究过程中也是走了一些弯弯的，开始时以为是在 编译器在定义函数参数那里自动默认进行了 类型推断 ，但后来才发现 类型推断的话，有很多地方解释不通。比如下面这一段代码，后来在热心大佬的指导下，才明白了为什么。</p>
-<pre><code class="language-typescript">let param1 = { height: 200 }
-
-createSquare(param1)  // 错误
-
-let param2 = { height: 200 } as SquareConfig
-
-createSquare(param2)  // 正确
-</code></pre>
-<p><strong>实际写代码的过程中并不推荐使用这种 将一个对象赋值给一个另一个变量，再将变量传入函数 这种方式来达到向 函数内部传接口没定义的参数的目的。更推荐的写法如下所示</strong></p>
-<pre><code class="language-typescript">interface SquareConfig {
-  color?: string;
-  width?: number;
-  [propName: string]: any;
-}
-</code></pre>
-<p>加入<code>[propName: string]: any;</code> 表示接受任意类别参数。这样怎么传都是正确的，没有了上面那些&quot;坑&quot;</p>
+<p>这样的话，可以使用脚本工具，遍历该文件夹，自动生成一份配置文件。效果与 umi 约定式路由类似。此外，可以使用 chokidar 监听 modals 文件夹下文件的删除和创建，来自动更新 config 配置文件。</p>
+<p>其实不光是 config 配置文件、如果仔细观察 service 文件的话，也可以使用脚本，自动生成一份 service 文件。</p>
+<p>我们团队设计和实现了一套脚本工具来完成这样的功能。</p>
+<blockquote>
+<ul>
+<li><a href="https://github.com/forsigner/generated">generated</a>.一个 cli 工具，主要用来运行配置的脚本文件</li>
+<li><a href="https://github.com/xdoer/generated-plugin-taro-modal-service">generated-plugin-taro-modal-service</a>.使用了 <a href="https://ts-morph.com/">ts-morph</a> 生成弹窗配置文件。</li>
+<li><a href="https://github.com/xdoer/webpack-plugin-chokidar/blob/main/README_zh.md">webpack-plugin-chokidar</a>. 结合 webpack 和 chokidar，优化了 在 webpack 中使用的 api 设计</li>
+</ul>
+</blockquote>
+<h2 id="结语">结语</h2>
+<p>希望此文能为大家带来帮助。</p>
+<p>本文涉及到的内容和模板在<a href="https://github.com/xdoer/TaroTemplate">这里</a>。</p>
 </div>
           </article>
           <div class="simple-share">
@@ -237,6 +375,15 @@ createSquare(param2)  // 正确
           </div>
         </div>
         <div class="paper" data-aos="fade-in">
+          
+          <div class="next-post">
+            <div class="next">
+              下一篇
+            </div>
+            <a href="https://aiyou.life/post/iWhkaOqqO/">
+              <h3 class="post-title">写一个倒计时😢？</h3>
+            </a>
+          </div>
           
         </div>
          
@@ -327,56 +474,56 @@ createSquare(param2)  // 正确
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge success"
+        class="badge "
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge "
+        class="badge secondary"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge warning"
+        class="badge "
       >
         前端
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge success"
+        class="badge warning"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge success"
+        class="badge warning"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge "
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge warning"
+        class="badge success"
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge warning"
+        class="badge success"
       >
         博客
       </a>
