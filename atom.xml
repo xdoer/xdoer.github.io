@@ -2,13 +2,57 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-08-31T11:04:04.507Z</updated>
+    <updated>2021-09-03T09:50:28.397Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[TS 的一些高级类型的收集]]></title>
+        <id>https://aiyou.life/post/zPGtmQi-5/</id>
+        <link href="https://aiyou.life/post/zPGtmQi-5/">
+        </link>
+        <updated>2021-09-03T09:28:41.000Z</updated>
+        <content type="html"><![CDATA[<p>记录自己想到的和遇到的一些高级 TS 类型的代码</p>
+<h2 id="数组不为空">数组不为空</h2>
+<p>一道面试题，如何定义一个不是空数组的数组？</p>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type NotAmptyArray&lt;T&gt; = [T, ...T[]]
+</code></pre>
+</details>
+<h2 id="全部可选的参数对象至少包含一个-key">全部可选的参数对象至少包含一个 key</h2>
+<p>自己想出来的一个问题，语言不好描述，看下面代码</p>
+<pre><code class="language-ts">interface A {
+    a?: number
+    b?: boolean
+}
+
+declare function main(opt: A): void
+
+// 怎么定义一个类型，使得参数对象中至少包含一个 key？
+main({})
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">interface A {
+    a: number
+    b: boolean
+}
+
+type AtLeastOne&lt;T&gt; = {
+    [K in keyof T]: Pick&lt;T, K&gt; &amp; Partial&lt;Omit&lt;T, P&gt;&gt;
+}[keyof T]
+
+declare function main(opt: AtLeastOne&lt;A&gt;): void
+
+main({ a: 1 })
+</code></pre>
+</details>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[Restful-API 的一种动态生成数据类型的方法]]></title>
         <id>https://aiyou.life/post/QqaRhC3Gf/</id>
@@ -2178,163 +2222,6 @@ const styles = StyleSheet.create({
 })
 
 </code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[多行文本溢出省略]]></title>
-        <id>https://aiyou.life/post/qo35dDzbQ/</id>
-        <link href="https://aiyou.life/post/qo35dDzbQ/">
-        </link>
-        <updated>2020-09-05T05:04:44.000Z</updated>
-        <summary type="html"><![CDATA[<p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>多行文本溢出省略技术是一个难题，无论是在前端还是APP端。文字何时换行，换行的是哪一个字，文字会占用几行都难以精确计算和估量。本文将探讨和实现一种相对完美的方法。</p>
-<!-- more -->
-<h1 id="单行文本省略">单行文本省略</h1>
-<p>单行文本省略较为简单，且兼容性较好。</p>
-<p>要实现单行文本省略，下面CSS属性缺一不可</p>
-<pre><code class="language-css">width: 100px;  // 固定宽度
-overflow: hidden;   // 溢出隐藏
-white-space: nowrap;    // 文字不换行
-text-overflow: ellipsis;    // 文字溢出截断
-</code></pre>
-<h1 id="多行文本省略">多行文本省略</h1>
-<p>当接到这个需求的时候，考虑到我们产品运行在微信小程序，而小程序在IOS和安卓平台都是用了webkit内核, 因而下面的代码应当在两个平台都可以很好运行。</p>
-<p>webkit 内核的浏览器可以原生实现多行文本溢出省略。</p>
-<pre><code class="language-css">display: -webkit-box；
--webkit-box-orient: vertical;
--webkit-line-clamp: 2;
-overflow: hidden；
-text-overflow: ellipsis；
-</code></pre>
-<p>然而事实并非如此。实际上面代码在安卓可以运行，但在IOS下则空白。<br>
-<img src="https://aiyou.life/post-images/1599296417880.png" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">line-clamp兼容性</div>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599295340251.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">微信小程序运行环境</div>
-<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599296818625.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">IOS WkWebView 基于 Webkit</div>
-<p>找了半天资料，也没有找到原因。猜想可能 WkWebView 中的 webkit 版本太低的缘故。</p>
-<p>既然上面的代码不能使用，只能尝试其他办法。</p>
-<h2 id="js-方式">JS 方式</h2>
-<p>JS计算裁剪的方式被排除了</p>
-<ul>
-<li>第一，这有悖于行为与展示相分离的理念</li>
-<li>第二，要考虑汉字，英文字母，图标，全角半角符号等才能相对准确算出文字占用几行，要不要裁切</li>
-<li>第三，我们的使用场景中要解析富文本，对于HTML标签，链接地址等要考虑的较多，实现方案较为复杂</li>
-</ul>
-<h2 id="css-方式">CSS 方式</h2>
-<h3 id="方法一">方法一</h3>
-<p>很容易写下下面这些代码，缺点是固定高度，文字数量必须超过两行，当文字只有一行或两行时，都会显示末尾的省略号。且文字超过两行，末尾的省略号有可能遮挡住一半的字符。这样的效果不是我们想要的。</p>
-<pre><code class="language-css">.container {
-    position: 'relative';
-    width: 200px;
-    height: 40px;
-    line-height: 20px;
-    overflow: hidden;
-}
-.container::after {
-    content: '...';
-    display: 'block';
-    position: 'absolute';
-    right: 0;
-    bottom: 0;
-}
-</code></pre>
-<h3 id="方法二">方法二</h3>
-<p>CSS 处理的难点在于知道有没有换行，思考良久后无果，从网上找了找资料，发现一种很巧妙的办法。解决了一部分问题。</p>
-<p>该方法利用浮动元素特性实现。原理很简单，但想法很独特。下面给出一个限定两行的例子。</p>
-<h4 id="第一步创建如图布局">第一步：创建如图布局</h4>
-<figure data-type="image" tabindex="3"><img src="https://aiyou.life/post-images/1599306945438.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第一步</div>
-<pre><code class="language-html">&lt;div class=&quot;container&quot;&gt;
-    &lt;div class=&quot;baseline&quot;&gt;&lt;/div&gt;
-    &lt;div class=&quot;text&quot;&gt;这是一段很长的文本这是一段很长的文本这是一段很长的文本这是一段很长的文本&lt;/div&gt;
-    &lt;div class=&quot;omit&quot;&gt;...&lt;/div&gt;
-&lt;/div&gt;
-</code></pre>
-<pre><code class="language-less">.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    .baseline {
-        float: left;
-        width: 20px;
-        height: 40px;
-        background: yellow;
-    }
-    .text {
-        float: right;
-        width: calc(100% - 20px);
-        background: blueviolet;
-        word-break: break-all;
-    }
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
-    }
-}
-</code></pre>
-<h4 id="第二步省略号归位">第二步：省略号归位</h4>
-<figure data-type="image" tabindex="4"><img src="https://aiyou.life/post-images/1599314322562.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第二步</div>
-<pre><code class="language-less">...
-    .omit {
-        float: right;
-        content: &quot;...&quot;;
-        width: 20px;
-        height: 20px;
-        background: red;
-        + position: relative;
-        + left: 100%;
-        + transform: translate(-100%, -100%);
-    }
-...
-</code></pre>
-<p>这里利用 position: relative 相对父元素将自己定位到了父元素的宽度外，之后利用 transform 向上向左移动了一个自己的宽高。当只有一行时，省略号移出了视线之外，当两行时，省略号回归了正确的位置。</p>
-<h4 id="第三步隐藏多余元素">第三步：隐藏多余元素</h4>
-<figure data-type="image" tabindex="5"><img src="https://aiyou.life/post-images/1599315200026.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">第三步</div>
-<pre><code class="language-less">...
-.container {
-    background: #099;
-    max-height: 40px;
-    line-height: 20px;
-    ++ overflow: hidden;
-    ...
-    .text {
-        float: right;
-        -- width: calc(100% - 20px);
-        ++ width: 100%;
-        ++ margin-left: -20px;
-        background: blueviolet;
-        word-break: break-all;
-    }
-...
-</code></pre>
-<p>这里使用 margin-left 为负，盖住了 baseline 元素。这样保证了基本布局不变，且达到了影藏无关元素的作用。由于在父元素中设定了 overflow: hidden, 清除浮动，所以父元素的背景颜色显示出来了。</p>
-<h4 id="局限性">局限性</h4>
-<figure data-type="image" tabindex="6"><img src="https://aiyou.life/post-images/1599316233622.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">局限</div>
-使用该种方式，局限在于固定高度。baseline 元素必须设定为固定高度，因而撑起了父元素的高度。
-<h4 id="注意">注意</h4>
-<ul>
-<li>container 元素中 maxHeight/Height 必须是 LineHeight 的整数倍。倍数表示限制几行</li>
-<li>container 元素中 maxHeight/Height 要与 baseline 元素的 height 保持一致</li>
-<li>baseline 元素宽度要与 emit 元素宽度保持一致</li>
-<li>emit 元素高度要为 container 元素的行高</li>
-</ul>
-<h4 id="应用案例">应用案例</h4>
-<figure data-type="image" tabindex="7"><img src="https://aiyou.life/post-images/1599318337342.png" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">指尖探案小程序评论</div>
-<p>对比App Store中的评论，可以看出我们的实现还是相对完美<br>
-<img src="https://aiyou.life/post-images/1599318937357.jpg" alt="" loading="lazy"></p>
-<div style="text-align:center;font-size:80%">AppStore评论</div>
-<h2 id="参考">参考</h2>
-<p><a href="https://juejin.im/post/5dc15b35f265da4d432a3d10#heading-9">可能是最全的 “文本溢出截断省略” 方案合集</a></p>
 ]]></content>
     </entry>
 </feed>
