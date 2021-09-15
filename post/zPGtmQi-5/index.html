@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" >
 
-<title>TS 的一些高级类型的收集 |
+<title>TS 的一些高级类型写法 |
     文享日志</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1630662818628">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1631720272735">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -87,19 +87,19 @@
       <div class="sm-12 md-8 col">
         <div class="paper">
           <article class="article">
-            <h1>TS 的一些高级类型的收集</h1>
+            <h1>TS 的一些高级类型写法</h1>
             <p class="article-meta">
               2021-09-03 
               <a
                 href="https://aiyou.life/tag/df67loo-n/"
-                class="badge "
+                class="badge warning"
               >
                 笔记
               </a>
               
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge secondary"
+                class="badge success"
               >
                 前端
               </a>
@@ -113,7 +113,7 @@
               
             </p>
             
-            <div class="post-content"><p>记录自己想到的和遇到的一些高级 TS 类型的代码</p>
+            <div class="post-content"><p>记录自己想到的和遇到的收集一些高级 TS 类型的代码</p>
 <h2 id="数组不为空">数组不为空</h2>
 <p>一道面试题，如何定义一个不是空数组的数组？</p>
 <pre><code class="language-ts">// 怎么定义类型，约束数组中值至少有一项
@@ -121,7 +121,11 @@ const a: number[] = []
 </code></pre>
 <details>
 <summary>点击查看答案</summary>
-<pre><code class="language-ts">type NotAmptyArray&lt;T&gt; = [T, ...T[]]
+<pre><code class="language-ts">// 解法一
+type NotAmptyArray&lt;T&gt; = [T, ...T[]]
+
+// 解法二
+type NotAmptyArray&lt;T&gt; = T[] &amp; { 0: T }
 </code></pre>
 </details>
 <h2 id="全部可选的参数对象至少包含一个-key">全部可选的参数对象至少包含一个 key</h2>
@@ -152,7 +156,118 @@ declare function main(opt: AtLeastOne&lt;A&gt;): void
 main({ a: 1 })
 </code></pre>
 </details>
-</div>
+<h2 id="给定的类型可选">给定的类型可选</h2>
+<p>在下面的实例中，实现 SetOptional，可使得给定的 key 为可选</p>
+<pre><code class="language-ts">type Foo = {
+  a: number;
+  b?: string;
+  c: boolean;
+}
+
+// 实现 SetOptional
+type SomeOptional = SetOptional&lt;Foo, 'a' | 'b'&gt;;
+
+// type SomeOptional = {
+//  a?: number; // 该属性已变成可选的
+//  b?: string; // 保持不变
+//  c: boolean; 
+// }
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">// 解法一
+type SetOptional&lt;T, N extends keyof T&gt; = {
+  [P in keyof T]: Partial&lt;Pick&lt;T, N&gt;&gt; &amp; Pick&lt;T, Exclude&lt;keyof T, N&gt;&gt;
+}[keyof T]
+
+// 解法二
+type Simplify&lt;T&gt; = {
+  [P in keyof T]: T[P]
+}
+type SetOptional&lt;T, K extends keyof T&gt; =
+ Simplify&lt;Partial&lt;Pick&lt;T, K&gt;&gt; &amp; Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;&gt;
+</code></pre>
+</details>
+<h2 id="条件-pick">条件 Pick</h2>
+<p>根据值类型进行筛选</p>
+<pre><code class="language-ts">interface Example {
+ a: string;
+ b: string | number;
+ c: () =&gt; void;
+ d: {};
+}
+
+// 测试用例：
+type StringKeysOnly = ConditionalPick&lt;Example, string&gt;;
+//=&gt; {a: string}
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">// 首先将类型对应的 key 找出来，然后再进行 Pick
+type ConditionalKeys&lt;T, Condition&gt; = {
+  [P in keyof T]: T[P] extends Condition ? P : never
+}[keyof T]
+
+type ConditionalPick&lt;T, Condition&gt; = Pick&lt;T, ConditionalKeys&lt;T, Condition&gt;&gt;
+</code></pre>
+</details>
+<h2 id="函数插入参数">函数插入参数</h2>
+<p>为已有的函数类型增加指定类型的参数，新增的参数名是 x，将作为新函数类型的第一个参数</p>
+<pre><code class="language-ts">type Fn = (a: number, b: string) =&gt; number
+type AppendArgument&lt;F, A&gt; = // 你的实现代码
+
+type FinalFn = AppendArgument&lt;Fn, boolean&gt; 
+// (x: boolean, a: number, b: string) =&gt; number
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type Fn = (a: number, b: string) =&gt; number
+
+// TS 中内置了 Parameters， 和 ReturnType 可以便捷的获取函数的参数和响应类型
+type AppendArgument&lt;F extends ((...args: any) =&gt; any), A&gt; = (x: A, ...args: Parameters&lt;F&gt;) =&gt; ReturnType&lt;F&gt;
+
+type FinalFn = AppendArgument&lt;Fn, boolean&gt;
+
+</code></pre>
+</details>
+<h2 id="扁平数组">扁平数组</h2>
+<pre><code class="language-ts">type NaiveFlat&lt;T extends any[]&gt; = // 你的实现代码
+
+// 测试用例：
+type NaiveResult = NaiveFlat&lt;[['a'], ['b', 'c'], ['d']]&gt;
+// NaiveResult的结果： &quot;a&quot; | &quot;b&quot; | &quot;c&quot; | &quot;d&quot;
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type NaiveFlat&lt;T extends any[]&gt; = {
+  [P in keyof T]: T[P] extends any[] ? NaiveFlat&lt;T[P]&gt;: T[P]
+}[number]
+</code></pre>
+</details>
+<h2 id="强制对象范围">强制对象范围</h2>
+<pre><code class="language-ts">type SomeType =  {
+  prop: string
+}
+
+// 更改以下函数的类型定义，让它的参数只允许严格SomeType类型的值
+function takeSomeTypeOnly(x: SomeType) { return x }
+
+// 测试用例：
+const x = { prop: 'a' };
+takeSomeTypeOnly(x) // 可以正常调用
+
+const y = { prop: 'a', addditionalProp: 'x' };
+takeSomeTypeOnly(y) // 将出现编译错误
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type Exclusive&lt;T1, T2 extends T1&gt; = {
+  [P in keyof T2]: P extends keyof T1 ? T2[P] : never
+}
+
+function takeSomeTypeOnly&lt;T extends SomeType&gt;(x: Exclusive&lt;SomeType, T&gt;) { return x }
+</code></pre>
+</details></div>
           </article>
           <div class="simple-share">
             <a class="share-item" href="javascript:share.qzone()">QQ空间</a>
@@ -185,7 +300,7 @@ main({ a: 1 })
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1630662818628"
+      src="https://aiyou.life/images/avatar.png?v=1631720272735"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -217,7 +332,7 @@ main({ a: 1 })
       <ul>
          
         <li>
-          <a href="https://aiyou.life/post/zPGtmQi-5/">TS 的一些高级类型的收集</a>
+          <a href="https://aiyou.life/post/zPGtmQi-5/">TS 的一些高级类型写法</a>
         </li>
           
         <li>
@@ -274,14 +389,14 @@ main({ a: 1 })
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge "
+        class="badge success"
       >
         前端
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge success"
+        class="badge secondary"
       >
         typescript
       </a>
@@ -295,21 +410,21 @@ main({ a: 1 })
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge secondary"
+        class="badge success"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge success"
+        class="badge secondary"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge "
+        class="badge success"
       >
         网络
       </a>

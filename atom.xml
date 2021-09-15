@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-09-03T10:50:04.424Z</updated>
+    <updated>2021-09-15T15:37:57.394Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,12 +10,12 @@
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
     <entry>
-        <title type="html"><![CDATA[TS 的一些高级类型的收集]]></title>
+        <title type="html"><![CDATA[TS 的一些高级类型写法]]></title>
         <id>https://aiyou.life/post/zPGtmQi-5/</id>
         <link href="https://aiyou.life/post/zPGtmQi-5/">
         </link>
         <updated>2021-09-03T09:28:41.000Z</updated>
-        <content type="html"><![CDATA[<p>记录自己想到的和遇到的一些高级 TS 类型的代码</p>
+        <content type="html"><![CDATA[<p>记录自己想到的和遇到的收集一些高级 TS 类型的代码</p>
 <h2 id="数组不为空">数组不为空</h2>
 <p>一道面试题，如何定义一个不是空数组的数组？</p>
 <pre><code class="language-ts">// 怎么定义类型，约束数组中值至少有一项
@@ -23,7 +23,11 @@ const a: number[] = []
 </code></pre>
 <details>
 <summary>点击查看答案</summary>
-<pre><code class="language-ts">type NotAmptyArray&lt;T&gt; = [T, ...T[]]
+<pre><code class="language-ts">// 解法一
+type NotAmptyArray&lt;T&gt; = [T, ...T[]]
+
+// 解法二
+type NotAmptyArray&lt;T&gt; = T[] &amp; { 0: T }
 </code></pre>
 </details>
 <h2 id="全部可选的参数对象至少包含一个-key">全部可选的参数对象至少包含一个 key</h2>
@@ -54,7 +58,118 @@ declare function main(opt: AtLeastOne&lt;A&gt;): void
 main({ a: 1 })
 </code></pre>
 </details>
-]]></content>
+<h2 id="给定的类型可选">给定的类型可选</h2>
+<p>在下面的实例中，实现 SetOptional，可使得给定的 key 为可选</p>
+<pre><code class="language-ts">type Foo = {
+  a: number;
+  b?: string;
+  c: boolean;
+}
+
+// 实现 SetOptional
+type SomeOptional = SetOptional&lt;Foo, 'a' | 'b'&gt;;
+
+// type SomeOptional = {
+//  a?: number; // 该属性已变成可选的
+//  b?: string; // 保持不变
+//  c: boolean; 
+// }
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">// 解法一
+type SetOptional&lt;T, N extends keyof T&gt; = {
+  [P in keyof T]: Partial&lt;Pick&lt;T, N&gt;&gt; &amp; Pick&lt;T, Exclude&lt;keyof T, N&gt;&gt;
+}[keyof T]
+
+// 解法二
+type Simplify&lt;T&gt; = {
+  [P in keyof T]: T[P]
+}
+type SetOptional&lt;T, K extends keyof T&gt; =
+ Simplify&lt;Partial&lt;Pick&lt;T, K&gt;&gt; &amp; Pick&lt;T, Exclude&lt;keyof T, K&gt;&gt;&gt;
+</code></pre>
+</details>
+<h2 id="条件-pick">条件 Pick</h2>
+<p>根据值类型进行筛选</p>
+<pre><code class="language-ts">interface Example {
+ a: string;
+ b: string | number;
+ c: () =&gt; void;
+ d: {};
+}
+
+// 测试用例：
+type StringKeysOnly = ConditionalPick&lt;Example, string&gt;;
+//=&gt; {a: string}
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">// 首先将类型对应的 key 找出来，然后再进行 Pick
+type ConditionalKeys&lt;T, Condition&gt; = {
+  [P in keyof T]: T[P] extends Condition ? P : never
+}[keyof T]
+
+type ConditionalPick&lt;T, Condition&gt; = Pick&lt;T, ConditionalKeys&lt;T, Condition&gt;&gt;
+</code></pre>
+</details>
+<h2 id="函数插入参数">函数插入参数</h2>
+<p>为已有的函数类型增加指定类型的参数，新增的参数名是 x，将作为新函数类型的第一个参数</p>
+<pre><code class="language-ts">type Fn = (a: number, b: string) =&gt; number
+type AppendArgument&lt;F, A&gt; = // 你的实现代码
+
+type FinalFn = AppendArgument&lt;Fn, boolean&gt; 
+// (x: boolean, a: number, b: string) =&gt; number
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type Fn = (a: number, b: string) =&gt; number
+
+// TS 中内置了 Parameters， 和 ReturnType 可以便捷的获取函数的参数和响应类型
+type AppendArgument&lt;F extends ((...args: any) =&gt; any), A&gt; = (x: A, ...args: Parameters&lt;F&gt;) =&gt; ReturnType&lt;F&gt;
+
+type FinalFn = AppendArgument&lt;Fn, boolean&gt;
+
+</code></pre>
+</details>
+<h2 id="扁平数组">扁平数组</h2>
+<pre><code class="language-ts">type NaiveFlat&lt;T extends any[]&gt; = // 你的实现代码
+
+// 测试用例：
+type NaiveResult = NaiveFlat&lt;[['a'], ['b', 'c'], ['d']]&gt;
+// NaiveResult的结果： &quot;a&quot; | &quot;b&quot; | &quot;c&quot; | &quot;d&quot;
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type NaiveFlat&lt;T extends any[]&gt; = {
+  [P in keyof T]: T[P] extends any[] ? NaiveFlat&lt;T[P]&gt;: T[P]
+}[number]
+</code></pre>
+</details>
+<h2 id="强制对象范围">强制对象范围</h2>
+<pre><code class="language-ts">type SomeType =  {
+  prop: string
+}
+
+// 更改以下函数的类型定义，让它的参数只允许严格SomeType类型的值
+function takeSomeTypeOnly(x: SomeType) { return x }
+
+// 测试用例：
+const x = { prop: 'a' };
+takeSomeTypeOnly(x) // 可以正常调用
+
+const y = { prop: 'a', addditionalProp: 'x' };
+takeSomeTypeOnly(y) // 将出现编译错误
+</code></pre>
+<details>
+<summary>点击查看答案</summary>
+<pre><code class="language-ts">type Exclusive&lt;T1, T2 extends T1&gt; = {
+  [P in keyof T2]: P extends keyof T1 ? T2[P] : never
+}
+
+function takeSomeTypeOnly&lt;T extends SomeType&gt;(x: Exclusive&lt;SomeType, T&gt;) { return x }
+</code></pre>
+</details>]]></content>
     </entry>
     <entry>
         <title type="html"><![CDATA[Restful-API 的一种动态生成数据类型的方法]]></title>
