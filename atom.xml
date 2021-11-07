@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-09-15T15:37:57.394Z</updated>
+    <updated>2021-11-07T16:36:32.733Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -10,12 +10,155 @@
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
     <entry>
+        <title type="html"><![CDATA[富文本编辑器转为受控组件的一种思路]]></title>
+        <id>https://aiyou.life/post/Fjnj0JDZ5/</id>
+        <link href="https://aiyou.life/post/Fjnj0JDZ5/">
+        </link>
+        <updated>2021-11-07T14:43:27.000Z</updated>
+        <summary type="html"><![CDATA[<p>本文将探讨如何将 wangEditor 改造成受控组件，并且可以与 Antd 的 Form 表单连用。其他编辑器应该类似，本文抛个砖引个玉，希望给大家带来启发。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>本文将探讨如何将 wangEditor 改造成受控组件，并且可以与 Antd 的 Form 表单连用。其他编辑器应该类似，本文抛个砖引个玉，希望给大家带来启发。</p>
+<!-- more -->
+<h2 id="前言">前言</h2>
+<p>最近接到一个小需求，要将业务中的 textarea 文本框改为富文本编辑器，调研了几种编辑器后，最终选择了 wangEditor 来实现需求。由于原来的 textarea 是放在 antd 的 form 表单中使用的，因而编辑器需要改造成受控组件的形式。</p>
+<h2 id="受控与非受控组件">受控与非受控组件</h2>
+<p>下面先用两个示例，感受一下受控组件和非受控组件的区别:</p>
+<p>非受控组件</p>
+<pre><code class="language-html">&lt;input /&gt;
+</code></pre>
+<p>受控组件</p>
+<pre><code class="language-html">const [value, setValue] = useState('')
+
+&lt;input value={value} onChange={(e) =&gt; setValue(e.detail.value)}/&gt;
+</code></pre>
+<p>简单来讲，受控组件可以由外部状态影响到输入框的输入值。</p>
+<h2 id="组件封装">组件封装</h2>
+<p>回到编辑器，他本身就类似于上面的非受控组件，但相比 input, 他没有 value 和 onChange 来改变编辑器的内容。幸运的是，他提供了 <code>editor.txt.html()</code> 方法可以 <strong>获取</strong> 和 <strong>设置</strong> 编辑器的内容，同时也提供了 <code>editor.config.onchange</code> 钩子函数来监听用户输入。</p>
+<p>于是很容易封装出这样的代码</p>
+<pre><code class="language-tsx">&lt;!------------Editor.tsx----------------&gt;
+import { useEffect, useRef } from 'react'
+import E from 'wangeditor'
+
+interface Props {
+  value: string
+  onChange(v: string): void
+}
+
+export default ({ value, onChange }: Props) =&gt; {
+  const editorEle = useRef(null)
+  const editorRef = useRef&lt;E | null&gt;(null)
+
+  useEffect(() =&gt; {
+    const editor = new E(editorEle.current)
+    editorRef.current = editor
+
+    editor.config.onchange = onChange
+    editor.create()
+  }, [])
+
+  useEffect(() =&gt; {
+    editorRef.current?.txt.html(value)
+  }, [value])
+
+  return &lt;div ref={editorEle}&gt;&lt;/div&gt;
+}
+</code></pre>
+<h2 id="问题引出">问题引出</h2>
+<p>使用 useEffect 监听 value 值，调用  <code>editor.txt.html()</code> 方法来更新编辑器的输入框内容。想法没什么问题，是实际使用，你会发现各种各样的问题，比如: <a href="https://github.com/wangeditor-team/wangEditor/issues/3666">如何保留光标位置</a> ，性能较差等等。</p>
+<h2 id="分析问题">分析问题</h2>
+<p>要解决这个问题，首先考虑一下，什么情况下 value 会变化？</p>
+<p>如果 value 值只由 onChange 引起变化，那其实编辑器中输入框的值永远是与 value 值是相等的，即 <code>value === editor.txt.html()</code>, 因而没有必要再去手动设置一遍 <code>editor.txt.html(value)</code>, 所以上面代码中，监听 value 值这一段代码可以去掉了。</p>
+<p>但情况往往没有这么简单，如果初始时，编辑器里的值是依赖接口返回的，则还是需要去监听 value 值的变化，组件里面，没有办法区分你数据是怎么来的，需不需要进行  <code>editor.txt.html(value)</code> 的操作。</p>
+<pre><code class="language-tsx">&lt;!------------App.tsx----------------&gt;
+import { useEffect, useState } from 'react'
+import Editor from './Editor'
+
+function App() {
+  const [value, setValue] = useState('')
+
+  useEffect(() =&gt; {
+    // 编辑器初始值依赖接口返回
+    fetch('http://localhost:3000').then(res =&gt; res.text()).then(setValue)
+  }, [])
+
+  return (
+    &lt;div className=&quot;App&quot;&gt;
+      &lt;Editor value={value} onChange={setValue} /&gt;
+    &lt;/div&gt;
+  )
+}
+</code></pre>
+<h2 id="解决方案">解决方案</h2>
+<p><strong>上面也提到了，如果 value 值是由 onChange 引起的，那么 <code>value</code> 永远等于 <code>editor.txt.html()</code>, 如果不等于，一定就是由外部因素引起 value 的变化，由外部引起时，再调用 <code>editor.txt.html(value)</code> 就好了。</strong></p>
+<pre><code class="language-tsx">export default ({ value, onChange }: Props) =&gt; {
+  
+  // ...省略部分代码
+
+  useEffect(() =&gt; {
+    if (value !== editorRef.current?.txt.html()) {
+      editorRef.current?.txt.html(value)
+    }
+  }, [value])
+
+  return &lt;div ref={editorEle}&gt;&lt;/div&gt;
+}
+</code></pre>
+<p>可能有人会疑惑，这种方法还是没解决保留光标位置的问题啊。</p>
+<p>这种方法确实没解决这个问题，但是还请考虑，什么情况下，需要除去 onChange 方法外，去改变 value 值呢? 初始化数据？reset 表单？这些是不是没必要保留光标位置呢？</p>
+<h2 id="代码示例">代码示例</h2>
+<pre><code class="language-tsx">import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import E from 'wangeditor'
+
+interface Props {
+  defaultValue?: string
+  value: string
+  onChange(v: string): void
+}
+
+export default forwardRef(({ value, onChange, defaultValue }: Props, ref) =&gt; {
+  const editorEleRef = useRef(null)
+  const editorRef = useRef&lt;E | null&gt;(null)
+
+  useEffect(() =&gt; {
+    const editor = new E(editorEleRef.current)
+    editorRef.current = editor
+
+    editor.config.onchange = onChange
+
+    if(defaultValue) editor.txt.html(defaultValue)
+
+    editor.create()
+
+    return () =&gt; {
+      editor.destroy()
+    }
+  }, [])
+
+  useEffect(() =&gt; {
+    if (value !== editorRef.current?.txt.html()) {
+      editorRef.current?.txt.html(value)
+    }
+  }, [value])
+
+  useImperativeHandle(ref, () =&gt; ({
+    value: editorRef.current?.txt.html() || ''
+  }))
+
+  return &lt;div ref={editorEleRef}&gt;&lt;/div&gt;
+})
+</code></pre>
+]]></content>
+    </entry>
+    <entry>
         <title type="html"><![CDATA[TS 的一些高级类型写法]]></title>
         <id>https://aiyou.life/post/zPGtmQi-5/</id>
         <link href="https://aiyou.life/post/zPGtmQi-5/">
         </link>
         <updated>2021-09-03T09:28:41.000Z</updated>
+        <summary type="html"><![CDATA[<p>记录自己想到的和遇到的收集一些高级 TS 类型的代码</p>
+]]></summary>
         <content type="html"><![CDATA[<p>记录自己想到的和遇到的收集一些高级 TS 类型的代码</p>
+<!-- more -->
 <h2 id="数组不为空">数组不为空</h2>
 <p>一道面试题，如何定义一个不是空数组的数组？</p>
 <pre><code class="language-ts">// 怎么定义类型，约束数组中值至少有一项
@@ -2243,102 +2386,6 @@ module.exports = {
   writeFile,
   fileScanner,
 }
-</code></pre>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[ReactNative渐进式图片加载]]></title>
-        <id>https://aiyou.life/post/FEu-GtOkz/</id>
-        <link href="https://aiyou.life/post/FEu-GtOkz/">
-        </link>
-        <updated>2020-09-05T16:22:37.000Z</updated>
-        <summary type="html"><![CDATA[<p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>最近在做ReactNative项目，我们的页面有很多图片，发现图片加载效果很卡顿。于是研究了一下RN下图片渐进加载。</p>
-<!-- more -->
-<h2 id="原理">原理</h2>
-<p>首先给图片一个固定宽高的容器，容器中有两个透明度为0的 Image 元素， 其中一个加载缩略图，一个为原图，监听图片加载，调整透明度，给过渡动画。</p>
-<h2 id="依赖">依赖</h2>
-<pre><code class="language-bash">react-native-fast-image   用于缓存图片
-react-spring/native   用于实现动画效果
-</code></pre>
-<h2 id="对比图">对比图</h2>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1599328089874.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">优化前</div>
-<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1599328239398.gif" alt="" loading="lazy"></figure>
-<div style="text-align:center;font-size:80%">优化后</div>
-<h2 id="核心代码">核心代码</h2>
-<pre><code class="language-typescript">import React, { FC } from 'react'
-import { View, StyleSheet, ImageStyle, ViewStyle, animated } from 'react-native'
-import FastImage, { FastImageProps } from 'react-native-fast-image'
-import { animated } from 'react-spring/native'
-import { useSpring } from 'react-spring'
-
-const AnimatedFastImage = animated(FastImage)
-
-interface ImgStyle extends ImageStyle {
-  width: number | string
-  height: number | string
-}
-
-interface Props extends FastImageProps {
-  thumbnailSource?: FastImageProps['source']
-  style: ImgStyle
-  containerStyle?: ViewStyle
-}
-
-export const ProgressiveImage: FC&lt;Props&gt; = ({
-  thumbnailSource,
-  source,
-  style,
-  containerStyle,
-  ...props
-}) =&gt; {
-  const [thumbOpStyle, setThumbOpStyle] = useSpring(() =&gt; ({ opacity: 0, config: { duration: 500 } }))
-  const [imgOpStyle, setImgOpStyle] = useSpring(() =&gt; ({ opacity: 0, config: { duration: 500 } }))
-
-  function handleThumbnailLoad() {
-    setThumbOpStyle({ opacity: 1, config: { duration: 500 } })
-  }
-
-  function onImageLoad() {
-    setImgOpStyle({ opacity: 1, config: { duration: 500 } })
-  }
-
-  return (
-    &lt;View style={[styles.container, { width: style.width, height: style.height }, containerStyle]}&gt;
-      {thumbnailSource &amp;&amp; (
-        &lt;AnimatedFastImage
-          {...props}
-          source={thumbnailSource}
-          style={[style, thumbOpStyle]}
-          onLoad={handleThumbnailLoad}
-          blurRadius={1}
-        /&gt;
-      )}
-      &lt;AnimatedFastImage
-        {...props}
-        source={source}
-        style={[styles.imageOverlay, imgOpStyle, style]}
-        onLoad={onImageLoad}
-      /&gt;
-    &lt;/View&gt;
-  )
-}
-
-const styles = StyleSheet.create({
-  imageOverlay: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    top: 0,
-  },
-  container: {
-    backgroundColor: '#e1e4e8',
-  },
-})
-
 </code></pre>
 ]]></content>
     </entry>

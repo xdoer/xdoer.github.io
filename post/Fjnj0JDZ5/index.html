@@ -3,7 +3,8 @@
   <head>
     <meta charset="utf-8" >
 
-<title>网络 | 文享日志</title>
+<title>富文本编辑器转为受控组件的一种思路 |
+    文享日志</title>
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
@@ -15,6 +16,12 @@
 <link rel="stylesheet" href="https://aiyou.life/styles/main.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css">
 
+
+  
+    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
+  
+
+  
 
 <!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
 
@@ -79,74 +86,172 @@
     <div id="top" class="row site">
       <div class="sm-12 md-8 col">
         <div class="paper">
-          <h2 class="current-tag">标签: 网络</h2>
-          
-  <article class="article">
-    <h2 class="article-title">
-      <a href="https://aiyou.life/post/M4RcI3wfU/">由封装一个请求库所想到的</a>
-    </h2>
-    <p class="article-meta">
-      2021-05-06
-      
-        <a href="https://aiyou.life/tag/K1r5vpFd_/" class="badge secondary">
-          前端
-        </a>
-      
-        <a href="https://aiyou.life/tag/g_6wyy_ol/" class="badge ">
-          网络
-        </a>
-      
-        <a href="https://aiyou.life/tag/E75leUW9b/" class="badge secondary">
-          typescript
-        </a>
-      
-    </p>
-    <p class="text-lead">
-      <p>是否有一种方式，从底向上的，针对不同的请求内核可以很方便的为其赋予请求库拦截器、中间件、快捷请求等几个通用功能，并且保留不同请求内核的差异化？</p>
+          <article class="article">
+            <h1>富文本编辑器转为受控组件的一种思路</h1>
+            <p class="article-meta">
+              2021-11-07 
+            </p>
+            
+            <div class="post-content"><p>本文将探讨如何将 wangEditor 改造成受控组件，并且可以与 Antd 的 Form 表单连用。其他编辑器应该类似，本文抛个砖引个玉，希望给大家带来启发。</p>
+<!-- more -->
+<h2 id="前言">前言</h2>
+<p>最近接到一个小需求，要将业务中的 textarea 文本框改为富文本编辑器，调研了几种编辑器后，最终选择了 wangEditor 来实现需求。由于原来的 textarea 是放在 antd 的 form 表单中使用的，因而编辑器需要改造成受控组件的形式。</p>
+<h2 id="受控与非受控组件">受控与非受控组件</h2>
+<p>下面先用两个示例，感受一下受控组件和非受控组件的区别:</p>
+<p>非受控组件</p>
+<pre><code class="language-html">&lt;input /&gt;
+</code></pre>
+<p>受控组件</p>
+<pre><code class="language-html">const [value, setValue] = useState('')
 
-    </p>
-    <div class="row">
-      <a href="https://aiyou.life/post/M4RcI3wfU/" class="readmore-link">
-        <button>
-          Read More
-        </button>
-      </a>
-    </div>
-  </article>
+&lt;input value={value} onChange={(e) =&gt; setValue(e.detail.value)}/&gt;
+</code></pre>
+<p>简单来讲，受控组件可以由外部状态影响到输入框的输入值。</p>
+<h2 id="组件封装">组件封装</h2>
+<p>回到编辑器，他本身就类似于上面的非受控组件，但相比 input, 他没有 value 和 onChange 来改变编辑器的内容。幸运的是，他提供了 <code>editor.txt.html()</code> 方法可以 <strong>获取</strong> 和 <strong>设置</strong> 编辑器的内容，同时也提供了 <code>editor.config.onchange</code> 钩子函数来监听用户输入。</p>
+<p>于是很容易封装出这样的代码</p>
+<pre><code class="language-tsx">&lt;!------------Editor.tsx----------------&gt;
+import { useEffect, useRef } from 'react'
+import E from 'wangeditor'
 
-  <article class="article">
-    <h2 class="article-title">
-      <a href="https://aiyou.life/post/4xGLEq7xe/">利用树莓派搭建个人服务器</a>
-    </h2>
-    <p class="article-meta">
-      2019-11-21
-      
-        <a href="https://aiyou.life/tag/g_6wyy_ol/" class="badge secondary">
-          网络
-        </a>
-      
-    </p>
-    <p class="text-lead">
-      <p>大学时用的腾讯云优惠到期了，续费要每个月60多块钱，有点肉疼。因而买了一块树莓派，想要研究一下怎么将他搞成一个服务器。拖拉了几个月，最近总算是搞好了。本文将介绍一下我的搭建过程。</p>
+interface Props {
+  value: string
+  onChange(v: string): void
+}
 
-    </p>
-    <div class="row">
-      <a href="https://aiyou.life/post/4xGLEq7xe/" class="readmore-link">
-        <button>
-          Read More
-        </button>
-      </a>
-    </div>
-  </article>
+export default ({ value, onChange }: Props) =&gt; {
+  const editorEle = useRef(null)
+  const editorRef = useRef&lt;E | null&gt;(null)
 
+  useEffect(() =&gt; {
+    const editor = new E(editorEle.current)
+    editorRef.current = editor
 
-        </div>
-        <div class="row flex-edges">
+    editor.config.onchange = onChange
+    editor.create()
+  }, [])
+
+  useEffect(() =&gt; {
+    editorRef.current?.txt.html(value)
+  }, [value])
+
+  return &lt;div ref={editorEle}&gt;&lt;/div&gt;
+}
+</code></pre>
+<h2 id="问题引出">问题引出</h2>
+<p>使用 useEffect 监听 value 值，调用  <code>editor.txt.html()</code> 方法来更新编辑器的输入框内容。想法没什么问题，是实际使用，你会发现各种各样的问题，比如: <a href="https://github.com/wangeditor-team/wangEditor/issues/3666">如何保留光标位置</a> ，性能较差等等。</p>
+<h2 id="分析问题">分析问题</h2>
+<p>要解决这个问题，首先考虑一下，什么情况下 value 会变化？</p>
+<p>如果 value 值只由 onChange 引起变化，那其实编辑器中输入框的值永远是与 value 值是相等的，即 <code>value === editor.txt.html()</code>, 因而没有必要再去手动设置一遍 <code>editor.txt.html(value)</code>, 所以上面代码中，监听 value 值这一段代码可以去掉了。</p>
+<p>但情况往往没有这么简单，如果初始时，编辑器里的值是依赖接口返回的，则还是需要去监听 value 值的变化，组件里面，没有办法区分你数据是怎么来的，需不需要进行  <code>editor.txt.html(value)</code> 的操作。</p>
+<pre><code class="language-tsx">&lt;!------------App.tsx----------------&gt;
+import { useEffect, useState } from 'react'
+import Editor from './Editor'
+
+function App() {
+  const [value, setValue] = useState('')
+
+  useEffect(() =&gt; {
+    // 编辑器初始值依赖接口返回
+    fetch('http://localhost:3000').then(res =&gt; res.text()).then(setValue)
+  }, [])
+
+  return (
+    &lt;div className=&quot;App&quot;&gt;
+      &lt;Editor value={value} onChange={setValue} /&gt;
+    &lt;/div&gt;
+  )
+}
+</code></pre>
+<h2 id="解决方案">解决方案</h2>
+<p><strong>上面也提到了，如果 value 值是由 onChange 引起的，那么 <code>value</code> 永远等于 <code>editor.txt.html()</code>, 如果不等于，一定就是由外部因素引起 value 的变化，由外部引起时，再调用 <code>editor.txt.html(value)</code> 就好了。</strong></p>
+<pre><code class="language-tsx">export default ({ value, onChange }: Props) =&gt; {
   
-  
+  // ...省略部分代码
+
+  useEffect(() =&gt; {
+    if (value !== editorRef.current?.txt.html()) {
+      editorRef.current?.txt.html(value)
+    }
+  }, [value])
+
+  return &lt;div ref={editorEle}&gt;&lt;/div&gt;
+}
+</code></pre>
+<p>可能有人会疑惑，这种方法还是没解决保留光标位置的问题啊。</p>
+<p>这种方法确实没解决这个问题，但是还请考虑，什么情况下，需要除去 onChange 方法外，去改变 value 值呢? 初始化数据？reset 表单？这些是不是没必要保留光标位置呢？</p>
+<h2 id="代码示例">代码示例</h2>
+<pre><code class="language-tsx">import { forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import E from 'wangeditor'
+
+interface Props {
+  defaultValue?: string
+  value: string
+  onChange(v: string): void
+}
+
+export default forwardRef(({ value, onChange, defaultValue }: Props, ref) =&gt; {
+  const editorEleRef = useRef(null)
+  const editorRef = useRef&lt;E | null&gt;(null)
+
+  useEffect(() =&gt; {
+    const editor = new E(editorEleRef.current)
+    editorRef.current = editor
+
+    editor.config.onchange = onChange
+
+    if(defaultValue) editor.txt.html(defaultValue)
+
+    editor.create()
+
+    return () =&gt; {
+      editor.destroy()
+    }
+  }, [])
+
+  useEffect(() =&gt; {
+    if (value !== editorRef.current?.txt.html()) {
+      editorRef.current?.txt.html(value)
+    }
+  }, [value])
+
+  useImperativeHandle(ref, () =&gt; ({
+    value: editorRef.current?.txt.html() || ''
+  }))
+
+  return &lt;div ref={editorEleRef}&gt;&lt;/div&gt;
+})
+</code></pre>
 </div>
-
+          </article>
+          <div class="simple-share">
+            <a class="share-item" href="javascript:share.qzone()">QQ空间</a>
+            <a class="share-item" href="javascript:share.weibo()">微博</a>
+            <a class="share-item" href="javascript:share.facebook()"
+              >Facebook</a
+            >
+            <a class="share-item" href="javascript:share.twitter()">Twitter</a>
+          </div>
+        </div>
+        <div class="paper" data-aos="fade-in">
+          
+          <div class="next-post">
+            <div class="next">
+              下一篇
+            </div>
+            <a href="https://aiyou.life/post/zPGtmQi-5/">
+              <h3 class="post-title">TS 的一些高级类型写法</h3>
+            </a>
+          </div>
+          
+        </div>
+         
+        <div class="paper" data-aos="fade-in">
+          <div id="gitalk-container"></div>
+        </div>
+          
       </div>
+
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
@@ -239,35 +344,35 @@
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge warning"
+        class="badge "
       >
         前端
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge warning"
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge secondary"
+        class="badge warning"
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge secondary"
+        class="badge warning"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge secondary"
+        class="badge success"
       >
         javascript
       </a>
@@ -288,7 +393,7 @@
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge "
+        class="badge warning"
       >
         博客
       </a>
@@ -423,6 +528,22 @@
 </script>
 
 
+
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script>
+  var gitalk = new Gitalk({
+    clientID: 'f9e29934c5621e13bb13',
+    clientSecret: '6ca4b35e60834188ea98ca3be6fba3c21b5ad34a',
+    repo: 'xdoer.github.io',
+    owner: 'xdoer',
+    admin: ['xdoer'],
+    id: location.pathname.substring(0, 49), // Ensure uniqueness and length less than 50
+    distractionFreeMode: false, // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+</script>
+  
 <script>
   // 点击文章内部图片查看大图
   const contentImagesEles = [...document.querySelectorAll('.post-content img')]
