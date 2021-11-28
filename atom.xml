@@ -2,13 +2,63 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-11-07T16:36:32.733Z</updated>
+    <updated>2021-11-28T10:17:27.584Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[让生活井井有条]]></title>
+        <id>https://aiyou.life/post/7Ta0APQTd/</id>
+        <link href="https://aiyou.life/post/7Ta0APQTd/">
+        </link>
+        <updated>2021-11-27T13:22:34.000Z</updated>
+        <summary type="html"><![CDATA[<p>想来好像蛮久没有更新博客了，想写些东西，但是还没有明确的思路写什么，那么就大致记录一下近况，和一些所见所想所感悟。。如此，本文主旨就是标题这个样子了...</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>想来好像蛮久没有更新博客了，想写些东西，但是还没有明确的思路写什么，那么就大致记录一下近况，和一些所见所想所感悟。。如此，本文主旨就是标题这个样子了...</p>
+<!-- more -->
+<h2 id="职业">职业</h2>
+<p>  犹犹豫豫，键盘打了半天字，删了更改改了删，想想还是该从刚毕业前夕写起。恍恍惚惚，大学毕业都两年多了。。。。。。。。。</p>
+<p>  应该是 17 年 12 月的某一天，准备去上晚上 8:00-10:00 的选修课时，白世伟喊我一起去到上海汉得在我们学校的宣讲会看看。本着涨涨见识的目的，旷了选修课，和他一起去了，印象中不记得讲了些什么，只记得每人发了一张纸，写了一些智力题，就草草结束了。</p>
+<p>  后来汉得在学校组织面试，我把大学做的<a href="https://hanblog.herokuapp.com/idx/0">博客</a>给面试官演示了一遍，问了几个问题，顺利通过了面试，拿到了汉得的实习 offer。本来是对这家公司无感的，但是来学校宣讲的公司，感觉一个比一个拉胯，我开始在网上投简历，找实习。不知道是不是每一个计算机人，心都向往着大厂，我那时自认为水平不错，有能力有技术，应该很容易就能进去，但投了很多简历，都石沉大海。</p>
+<p>  大概是 18 年 4，5 月份的时候，学校规定每个学生必须参与实习，并给出了一份公司名单。除了上海汉得外，全他娘的是新疆本地的互联网公司。这意味着除了去上海汉得外，基本只能在新疆本地待着了。</p>
+<p>  18 年 12 月，前往上海参加汉得的为期三个月的实习生培训，当我坐在教室里，授课老师从基础的 HTML 讲起，周围同学基本 <code>零基础</code> 的技术水平，心里落差其实挺大的。呆了不到一个星期，我意识到这样的学习对我收效甚微。主动联系了主管，想让他安排我上手参与项目，后来就去了深圳，驻场华润置地，开发了微信企业号，万象城装修管理等几个项目，也让我慢慢了解了外包这个岗位。</p>
+<p>  那时候有和师兄聊过薪资待遇问题，也有提到我毕业后，如果来这里的话，林林总总能拿到 9k 的薪资，加上各种各样的补贴和福利，最后大约一个月能拿到 12k。。当时心想好像和大厂起薪差不多了，好像还行的样子。心里就默默的接受了。</p>
+<p>  毕业后，驻场北京阳光保险，技术氛围，转正定薪等与心里期望落差蛮大的，坚持了两个月，于19年 10 月 27 日裸辞了。辞职前，投了很多公司， 但都石沉大海，在 cnode 上无意看到了志毅发的西山居的招聘帖子，加了微信，发了简历后，成功的约了面试。最终面到了老白这一面，面完了最终才提到这是个外包岗位，心里多少是有气且犹豫的，但最终考虑到志毅是阿里出来的，技术水平足够牛逼，我可以学到很多东西，我最终接受了这个 offer，也想着呆满两年，再往大厂跳。</p>
+<p>  在西山居，我们团队属于一个创业型团队，这意味着团队人少，工作量大，也意味着我能够快速成长，在技术上有所提升，还意味着头发一撮一撮的掉...没过几个月，得到了老白的认可，顺利的拿到了正式编。在经过几次大方向变更，最终产品定型之后，从业务中就很难获得技术上的提升了，日常开发只是满足常规的一些需求，开发几个弹窗，几个页面等等，虽然无趣，但这却是工作和生活的常态。</p>
+<p>  在西山居最终还是没呆满两年，在志毅离职后，我给一些大厂投了简历，最后面着面着，考虑到个人发展，薪资待遇，技术氛围等原因，在拿到蚂蚁的 offer 后，提了离职。</p>
+<p>  “你想要什么”，这个问题经常会在我的脑海中闪现，也经常想几秒钟，然后无疾而终。现在细想，我依然回答不好这个问题。<br>
+  在这几年的职业生涯中，“技术”是我这个阶段的主线。只有明确目标和追求，有了主线，才不至于安于现状，止步不前。</p>
+<h2 id="生活">生活</h2>
+<p>  大家应该都经历过下班后，躺在沙发上刷手机，打游戏，然后不知不觉过了 12 点，睡觉前会想时间过得快，仿佛啥都没干，就没时间了。<br>
+  久而久之，<strong>挺没意思，挺迷茫的</strong>。<br>
+  我决定做些什么，在看完<a href="https://www.bilibili.com/video/BV1U64y1B7LE?from=search&amp;seid=3067143539344479507">《用好提醒事项，摆脱焦虑和拖延》</a> 这个视频后，决定使用“提醒事项”配合“日历”，完成日常生活的管理。</p>
+<p>根据视频做了简单的规划<br>
+<img src="https://aiyou.life/post-images/1638086254227.png" alt="" loading="lazy"></p>
+<h3 id="记账">记账</h3>
+<p>  从 9 月离开珠海后，到 10 月在杭州安顿下来，花费巨大，却也没有统计过具体花钱花在了什么地方，自己到底有多少资产。所以我第一个日程的规划，就是每天花 5 分钟的时间，记录一下今天的花销。<br>
+  研究了几款记账软件，最后选择了使用微信账本小程序记账，他足够简单，使用微信付款还能自动同步账单等等。后来看到少数派推荐的这款软件 <a href="https://sspai.com/post/66133">icost</a> 试用了一下，感觉还挺不错，功能，UI等设计的很棒。只有高级功能需要付费 50 RMB，价格还算合理，但对我这种刚接触记账的小白用户来说，值得不值得入手就是另外一回事了。<br>
+  这时，也有想法自己开发一个记账小程序，刚好可以实践一下自动化构建，玩一玩 docker、gitlab、自动化构建等一套流程。<br>
+<img src="https://aiyou.life/post-images/1638088782119.png" alt="" loading="lazy"></p>
+<p>  断断续续花了一个多星期，在修复了 Taro 的两个 Bug: <a href="https://github.com/NervJS/taro-plugin-inject/pull/9">fix: 新增组件失败</a>, <a href="https://github.com/NervJS/taro-project-templates/pull/52">fix: wxcloud模板在 ts 下跑不起来 </a>, 成功搭建起小程序项目。然后在经历了树莓派性能太低，gitlab 安装不上、内存卡读取速度太慢，命令运行太卡等挫折后，最后架构改为：在 MBP 的 docker  中安装 gitlab, 在树莓派安装 gitlab-runner 跑任务。成功在内网搭建起了一套Git 和自动化构建系统</p>
+<p>内网 Gitlab 跑任务:<br>
+<img src="https://aiyou.life/post-images/1638088722782.png" alt="" loading="lazy"></p>
+<p>自动化构建:<br>
+<img src="https://aiyou.life/post-images/1638094447340.png" alt="" loading="lazy"></p>
+<p>项目截图:<br>
+<img src="https://aiyou.life/post-images/1638089953253.png" alt="" loading="lazy"></p>
+<h3 id="读书">读书</h3>
+<p>  虽说上了这么多年的学，可还是感觉自己很空洞，说话写字没有深度。此外还觉得自己情商太低，容易说错话。所以我规划了每天读一个章节的书，第一本也就顺其自然的选择了《人性的弱点》。</p>
+<p>  光读书还不够，微信读书可以勾勾画画做批注等等，此外，还需要精炼主题，了解每一章大致讲了写什么，我整理了一些关键点到 <a href="https://www.yuque.com/docs/share/9cfcc350-32ed-4163-ba7e-7aa1b43bfe5a">语雀笔记</a>上，并且打算看完后，再写一篇读后感。</p>
+<p>  作为补充，还可以选几本其他类的书，一起读。我选择了常书欣的《斗贼》，常书欣文笔非常好，读起来很舒服，故事情节也很搞笑。</p>
+<h3 id="技能">技能</h3>
+<p>  这几年一直在用 JS 写项目，忽略了很多其他的东西。当我在“提醒事项”上填充内容时，我脑海中浮现的 Linux、Shell、服务器之类的东西，所以规划了学习 shell 脚本、Vim 快捷键、iTerm2 快捷键等。。</p>
+<p>  当我学习了 shell 脚本后，马上就在公司项目中应用上了。shell 脚本完全可以在一些场景下，代替 js 脚本，且 shell 脚本执行效率相比 nodejs 高出许多。。</p>
+<p>  快捷键的学习，很大的提高了我的开发效率。尤其在我学习了 vim 快捷键后，感触更深。以往用 vim 打开文件，更改某个文字时，使用方向键从左上角，一个一个键的按，按到最终目标，这样效率低，但也能用，所以就这样凑合了好久，也没有仔细了解学习快捷键。。如果在当时愿意多了解一步的话，会方便很多。。我整理了<a href="https://www.yuque.com/xdoer/cw34f7">语雀仓库</a>，大家可以看看</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[富文本编辑器转为受控组件的一种思路]]></title>
         <id>https://aiyou.life/post/Fjnj0JDZ5/</id>
@@ -2024,369 +2074,6 @@ setConfig({
 <h2 id="结语">结语</h2>
 <p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。</p>
 <figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1619618374404.png" alt="" loading="lazy"></figure>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Taro小程序开发提升效率的几点分享-路由篇]]></title>
-        <id>https://aiyou.life/post/FkN_iGcYQ/</id>
-        <link href="https://aiyou.life/post/FkN_iGcYQ/">
-        </link>
-        <updated>2020-09-22T13:00:12.000Z</updated>
-        <summary type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>我们都知道，小程序开发一个页面，首先要在 pages 文件夹在新建文件夹，然后在 appConfig 中配置页面完整的路径地址，在进行路由跳转时，还需要在 navigateTo 中写下完整的页面路径。当页面数量少，代码量小时，似乎可以接受，但当代码量大，项目存在好几个分包时，页面跳转路径会变得非常长，书写页面路径会变得越来越困难，代码也不够美观和直观。解析路由参数时，还需要经过几步转换才能得到。。</p>
-<!-- more -->
-<h2 id="环境">环境</h2>
-<p>基础环境: taro 3.0.5 / react 16.10.0 / typescript 4.1.0</p>
-<p>技术栈: React Hooks</p>
-<h2 id="路由部分">路由部分</h2>
-<p>Taro 小程序路由方法调用示例</p>
-<p>路由跳转</p>
-<pre><code class="language-typescript">navigateTo({
-  url: `/package-appointment/pages/manage-appointments/index?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
-})
-</code></pre>
-<p>参数解析</p>
-<pre><code class="language-typescript">const { params } = useRouter()
-const { roomId, appointmentId, scriptId } = params
-const oRoomId = Number.parseInt(roomId)
-const oAppointmentId = Number.parseInt(appointmentId)
-const oScriptId = Number.parseInt(scriptId)
-</code></pre>
-<h2 id="优化方案">优化方案</h2>
-<h3 id="part-1-路由表文件">PART 1 路由表文件</h3>
-<p>新建一个路由表文件 routeTable.ts，为路径命名。</p>
-<pre><code class="language-typescript">export enum URLs {
-  INDEX = '/pages/index/index',
-  MANAGE_APPOINTMENTS = '/package-appointment/pages/manage-appointments/index',
-  INTENT_DETAIL = '/package-intent/pages/intent-detail/index'
-}
-</code></pre>
-<p>调用时，只需要引入路由表文件</p>
-<pre><code class="language-typescript">import { URLs } from '@/common/routeTable'
-...
-navigateTo({
-  url: `${URLs.MANAGE_APPOINTMENTS}?roomId=${roomId}&amp;appointmentId=${appointmentId}&amp;scriptId=${scriptId}`
-})
-...
-</code></pre>
-<p>引入了路由表文件的同时，引入了新的问题，新建一个页面要维护两个路由地址文件，一个是 app.config ，另一个就是路由表文件 routeTable。增加了维护成本，同时两个文件，只要有一点错误，页面就不能正确的被访问。怎么处理这个问题？</p>
-<h3 id="part-2-脚本更新路由表与相关配置">PART 2 脚本更新路由表与相关配置</h3>
-<p>无论 app.config 路径配置还是路由表配置，页面与路径是对应关系，我们可以写一个脚本去处理问题。首先扫描源码文件夹，通过正则表达式找到 pages 和 package- 下的所有页面。找到文件后，获取文件夹名称作为路由表的 shortName, 构造数据后即可替换和新建到 app.config 和 routeTable 中。</p>
-<p>除此之外，还可以顺带把 project.config.json 中 miniprogram 字段更新，用于开发页面进行快捷调试。</p>
-<p>脚本完成之后，每次开发页面时，只需要在 pages 目录下或者分包 pages 目录下新建目录，运行脚本命令即可自动更新 app.config 、 project.config 和 routeTable。</p>
-<p>注意:</p>
-<blockquote>
-<ul>
-<li>查找页面文件，默认 pages 下的一级目录为所有页面文件，这里需要开发者拥有良好的开发习惯，写的页面没有进行嵌套。</li>
-<li>脚本代码很简单，就不新建仓库了，完整代码已经贴到了最下面</li>
-</ul>
-</blockquote>
-<h3 id="part-3-地址参数改造">PART 3 地址参数改造</h3>
-<p>观察 PART 1 部分的代码，其实可以看到，虽然通过路由表形式缩短了一部分地址的长度，但是参数部分还可以做些文章。</p>
-<pre><code class="language-typescript">// queryParams 封装
-const covertObjToSearchParams = (searchObj: commonObjectProps = {}) =&gt; {
-  let searchParams = ''
-  for (let i in searchObj) {
-    searchParams = searchParams + `${i}=${searchObj[i]}&amp;`
-  }
-  return searchParams.slice(0, -1)
-}
-
-const queryParams = covertObjToSearchParams({ roomId, appointmentId, scriptId })
-
-navigateTo({
-  url: `${URLs.MANAGE_APPOINTMENTS}?${queryParams}`
-})
-
-</code></pre>
-<p>通过这种方式传递参数，简洁直观，方便不少。</p>
-<h3 id="part-4-路由跳转方法改造">PART 4 路由跳转方法改造</h3>
-<p>小程序中的方法大都都是通过一个对象传递的参数，这是因为大多数方法都有很多参数，通过对象传参则显得代码整洁友好。观察我们的代码，用到的最多的就是一个 url 参数, 那我们完全可以直接将地址放到第一个参数位上。</p>
-<p>navigateTo 方法改造</p>
-<pre><code class="language-typescript">import { navigateTo as originNavigateTo } from '@tarojs/taro'
-
-export function navigateTo(url: string, params?: commonObjectProps, opt?: commonObjectProps) {
-  if (!params) return originNavigateTo({ url, ...opt })
-
-  const _url = `${url}?${covertObjToSearchParams(params)}`
-  originNavigateTo({ url: _url, ...opt })
-}
-</code></pre>
-<p>navigateTo 调用</p>
-<pre><code class="language-typescript">navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })`
-</code></pre>
-<p>相比前文中的最开始时的路由调用，这里更加简洁明了</p>
-<h3 id="part-5-路由参数解析方法改造">PART 5 路由参数解析方法改造</h3>
-<p>Taro 中提供了 <strong>useRouter</strong> hooks去解析路由参数，但该 Hooks 解析出的参数都是字符串类型。</p>
-<p>当使用参数时，需要先导出 <strong>params</strong> 对象，然后再拿到参数值，对于一些数字、布尔类型值还只能再通过转换获得原始值。流程繁琐且复杂。怎么解决这个问题?</p>
-<p>首先对 useRouter 进行初步封装</p>
-<pre><code class="language-typescript">import { useRouter as useOriginRouter } from '@tarojs/taro'
-
-export function useRouter&lt;T&gt;(): T {
-  const { params } = useOriginRouter()
-  return params
-}
-</code></pre>
-<p>封装完的 useRouter 只简化了导出 params 的过程，而参数类型转换还是只能根据具体的参数进行具体转换。那这样的封装其实还是有点鸡肋。</p>
-<p>通过 queryParams 传递的参数只能是字符串形式的，所以解析参数也只能解析出字符串。因而可以通过 <strong>JSON.stringify</strong> 将参数对象转换为字符串，解析时再利用 <strong>JSON.parse</strong> 解析出保有原始数据类型的参数。</p>
-<pre><code class="language-typescript">import { useRouter as useOriginRouter, navigateTo as originNavigateTo } from '@tarojs/taro'
-
-// 路由跳转
-export function navigateTo(url: string, params?: object) {
-  if (!params) return originNavigateTo({ url })
-
-  const _url = `${url}?navParams=${JSON.stringify(params)}`
-  originNavigateTo({ url: _url })
-}
-
-// 路由解析
-export function useRouter&lt;T&gt;(): T {
-  const { params } = useOriginRouter()
-
-  try {
-    const targetParams = params['navParams']
-    if (targetParams) return JSON.parse(targetParams)
-  } catch (e) {
-    console.warn('参数解析失败', e)
-  }
-
-  return {} as T
-}
-</code></pre>
-<p>使用这种封装方式，虽然 URL 不直观且不利于 SEO，但在小程序环境中，用户根本不会看到 URL，且在当前小程序环境中，SEO似乎根本没什么用。</p>
-<p>使用我们封装好的代码，文章开头给出的示例可简化为如下代码:</p>
-<pre><code class="language-typescript">import { navigateTo, useRouter } from '@/app'
-
-navigateTo(URLs.MANAGE_APPOINTMENTS, { roomId, appointmentId, scriptId })
-...
-
-const { roomId, appointmentId, scriptId } = useRouter()
-...
-
-</code></pre>
-<h2 id="完整路由脚本生成和代码">完整路由脚本生成和代码</h2>
-<p>脚本代码很简单，就不新建仓库存了。</p>
-<h3 id="主脚本文件">主脚本文件</h3>
-<pre><code class="language-javascript">const path = require('path')
-const fs = require('fs')
-const { isDir, readDir, readFile, writeFile } = require('./util')
-const PROJECT_CONFIG = require('../project.config.json')
-
-const BASE_PATH = path.resolve(__dirname, '..')
-const APP_CONFIG_PATH = path.resolve(BASE_PATH, 'src/app.config.ts')
-const URL_TABLE_PATH = path.resolve(BASE_PATH, 'src/common/url.constant.ts')
-const PACKAGE_CONFIG_PATH = path.resolve(BASE_PATH, 'project.config.json')
-
-function handleMainPageConfig(dirsName, fileStr) {
-  const paths = dirsName.map((dir) =&gt; `'pages/${dir}/index'\n`)
-  fileStr = fileStr.replace(/pages[\S\s]*subPackages/, `pages: [${paths}], subPackages`)
-  return fileStr
-}
-
-function handleSubPageConfig(rootPath, dirsName, subPackage) {
-  const [, name] = rootPath.split('-')
-  subPackage.push({
-    root: rootPath,
-    name,
-    pages: dirsName.map((name) =&gt; `pages/${name}/index`),
-  })
-  return subPackage
-}
-
-function handleMainRouteTable(dirsName, fileStr) {
-  const paths = dirsName.map((dir) =&gt; `'/pages/${dir}/index'\n`)
-  for (let i = 0; i &lt; dirsName.length; i++) {
-    const current = dirsName[i]
-    const name = current
-      .split('-')
-      .map((v) =&gt; v.toUpperCase())
-      .join('_')
-    fileStr = fileStr + `${name}=${paths[i]},`
-  }
-  return fileStr
-}
-
-function handleSubRouteTable(rootPath, dirsName, fileStr) {
-  const paths = dirsName.map((dir) =&gt; `'/${rootPath}/pages/${dir}/index'\n`)
-  for (let i = 0; i &lt; dirsName.length; i++) {
-    const current = dirsName[i]
-    const name = current
-      .split('-')
-      .map((v) =&gt; v.toUpperCase())
-      .join('_')
-    fileStr = fileStr + `${name}=${paths[i]},`
-  }
-  return fileStr
-}
-
-function handleMainProjectConfig(dirsName, routes) {
-  const paths = dirsName.map((dir) =&gt; `pages/${dir}/index`)
-  return routes.concat(paths.map((_path, idx) =&gt; {
-    return {
-      id: idx + 1,
-      name: dirsName[idx],
-      pathName: _path,
-      query: '',
-    }
-  }))
-}
-
-function handleSubProjectConfig(rootPath, dirsName, routes) {
-  const paths = dirsName.map((dir) =&gt; `${rootPath}/pages/${dir}/index`)
-  return routes.concat(
-    paths.map((_path, idx) =&gt; {
-      return {
-        id: idx + 1,
-        name: dirsName[idx],
-        pathName: _path,
-        query: '',
-      }
-    }),
-  )
-}
-
-async function updateAppConfig(fileStr, subPackage) {
-  fileStr = fileStr.replace(/(subPackages[\S\s]*)window/g, `subPackages: ${JSON.stringify(subPackage)}, window`)
-  await writeFile(APP_CONFIG_PATH, fileStr)
-}
-
-async function updateRouteTable(fileStr) {
-  let routeTable = `
-    // 自动生成, pages 文件夹新建目录，运行 npm run g
-    export enum URLs {
-      ${fileStr}
-    }
-  `
-  await writeFile(URL_TABLE_PATH, routeTable)
-}
-
-async function updateProjectConfig(entrance) {
-  PROJECT_CONFIG.condition.miniprogram.list = entrance
-  await writeFile(PACKAGE_CONFIG_PATH, JSON.stringify(PROJECT_CONFIG, null, 2))
-}
-
-function sortDirs(dirsName) {
-  const indexIdx = dirsName.findIndex((dirname) =&gt; dirname === 'index')
-  if (indexIdx === -1) return dirsName.sort((a, b) =&gt; a.localeCompare(b))
-  dirsName.splice(indexIdx, 1)
-  dirsName = dirsName.sort((a, b) =&gt; a.localeCompare(b))
-  dirsName.unshift('index')
-  return dirsName
-}
-
-async function main(dirPath) {
-  const baseDirsName = await readDir(dirPath)
-  const target = baseDirsName.filter((dirName) =&gt; /^pages$|^package-\w+$/.test(dirName))
-
-  // 读取APP配置文件
-  let appConfigFileStr = await readFile(APP_CONFIG_PATH)
-  // app.config 分包配置
-  let subPackage = []
-
-  // 生成路由表文件
-  let routeTableFileStr = ''
-  
-  // project.config 项目快捷入口配置
-  let entrance = []
-  let mainEntrance = []
-
-  for await (let i of target) {
-    if (i === 'pages') {
-      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i)))
-      appConfigFileStr = handleMainPageConfig(dirsName, appConfigFileStr)
-      routeTableFileStr = handleMainRouteTable(dirsName, routeTableFileStr)
-      mainEntrance = handleMainProjectConfig(dirsName, [])
-    } else {
-      const dirsName = sortDirs(await readDir(path.resolve(dirPath, i, 'pages')))
-      subPackage = handleSubPageConfig(i, dirsName, subPackage)
-      routeTableFileStr = handleSubRouteTable(i, dirsName, routeTableFileStr)
-      entrance = handleSubProjectConfig(i, dirsName, entrance)
-    }
-  }
-  updateAppConfig(appConfigFileStr, subPackage)
-  updateRouteTable(routeTableFileStr)
-  updateProjectConfig(mainEntrance.concat(entrance))
-}
-
-// 主函数
-main(path.resolve(BASE_PATH, 'src'))
-
-</code></pre>
-<h3 id="工具脚本文件">工具脚本文件</h3>
-<pre><code class="language-javascript">const path = require('path')
-const fs = require('fs')
-
-// 当前路径是文件夹
-function isDir(filePath) {
-  return new Promise((resolve, reject) =&gt; {
-    fs.stat(filePath, (err, stats) =&gt; {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(stats.isDirectory())
-      }
-    })
-  })
-}
-
-// 读取当前文件夹目录
-function readDir(filePath) {
-  return new Promise((resolve, reject) =&gt; {
-    fs.readdir(filePath, 'utf8', (err, dir) =&gt; {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(dir)
-      }
-    })
-  })
-}
-
-// 读取文件
-function readFile(filePath) {
-  return new Promise((resolve, reject) =&gt; {
-    fs.readFile(filePath, (err, dir) =&gt; {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(dir.toString())
-      }
-    })
-  })
-}
-
-// 写文件
-async function writeFile(filePath, fileStr) {
-  return new Promise((resolve, reject) =&gt; {
-    fs.writeFile(filePath, fileStr, (err, res) =&gt; {
-      if (err) return reject(err)
-      resolve(res)
-    })
-  })
-}
-
-// 文件夹扫描
-async function fileScanner(filePath, fn) {
-  const dir = await isDir(filePath)
-  if (dir) {
-    const dirs = await readDir(filePath)
-    for await (const name of dirs) {
-      fileScanner(path.resolve(filePath, name), fn)
-    }
-  } else {
-    await fn(filePath)
-  }
-}
-
-module.exports = {
-  isDir,
-  readDir,
-  readFile,
-  writeFile,
-  fileScanner,
-}
-</code></pre>
 ]]></content>
     </entry>
 </feed>
