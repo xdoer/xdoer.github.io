@@ -2,13 +2,77 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2021-11-28T10:17:27.584Z</updated>
+    <updated>2021-12-11T16:36:40.292Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
     <logo>https://aiyou.life/images/avatar.png</logo>
     <icon>https://aiyou.life/favicon.ico</icon>
     <rights>All rights reserved 2021, 文享日志</rights>
+    <entry>
+        <title type="html"><![CDATA[账本开发小记]]></title>
+        <id>https://aiyou.life/post/WTBK_yMNR/</id>
+        <link href="https://aiyou.life/post/WTBK_yMNR/">
+        </link>
+        <updated>2021-12-11T13:32:37.000Z</updated>
+        <summary type="html"><![CDATA[<p>上篇文章的日程规划中有提到我要开发个账本的产品，本来打算开发完了再整理文章的，但意识到到时候很可能很多东西都忘记了，所以趁有空，赶紧先记录一些。。</p>
+]]></summary>
+        <content type="html"><![CDATA[<p>上篇文章的日程规划中有提到我要开发个账本的产品，本来打算开发完了再整理文章的，但意识到到时候很可能很多东西都忘记了，所以趁有空，赶紧先记录一些。。</p>
+<!-- more -->
+<h2 id="前言">前言</h2>
+<p>首先做账本这个东西，不仅仅是做账本。我希望通过做这个产品，能够串起来整个研发流程，了解每一个之前不熟悉的领域，能给自己带来技术层面的收获，在这个基础上，如果能够把账本这个软件做出来，解决我记账的问题的同时，也能够给别人带来便利，这样是最好的。</p>
+<h2 id="规划">规划</h2>
+<h3 id="产品形态">产品形态</h3>
+<p>一款软件产品无外乎有 app，web 网页，小程序三种形态。</p>
+<p>考虑到记账的这件事，对于大部分目标用户来说，都是在 app 或者 小程序中完成的。而让用户在手机中安装 app 成本很高，且目前也没有服务器资源，所以先使用免费的微信云服务，把小程序做起来。</p>
+<h3 id="ui">UI</h3>
+<p>之前花了好几个夜晚，在网上找免费的 sketch 或者 figma 模板，结果都不太满意。后来发现某款记账 App UI 挺好的，我打算先抄一下，在学习使用 figma 画他的 UI 图的时候，发现实在太费劲了。所以目前 UI 就先不考虑，先把整个功能实现了，再打磨 UI</p>
+<h3 id="技术选型">技术选型</h3>
+<p>Web 网页和小程序是前端技术栈无疑，只是 Vue 和 React 选哪个的问题。由于不太喜欢 Vue 模板，所以选择对 TypeScript 支持良好的 React。</p>
+<p>小程序选择基于 React 技术栈的 Taro 框架，框架用的人多，遇到一些坑相对会少一些。</p>
+<p>App 首选肯定 React Native，但一直用前端技术栈做这些没啥意思，到时候也可能尝试使用 flutter。</p>
+<h3 id="架构设计">架构设计</h3>
+<p>账本是一个比较注重隐私的产品，所以应该具备“本地模式”和“网络模式”两种形态。</p>
+<p>此外，开发时要注意架构设计，可以便捷的切换本地模式和网络模式，在没有服务器的情况下，应用也可以正常使用。</p>
+<p>开发可能涉及多包依赖，使用 lerna 来解决问题</p>
+<p>考虑代码的多仓库管理，使用 git sub-module ，配合 lerna 进行开发</p>
+<h3 id="自动化部署">自动化部署</h3>
+<p>从学习和提高效率，规范代码，自动化构建、部署等角度来讲，需要部署一套 gitlab。</p>
+<p>恰巧，吃灰许久的树莓派可以排上了用场。希望能他能担此重任。</p>
+<h2 id="环境搭建">环境搭建</h2>
+<p>首先确保网络是畅通的翻过去的环境，否则很多依赖装不上，坑很多。</p>
+<h3 id="gitlab-安装">Gitlab 安装</h3>
+<p>Gitlab 打算装载树莓派上，我的树莓派型号是 3B+，有 1G 的内存， 16G 的磁盘空间，装的 Ubuntu 系统。</p>
+<p>Gitlab 在安装过程中坑点较多，安装时使用默认官方源，进行 <code>apt-get install</code> 安装，安装后软件后，根本运行不起来，后来查阅文档，发现只推荐在树莓派 4 的 4G 内存版本以上进行安装。淘宝搜了一下，因为穷，只能考虑安装到我的 MacBook Pro 开发机了。</p>
+<p>为了不污染环境，安装了 docker，在 docker 中部署 gitlab，教程在官网是有的，根据<a href="https://docs.gitlab.com/ee/install/docker.html">说明</a>安装即可。</p>
+<p>有几点需要注意的是：</p>
+<ol>
+<li>网站上写的默认给 gitlab docker 对外暴露的端口是 80、443 和 22。这几个端口在 MacOS 下是有限制的，建议都换成其他端口。</li>
+<li>默认设置了 <code>hostname</code> 为 <code>gitlab.example.com</code>，这需要你更改本机的 hosts 文件，进行配置。</li>
+<li>我在实践时 docker 给了 4G 的内存，4 个 CPU 核，gitlab 安装是失败的。给到了 8G 内存，才安装成功。</li>
+</ol>
+<h3 id="gitlab-runner-安装">Gitlab-Runner 安装</h3>
+<p>Gitlab-Runner 是用来对仓库代码跑 CI/CD 等流程的工具。Runner 可以在本地部署，也可以直接用远程的，Gitlab 官网好像是有免费提供一个 Runner 进行使用，这个对标的是 Github Action。</p>
+<p>考虑到不让我的树莓派吃灰，我决定把 Runner 部署到树莓派中。</p>
+<p>远程连接到树莓派上，按照官网教程，也顺利的装上了。在测试功能的过程中发现项目代码打包不了，在安装依赖的过程中就卡死了。最后重装系统，重装 Runner 问题依旧，换成了树莓派原系统也不太行。</p>
+<p>后来才想到可能是内存卡的问题，安装依赖时，<code>node_modules</code> 里成百上千个小文件，很考验内存卡性能，换了内存卡后，问题成功解决了。</p>
+<p>还有就是在 Runner 中注册后，Gitlab 网页上发现 Runner 是不可用状态，此时需要手动执行命令</p>
+<pre><code class="language-bash">sudo gitlab-runner verify
+sudo gitlab-runner restart
+</code></pre>
+<p>遇到最无语的事情是在成功跑了几次任务后，给 Runner 改了标签后，YML 中 也把标签改了后，再运行任务时，显示的一直是挂起状态。把标签恢复了也不行，花了几个晚上尝试，没有结果。。。有心想看看源代码，找找 bug，奈何没这个实力和水平。。最后重装系统和软件才搞定，然后发现该标签后也能正常运行了....</p>
+<p>其他一些坑点可以参照<a href="https://zhuanlan.zhihu.com/p/184936276">这篇文章</a></p>
+<h3 id="yml-脚本编写">YML 脚本编写</h3>
+<p>Runner 是根据 YML 脚本进行执行的。</p>
+<p>一个前端项目的 YML 文件中一般包含了四个 Job: 依赖安装、Eslint 扫描、打包构建和部署。</p>
+<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1639239708604.png" alt="" loading="lazy"></figure>
+<p>配置完四个 Job 后，发现部署巨慢无比，且在 build 阶段还总失败报错找不到依赖。尝试了很久解决不了。</p>
+<p>观察发现每个 Job 的执行，都会重新初始化一遍项目，拉代码下来运行，<code>node_modules</code> 在配置完 cache 字段后，只需要安装一次。</p>
+<p>后来想，是我自己一个人开发的话，没必要搞这么多步骤，最重要的是把部署这一步搞定就 ok..</p>
+<h2 id="开发">开发</h2>
+<p>// TDOO</p>
+]]></content>
+    </entry>
     <entry>
         <title type="html"><![CDATA[让生活井井有条]]></title>
         <id>https://aiyou.life/post/7Ta0APQTd/</id>
@@ -1898,182 +1962,6 @@ instance.post('http://localhost:3000/api', {
 <h2 id="参考">参考</h2>
 <p><a href="https://github.com/axios/axios">axios</a>: https://github.com/axios/axios</p>
 <p><a href="https://github.com/umijs/umi-request">umi-request</a>:https://github.com/umijs/umi-request</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[Fower: 一个多平台原子类 CSS In JS 样式库]]></title>
-        <id>https://aiyou.life/post/ZSut5c_dE/</id>
-        <link href="https://aiyou.life/post/ZSut5c_dE/">
-        </link>
-        <updated>2021-04-28T12:41:50.000Z</updated>
-        <summary type="html"><![CDATA[<p>在过去的一年半中，我们团队分别使用了 Taro  React 开发小程序， React 开发 Web 程序 和使用  React Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在  React Native 中使用 StyleSheet.create 创建样式。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>在过去的一年半中，我们团队分别使用了 Taro  React 开发小程序， React 开发 Web 程序 和使用  React Native 开发 App。使用的样式构建也各种各样，并不统一，在小程序中，使用 SCSS，在 Web 中使用 tailwind, 在  React Native 中使用 StyleSheet.create 创建样式。</p>
-<!-- more -->
-<p>在这三种写法中来回切换是痛苦的。</p>
-<h2 id="简介">简介</h2>
-<p>我们从 tailwind 中获得了灵感， 将 tailwind 的原子样式 与  JSX Prop 结合，开发了 Fower。Fower 在  JSX 组件外包装了一层，通过收集整合原子样式属性，生成 className 或者 style 属性，并将其注入到内层组件中。由于 Fower 组件本质是一个  JSX 组件，因而也获得了 VSCode 的智能提示，书写样式时，只需要打个首字母，就可以联想出所有的原子样式，回车即可填充属性，这种开发体验是相当爽的。</p>
-<figure data-type="image" tabindex="1"><img src="https://aiyou.life/post-images/1619614139846.png" alt="" loading="lazy"></figure>
-<p>在此基础上，Fower 通过附加各种属性后缀，支持了伪类，媒体查询，主题切换，暗黑模式等功能；提供了一些布局属性，可以快速让多子元素垂直、水平居中；也有一些功能属性，可以快速裁剪文字，省略显示；可以通过一个属性，构建出一个方形或者圆；还有功能强劲的 css 属性，让你使用各种子元素选择器。。。除了内置的这些属性，Fower 也提供了相关 API，可以让你可以定制化你自己的属性实现。</p>
-<p>我们除了对  React, Taro  React,  React Native 封装了组件包外，还针对 Vue, Svelte 等框架进行了部分兼容和适配，Fower 提供了 VSCode 插件，解决了在  React Like 之外的框架的智能提示。</p>
-<p>使用 Fower，基本上<strong>可以让你不用再写烦人的 CSS 文件</strong></p>
-<h2 id="对比">对比</h2>
-<p>相比于 Tailwind, Fower 的优势是明显的。</p>
-<blockquote>
-<ul>
-<li>VSCode 插件。Tailwind 的使用离不开 VSCode 插件。Fower 在  React Like 框架中，利用 VSCode 智能提示就可以联想出各种属性，在其他框架中，才需要安装 VSCode 插件</li>
-<li>开箱即用。Fower 只需要安装对应的框架包，即可直接使用，无需进行繁杂的配置。</li>
-<li>体积。对于类似 <code>p1</code>, <code>p2</code> 到 <code>p100</code> 这种属性，Tailwind 中枚举了每一个属性的样式，导致体积异常的庞大。Fower 在  React Like 中属于运行时库，对属性具有编程性，可以动态生成样式，所以体积非常小。在非  React Like 框架中，Fower 通过收集模板的原子属性样式也是动态生成样式。</li>
-<li>多端使用。Fower 针对市面上主流的框架进行了针对性适配，你可以在  React, Preact, Vue, Svelte,  React Native, Taro  React 小程序, Remax 小程序等平台使用 Fower。Tailwind 不支持在  React Native 使用，并且在 Taro, Remax 等小程序环境中没有支持。</li>
-</ul>
-</blockquote>
-<p>由于 Fower 是运行时 UI 库，所以相对于 Tailwind 有一定的运行时损耗。但对于设备算力越来越强大的今天，这点损耗可以忽略不计。但 Fower 还是尽可能的使用了各种手段提高运行效率，Fower 内部对所有遍历过的属性进行缓存，极大提高运行速度。</p>
-<h2 id="项目">项目</h2>
-<p><a href="https://fower.vercel.app/">官方文档（https://fower.vercel.app/）</a></p>
-<p><a href="https://github.com/forsigner/fower">项目地址（https://github.com/forsigner/fower）</a></p>
-<h2 id="功能一览">功能一览</h2>
-<p>下面演示了使用 Fower/react 框架包的 Box 组件编写的 demo。实际上，直接使用 Box 标签也是可以用的，但需要额外的配置。</p>
-<h3 id="基本使用"><a href="https://fower.vercel.app/zh-cn/docs/basic">基本使用</a></h3>
-<p>Fower 提供了大量的原子样式属性，可以极速构建 UI。</p>
-<pre><code class="language-html">&lt;Box text2XL fontBold green500 className=&quot;user&quot; style={{ fontWeight: 'bold' }}&gt;
-  Hi, Fower
-&lt;/Box&gt;
-</code></pre>
-<h3 id="可编程动态样式">可编程/动态样式</h3>
-<p>你可以通过为属性赋值的方式，来编写动态样式</p>
-<pre><code class="language-html">&lt;Box
-  text-14
-  display=&quot;block&quot;
-  color=&quot;red&quot;
-  blue={false}
-  p-10
-  m-10rem
-  bg=&quot;red&quot;
-  bgRed={true}
-  bgBlue={false}
-&gt;
-  Hi, Fower
-&lt;/Box&gt;
-</code></pre>
-<h3 id="css-属性"><a href="https://fower.vercel.app/zh-cn/docs/css-prop">CSS 属性</a></h3>
-<p>Fower 中提供了强大的 CSS 属性，实现了大部分 CSS 的功能。</p>
-<pre><code class="language-html">&lt;Box
-  text4XL
-  css={{
-    backgroundColor: '#edf2f7',
-    ':hover': {
-      backgroundColor: '#feebc8',
-    },
-    '.title': {
-      fontWeight: 'bold',
-    },
-    span: {
-      color: 'deeppink',
-    },
-  }}
-&gt;
-  &lt;Box className=&quot;title&quot;&gt;Nested demo&lt;/Box&gt;
-  &lt;span&gt;Hi, Fower!&lt;/span&gt;
-&lt;/Box&gt;
-</code></pre>
-<h3 id="伪类响应式"><a href="https://fower.vercel.app/zh-cn/docs/pseudo">伪类/响应式</a></h3>
-<p>Fower 通过后缀的方式，支持了伪类，响应式等功能</p>
-<pre><code class="language-html">&lt;Box text2XL text3XL--hover red--first-child fontBold green500&gt;
-  &lt;Box&gt;Hi, Fower&lt;/Box&gt;
-&lt;/Box&gt;
-&lt;Box textSM textLG--sm text4XL--md text6XL--lg&gt;
-  Lorem ipsum dolor sit amet
-&lt;/Box&gt;
-</code></pre>
-<h3 id="颜色助手"><a href="https://fower.vercel.app/zh-cn/docs/color-helper">颜色助手</a></h3>
-<p>颜色助手可以快速增加或减少颜色的亮度，透明度等等</p>
-<pre><code class="language-html">&lt;Box toEvenly toCenterY&gt;
-  &lt;Box red300&gt;normal&lt;/Box&gt;
-  &lt;Box red300--D40&gt;darken&lt;/Box&gt;
-&lt;/Box&gt;
-</code></pre>
-<h3 id="主题"><a href="https://fower.vercel.app/zh-cn/docs/theme">主题</a></h3>
-<p>Fower 内置了主题。你可以通过 setTheme API 更改和添加配置。</p>
-<pre><code class="language-html">import { setTheme } from '@fower/core'
-
-setTheme({
-  spacings: {
-    10086: 110,
-  },
-  color: {
-    gray10086: '#FFFFFF'
-  }
-})
-
-&lt;Box textSM bgGray10086 bgGray10086--dark p10086&gt;
-  Lorem ipsum dolor sit amet
-&lt;/Box&gt;
-</code></pre>
-<h3 id="与第三方组件库一起使用">与第三方组件库一起使用</h3>
-<p>上文中提到 Fower 原理是通过给现有组件包装了一层，通过收集整合原子样式属性，最终将 className 或 style 属性注入到内层组件。因而与第三方组件使用时，只需要利用 styled API 包装即可。</p>
-<pre><code class="language-html">import { Button as AntdButton } from 'antd'
-import { styled } from '@fower/styled'
-
-const Button = styled(AntdButton)
-
-&lt;Button red300 red400={false} text={7 + 7}&gt;
-  normal
-&lt;/Button&gt;
-</code></pre>
-<h3 id="属性冲突">属性冲突</h3>
-<p>Fower 组件提供的属性与三方属性冲突时，Fower 也提供了解决方案。</p>
-<pre><code class="language-html">import { Button as AntdButton } from 'antd'
-import { styled } from '@fower/styled'
-
-const Button = styled(AntdButton)
-
-&lt;Button excludedProps={['block']} block&gt;
-  normal
-&lt;/Button&gt;
-</code></pre>
-<h3 id="类名">类名</h3>
-<p>Fower 同样支持了 tailwind 的用法</p>
-<pre><code class="language-html">&lt;Box className=&quot;toCenter square-400 bgRed400&quot;&gt;
-  &lt;Box className=&quot;white&quot;&gt;Lorem ipsum&lt;/Box&gt;
-&lt;/Box&gt;
-</code></pre>
-<h3 id="动画">动画</h3>
-<p>Fower 提供了 keyframes API，可以快速创建动画。</p>
-<pre><code class="language-html">import { Box } from '@fower/react';
-import { keyframes } from '@fower/core';
-
-const bounce = keyframes({
-  'from, 20%, 53%, 80%, to': {
-    transform: 'translate3d(0,0,0)',
-    padding: 10,
-  },
-    '40%, 43%': {
-    transform: 'translate3d(0, -30px, 0)',
-  },
-})
-
-&lt;Box
-  text-30
-  css={{
-    animation: `${bounce} 1s ease infinite`,
-  }}
-&gt;
-  40 Lorem ipsum dolor sit amet
-&lt;/Box&gt;
-</code></pre>
-<h3 id="扩展">扩展</h3>
-<p>Fower 提供了 <a href="https://fower.vercel.app/zh-cn/docs/add-atom">addAtom</a> API 可以快速扩展原子样式属性。但这只能在自己的项目中使用。</p>
-<p>Fower 提供了灵活的插件机制，你可以编写自己的样式 Util，供他人使用。</p>
-<pre><code class="language-html">import { setConfig } from '@fower/core';
-import ellipsis from 'fower-plugin-ellipsis';
-
-setConfig({
-  plugin: [ellipsis],
-});
-</code></pre>
-<h2 id="结语">结语</h2>
-<p>经过团队半年的不懈努力，Fower 日渐完善，我们也在项目中积极使用。目前在我们小程序项目中做到了仅有一个 app.scss 样式文件的地步。我们封装了很多框架包，也在积极测试与使用，但难免会遇到很多 Bug，希望大家积极试用使用 Fower，也希望 Fower 项目能够真正的帮助你解决样式开发的痛点。谢谢大家。</p>
-<figure data-type="image" tabindex="2"><img src="https://aiyou.life/post-images/1619618374404.png" alt="" loading="lazy"></figure>
 ]]></content>
     </entry>
 </feed>
