@@ -8,7 +8,7 @@
 <meta name="description" content="">
 
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1639240595674">
+<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1642938807452">
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
@@ -145,7 +145,117 @@ sudo gitlab-runner restart
 <p>观察发现每个 Job 的执行，都会重新初始化一遍项目，拉代码下来运行，<code>node_modules</code> 在配置完 cache 字段后，只需要安装一次。</p>
 <p>后来想，是我自己一个人开发的话，没必要搞这么多步骤，最重要的是把部署这一步搞定就 ok..</p>
 <h2 id="开发">开发</h2>
-<p>// TDOO</p>
+<p>整个项目难度不大，为了学习，我还是在项目中的多用自己写的一些工具: 比如说<a href="https://github.com/xdoer/PreQuest">请求库</a>，<a href="https://github.com/xdoer/StateBus">状态管理</a>，<a href="https://github.com/xdoer/ScriptRunner">脚本管理</a>，<a href="https://github.com/xdoer/TaroRouter">Taro 路由管理</a>，Mock 工具，<a href="https://github.com/xdoer/chokidar">文件监听</a>等等。</p>
+<h3 id="123-日">1.23 日</h3>
+<p>目前进度是:</p>
+<ol>
+<li>基本的界面 UI 完成初版。</li>
+<li>接口 Mock 工具完成了初版</li>
+<li>脚本管理工具支持子进程的运行模式</li>
+<li>状态管理工具完善</li>
+<li>实现了更好用的弹窗管理</li>
+<li>实现了前端版本的接口路由，可自由切换 WxCloud、Storage、和 Server 的数据存储模式</li>
+</ol>
+<p>UI 一览:<br>
+<img src="https://aiyou.life/post-images/1642932965402.png" alt="" loading="lazy"><br>
+<img src="https://aiyou.life/post-images/1642933228435.png" alt="" loading="lazy"><br>
+<img src="https://aiyou.life/post-images/1642933236561.png" alt="" loading="lazy"><br>
+<img src="https://aiyou.life/post-images/1642932991041.png" alt="" loading="lazy"></p>
+<p><strong>总结</strong><br>
+虽然总体进度很慢，但在技术层面也算是小有收获。</p>
+<p>账本的目标是要实现将数据自由存到服务器(Server)、微信云服务器(WxCloud)、和本地(Local)。怎么能很好的兼容这三者？WxCloud 和 Local 都是前端代码可以直接调用的，意思是前端就可以直接访问数据库进行操作，而 Sever 模式需要走常规的接口请求。</p>
+<p>为了方便上层的开发，即开发时不需要感知到底运行的是那种模式，考虑将 WxCloud 和 Local 模式的调用方式和 Server 保持一致。这是是什么意思呢？</p>
+<pre><code class="language-ts">const fetchData = (options) =&gt; {
+    // wxCloud 模式
+    if(Env.isWxCloud) return cloudServer.get(options)
+
+    // storage 模式
+    if(Env.isLocal) return storageServer.get(options)
+
+    // erver 模式
+    return fetch(path, options)
+}
+
+export default function App() {
+    const [user, setUser] = useState()
+
+    useEffect(() =&gt; {
+        // 渲染 UI 时，不需要管底层到底怎么取的数据
+        fetchData('/user', { id: 1 }).then(res =&gt; setUser(res)
+    }, [])
+
+    return &lt;div&gt;&lt;/div&gt;
+}
+</code></pre>
+<p>这就需要在前端实现类似 koa-router 之类的库，来支撑 WxCloud 和 Local 模式。动手实践后，才发现这个东西非常简单。其实就是一个 key 和 callback 的映射。</p>
+<pre><code class="language-ts">class Router {
+  routers: Route = {}
+
+  use(path, cb) {
+    this.routers[path] = cb
+    return this
+  }
+
+  call(options) {
+    const { path, ...opts } = options
+    return this.routers[path](opts)
+  }
+
+  merge(routers) {
+    this.routers = { ...this.routers, ...routers }
+    return this
+  }
+}
+</code></pre>
+<p>用法如下:</p>
+<pre><code class="language-ts">const appRouter = new Router()
+const userRouter = new Router()
+
+userRouter.use('/user', (options) =&gt; {
+    return userService.getUser(options)
+})
+
+appRouter.merge(userRouter.routers)
+</code></pre>
+<p>有了前端版本的路由，上面的 fetchData 就可以改造为下面这样，从 wxCloud 数据库中取数据还是 Storage 中取数据，交由 userService 去取处理。</p>
+<pre><code class="language-ts">function fetchData(options) {
+    if(Env.isServer) return  fetch(options)
+    return appRouter.call(options)
+}
+</code></pre>
+<p>而在 WxCloud 和 Storage 之间，为了取数据方式的一致性，简单的封装了增删查改。但是对于连表查询等高级能力，目前还没搞定。之前还研究了一下 sqlite.js，尝试在小程序的 wasm 中运行一下，折腾了很久，也搞定不定。。</p>
+<p>除了前端的接口路由外，还想分享的一点是实现了脚本管理工具的部分脚本的子进程运行模式，为什么要搞这个呢？<br>
+我们都知道，当我们跑起一个脚本时，一般逻辑都是跑在主进程上的，我实现的脚本管理工具也是一样，它会加载配置的各个模块，自动填充配置的参数运行。本质也是运行在主线程上。</p>
+<p>mock 工具原理本质就是开启了一个 Http Server，我设计的每个 mock 文件，都包含了一个 path 和一些 response，这也就是说我的 Http Server 中的路由是动态修改的。</p>
+<p>mock 工具简易实现如下:</p>
+<pre><code class="language-ts">function mockServer() {
+    const app = express()
+
+    fs.readdirSync('./mock').forEach(file =&gt; {
+        const { path, response } = require(file)
+        app.use(path, (, res) =&gt; {
+            res.json(response)
+        })
+    }
+
+    app.listen(3000)
+}
+
+// mock/user.ts
+export default {
+    path: 'user',
+    response: {
+        name: '张三'
+    }
+}
+</code></pre>
+<p>运行起上面的代码后，将会在 mock 文件夹下找到 user.ts，加载并应用。实际开发过程中，我们可以需要经常修改 user.ts 文件，但修改后需要在下次启动项目才会生效。此时就要 <code>ctrl c</code> 结束脚本运行，然后再 <code>yarn dev</code> 开启脚本。这样繁琐且麻烦，有没有办法解决这个问题？child_process</p>
+<p>child_process 可以在主线程中开启一个子线程去运行代码，实现起来也很简单，但有个大坑就是子线程创建的子线程，在关闭主线程后，孙子线程还会继续保留。</p>
+<p>我在脚本管理器中设计了一个 subProcess 的参数，标志要开启子线程运行代码。当监听到 mock 文件夹下的 user.ts 文件变动，则再次运行 mock Server 的代码，此时如果发现 mock Server 已经有运行在一个子线程上，则会关了它，再开启一个。。</p>
+<p>原理很简单，但这足足花了我两天时间。。之前实现的逻辑生成了多个子线程和孙子线程，关闭 mock server 的线程时，都不知道这个线程运行在子线程还是孙子线程上。。。说多了都是泪。。。</p>
+<p>最终的效果非常不错:<br>
+可以看到，在我保存完文件后，mock server 自动重启，运行 curl 命名，修改生效。<br>
+<img src="https://aiyou.life/post-images/1642938745385.gif" alt="" loading="lazy"></p>
 </div>
           </article>
           <div class="simple-share">
@@ -179,7 +289,7 @@ sudo gitlab-runner restart
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1639240595674"
+      src="https://aiyou.life/images/avatar.png?v=1642938807452"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -261,7 +371,7 @@ sudo gitlab-runner restart
       
       <a
         href="https://aiyou.life/tag/df67loo-n/"
-        class="badge warning"
+        class="badge "
       >
         笔记
       </a>
@@ -275,7 +385,7 @@ sudo gitlab-runner restart
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge success"
+        class="badge secondary"
       >
         typescript
       </a>
@@ -289,35 +399,35 @@ sudo gitlab-runner restart
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge secondary"
+        class="badge "
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge success"
+        class="badge warning"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge success"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge success"
+        class="badge warning"
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge secondary"
+        class="badge success"
       >
         博客
       </a>
