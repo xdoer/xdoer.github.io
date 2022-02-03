@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2022-01-23T12:19:10.242Z</updated>
+    <updated>2022-02-03T12:12:37.875Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -70,7 +70,7 @@ sudo gitlab-runner restart
 <p>观察发现每个 Job 的执行，都会重新初始化一遍项目，拉代码下来运行，<code>node_modules</code> 在配置完 cache 字段后，只需要安装一次。</p>
 <p>后来想，是我自己一个人开发的话，没必要搞这么多步骤，最重要的是把部署这一步搞定就 ok..</p>
 <h2 id="开发">开发</h2>
-<p>整个项目难度不大，为了学习，我还是在项目中的多用自己写的一些工具: 比如说<a href="https://github.com/xdoer/PreQuest">请求库</a>，<a href="https://github.com/xdoer/StateBus">状态管理</a>，<a href="https://github.com/xdoer/ScriptRunner">脚本管理</a>，<a href="https://github.com/xdoer/TaroRouter">Taro 路由管理</a>，Mock 工具，<a href="https://github.com/xdoer/chokidar">文件监听</a>等等。</p>
+<p>整个项目难度不大，为了学习，我还是在项目中的多用自己写的一些工具: 比如说<a href="https://github.com/xdoer/PreQuest">请求库</a>，<a href="https://github.com/xdoer/StateBus">状态管理</a>，<a href="https://github.com/xdoer/ScriptRunner">脚本管理</a>，<a href="https://github.com/xdoer/TaroRouter">Taro 路由管理</a>，<a href="https://github.com/xdoer/Mock">Mock 工具</a>，<a href="https://github.com/xdoer/chokidar">文件监听</a>等等。</p>
 <h3 id="123-日">1.23 日</h3>
 <p>目前进度是:</p>
 <ol>
@@ -181,6 +181,37 @@ export default {
 <p>最终的效果非常不错:<br>
 可以看到，在我保存完文件后，mock server 自动重启，运行 curl 命名，修改生效。<br>
 <img src="https://aiyou.life/post-images/1642938745385.gif" alt="" loading="lazy"></p>
+<p>核心代码:</p>
+<pre><code class="language-ts"> childprocess.spawn(
+     'ts-node',
+      [
+          '-e', 
+          `require(&quot;${module}&quot;)(...${JSON.stringify(args)})`, 
+          '--skip-project'
+      ], 
+      {
+        stdio: ['inherit', 'inherit', 'inherit']
+      }
+)
+</code></pre>
+<h3 id="23-日">2.3 日</h3>
+<p>目前进度:</p>
+<ol>
+<li>代码仓库整到了 Github，使用 Github Action 进行自动化构建</li>
+<li>写了部分系统设计文档。设计了部分数据表和 Local 模式下的接口实现</li>
+<li>重构代码，用状态管理工具去控制运行模式（Local、WxCloud、Server）</li>
+<li>状态管理的 Storage 模式</li>
+<li>Local 和 WXCloud 的 DB 数据初始化</li>
+<li>Local 模式初步跑通</li>
+</ol>
+<p>UI 一览:<br>
+<img src="https://aiyou.life/post-images/1643887159019.png" alt="" loading="lazy"></p>
+<p><strong>总结</strong><br>
+首先把代码仓库切到 Github 了，电脑装的 docker 和 gitlab，运行起来资源占用太大，电脑风扇总是飞转，推完代码后，树莓派的 runner 也是跑的很慢，要几分钟才能跑完 CI，然后上传代码后预览。在一次 docker 升级后，docker gui 彻底打不开，索性直接卸载，转移仓库到 github 上了，花了一点时间研究了一下 Github Action 写了一下脚本，实现了向 delpoy 代码分支 push 代码，自动打包预览的功能。打包时间比树莓派快多了。。</p>
+<p>然后就是写系统设计文档了，这玩意不写的话，没办法进行下去。脑子里都是一些琐碎的想法，不整理出来，无从下手写代码。设计了主要的数据表模型，存什么字段都大致罗列了一下；同时也写了一下实现了接口规范，响应的数据，传的参数等。</p>
+<p>关于运行模式（Local、WxCloud、Server），之前没考虑好，是打算在打包的时候，根据环境变量来控制运行哪种模式，最近发现不能这么搞，应该放到前端，有个开关来控制数据存到哪里。切换开关后，状态应当是一直生效的，所以还要把状态管理和持久化数据进行结合，同样考虑到跨平台的原因，存取持久化数据可能是一个异步的过程，所以整个重构还是有一点挑战的。同时也是考虑目前没有服务器资源，所以重心放在了先将 Local 模式跑通。</p>
+<p>Local 模式下的数据初始化。UI 里面有一部分数据应当初始化到 DB 中，比如账单的支出类型、币种类型、资产类型等数据。所以怎么在用户打开你的小程序时，自动的初始化一遍这些数据？怎么保证发起的请求是在初始化 DB 后？怎么保证只初始化一遍数据？</p>
+<p>解决完上述问题，整个 Local 模式初步跑通了，效果图见上边的 UI 一览。对于 WxCloud 模式，理论上也没啥问题，因为在 Connect 层，一些和 Storage 的差异都已经抹平了。。</p>
 ]]></content>
     </entry>
     <entry>
