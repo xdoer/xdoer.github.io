@@ -1,35 +1,83 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" >
+    <meta charset="utf-8" />
 
 <title>我的学生👨‍🎓时代-初中篇 |
     文享日志</title>
-<meta name="description" content="">
+<meta name="description" content="" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1643890353991">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+/>
+<link
+  rel="shortcut icon"
+  href="https://aiyou.life/favicon.ico?v=1643970568325"
+/>
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-<link rel="stylesheet" href="https://aiyou.life/styles/main.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css">
+<link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+  integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+  crossorigin="anonymous"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css"
+/>
+<link rel="stylesheet" href="https://aiyou.life/styles/main.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css"
+/>
 
 
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
   
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
-  
-
-  
-
 <!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+
+<style>
+  .prev-mask {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+  }
+  .img-big {
+    max-height: 70vh;
+  }
+  .post-content img {
+    max-height: 500px;
+  }
+</style>
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
+    <div class="prev-mask">
+      <div class="img-container">
+        <div class="img-close">
+          <img class="img-big" />
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar border fixed split-nav">
   <div class="nav-brand">
     <h3><a href="https://aiyou.life">文享日志</a></h3>
@@ -92,7 +140,7 @@
               2020-08-15 
               <a
                 href="https://aiyou.life/tag/la2vnLuFN/"
-                class="badge warning"
+                class="badge "
               >
                 生活
               </a>
@@ -148,7 +196,7 @@
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1643890353991"
+      src="https://aiyou.life/images/avatar.png?v=1643970568325"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -230,56 +278,56 @@
       
       <a
         href="https://aiyou.life/tag/df67loo-n/"
-        class="badge secondary"
+        class="badge success"
       >
         笔记
       </a>
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge "
+        class="badge secondary"
       >
         前端
       </a>
       
       <a
         href="https://aiyou.life/tag/E75leUW9b/"
-        class="badge secondary"
+        class="badge "
       >
         typescript
       </a>
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge warning"
+        class="badge "
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge warning"
+        class="badge secondary"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge "
+        class="badge warning"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge warning"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge warning"
+        class="badge secondary"
       >
         ReactNative
       </a>
@@ -303,8 +351,7 @@
 
     </div>
 
-    
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <!-- <script src="//cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-bash.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-typescript.min.js"></script>
@@ -316,7 +363,6 @@
   AOS.init()
 
   // hljs.initHighlightingOnLoad()
-
 </script>
 
 <script type="application/javascript">
@@ -440,21 +486,23 @@
 <script>
   // 点击文章内部图片查看大图
   const contentImagesEles = [...document.querySelectorAll('.post-content img')]
-  const maskEle = document.querySelector('prev-mask')
-  const containerEle = document.querySelector('image-container')
-  const imgCloseEle = document.querySelector('img-close')
-  const imgBigEle = document.querySelector('img-big')
+  const maskEle = document.querySelector('.prev-mask')
+  const containerEle = document.querySelector('.image-container')
+  const imgCloseEle = document.querySelector('.img-close')
+  const imgBigEle = document.querySelector('.img-big')
 
   contentImagesEles.forEach((ele) => {
+    ele.style
+
     ele.addEventListener('click', () => {
       const { currentSrc } = ele
-      imgBigEle.attributes.currentSrc = currentSrc
-      mask.style.display = 'block'
+      imgBigEle.src = currentSrc
+      maskEle.style.display = 'flex'
     })
   })
 
   imgCloseEle.addEventListener('click', () => {
-    mask.style.display = 'none'
+    maskEle.style.display = 'none'
   })
 </script>
 

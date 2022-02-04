@@ -1,35 +1,83 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" >
+    <meta charset="utf-8" />
 
 <title>账本开发小记 |
     文享日志</title>
-<meta name="description" content="">
+<meta name="description" content="" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<link rel="shortcut icon" href="https://aiyou.life/favicon.ico?v=1643890353991">
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+/>
+<link
+  rel="shortcut icon"
+  href="https://aiyou.life/favicon.ico?v=1643970568325"
+/>
 
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
-<link rel="stylesheet" href="https://aiyou.life/styles/main.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css">
+<link
+  rel="stylesheet"
+  href="https://use.fontawesome.com/releases/v5.7.2/css/all.css"
+  integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr"
+  crossorigin="anonymous"
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/papercss@1.6.1/dist/paper.min.css"
+/>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css"
+/>
+<link rel="stylesheet" href="https://aiyou.life/styles/main.css" />
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/themes/prism.css"
+/>
 
 
+
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
   
-    <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css" />
-  
-
-  
-
 <!-- <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script> -->
+
+<style>
+  .prev-mask {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 10000;
+    justify-content: center;
+    align-items: center;
+  }
+  .img-big {
+    max-height: 70vh;
+  }
+  .post-content img {
+    max-height: 500px;
+  }
+</style>
 
 <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
 
   </head>
   <body>
+    <div class="prev-mask">
+      <div class="img-container">
+        <div class="img-close">
+          <img class="img-big" />
+        </div>
+      </div>
+    </div>
+
     <nav class="navbar border fixed split-nav">
   <div class="nav-brand">
     <h3><a href="https://aiyou.life">文享日志</a></h3>
@@ -273,20 +321,25 @@ export default {
 <p>目前进度:</p>
 <ol>
 <li>代码仓库整到了 Github，使用 Github Action 进行自动化构建</li>
-<li>写了部分系统设计文档。设计了部分数据表和 Local 模式下的接口实现</li>
+<li>写了部分系统设计文档。设计了部分数据表和本地模式下的接口实现</li>
 <li>重构代码，用状态管理工具去控制运行模式（Local、WxCloud、Server）</li>
 <li>状态管理的 Storage 模式</li>
-<li>Local 和 WXCloud 的 DB 数据初始化</li>
-<li>Local 模式初步跑通</li>
+<li>本地模式下的 DB 数据初始化</li>
+<li>本地模式初步跑通</li>
 </ol>
+<p>这里本地模式是指 Local 和 WxCloud，能在前端直接操作数据库</p>
 <p>UI 一览:<br>
 <img src="https://aiyou.life/post-images/1643887159019.png" alt="" loading="lazy"></p>
 <p><strong>总结</strong><br>
 首先把代码仓库切到 Github 了，电脑装的 docker 和 gitlab，运行起来资源占用太大，电脑风扇总是飞转，推完代码后，树莓派的 runner 也是跑的很慢，要几分钟才能跑完 CI，然后上传代码后预览。在一次 docker 升级后，docker gui 彻底打不开，索性直接卸载，转移仓库到 github 上了，花了一点时间研究了一下 Github Action 写了一下脚本，实现了向 delpoy 代码分支 push 代码，自动打包预览的功能。打包时间比树莓派快多了。。</p>
 <p>然后就是写系统设计文档了，这玩意不写的话，没办法进行下去。脑子里都是一些琐碎的想法，不整理出来，无从下手写代码。设计了主要的数据表模型，存什么字段都大致罗列了一下；同时也写了一下实现了接口规范，响应的数据，传的参数等。</p>
-<p>关于运行模式（Local、WxCloud、Server），之前没考虑好，是打算在打包的时候，根据环境变量来控制运行哪种模式，最近发现不能这么搞，应该放到前端，有个开关来控制数据存到哪里。切换开关后，状态应当是一直生效的，所以还要把状态管理和持久化数据进行结合，同样考虑到跨平台的原因，存取持久化数据可能是一个异步的过程，所以整个重构还是有一点挑战的。同时也是考虑目前没有服务器资源，所以重心放在了先将 Local 模式跑通。</p>
-<p>Local 模式下的数据初始化。UI 里面有一部分数据应当初始化到 DB 中，比如账单的支出类型、币种类型、资产类型等数据。所以怎么在用户打开你的小程序时，自动的初始化一遍这些数据？怎么保证发起的请求是在初始化 DB 后？怎么保证只初始化一遍数据？</p>
-<p>解决完上述问题，整个 Local 模式初步跑通了，效果图见上边的 UI 一览。对于 WxCloud 模式，理论上也没啥问题，因为在 Connect 层，一些和 Storage 的差异都已经抹平了。。</p>
+<p>关于运行模式（Local、WxCloud、Server），之前没考虑好，是打算在打包的时候，根据环境变量来控制运行哪种模式，最近发现不能这么搞，应该放到前端，有个开关来控制数据存到哪里。切换开关后，状态应当是一直生效的，所以还要把状态管理和持久化数据进行结合，同样考虑到跨平台的原因，存取持久化数据可能是一个异步的过程，所以整个重构还是有一点挑战的。同时也是考虑目前没有服务器资源，所以重心放在了先将本地模式跑通。</p>
+<p>本地模式下的数据初始化。UI 里面有一部分数据应当初始化到 DB 中，比如账单的支出类型、币种类型、资产类型等数据。所以在什么时机初始化这些数据？怎么保证发起的请求是在初始化 DB 后？怎么保证只初始化一遍数据（即下次打开应用不再初始化数据）？这些都是我在设计时遇到的挑战。最终解决方式是在调用接口时，用到了某张表，先查看索引表有没有这张表的记录，有的话，说明初始化了，没有的话，则进行初始化操作。这个流程相对符合直觉，但是要考虑的还要更多一些，比如并发请求，怎么控制只初始化一次等等。。解决方法还是之前在 axios 中看到的异步控制 Promise 的方案，简直帮了大忙。</p>
+<pre><code class="language-ts">let promiseReslove
+let promise = new Promise((resolve) =&gt; promiseReslove = resolve)
+</code></pre>
+<p>解决完上述问题，整个本地模式初步跑通了，效果图见上边的 UI 一览。整个效果还是令人满意的。<br>
+昨天在调试 wxCloud 模式的时候，突然小程序 IDE 报了个错，这才发现免费的微信云开发数据库，每天只有 500 次的读写操作。然后看了一下文档，数据库同时连接数只有 5 个，这就说明数据库的读写等操作，只能放到云函数里去弄，前端改造成本较低，代码设计之初就添加了 DB 的 Connect 层，后续添加或者调整存储形式，都比较容易。</p>
 </div>
           </article>
           <div class="simple-share">
@@ -320,7 +373,7 @@ export default {
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1643890353991"
+      src="https://aiyou.life/images/avatar.png?v=1643970568325"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -402,7 +455,7 @@ export default {
       
       <a
         href="https://aiyou.life/tag/df67loo-n/"
-        class="badge success"
+        class="badge secondary"
       >
         笔记
       </a>
@@ -423,42 +476,42 @@ export default {
       
       <a
         href="https://aiyou.life/tag/rSf0tu2pz/"
-        class="badge "
+        class="badge warning"
       >
         React
       </a>
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge success"
+        class="badge "
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge warning"
+        class="badge "
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge success"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge secondary"
+        class="badge success"
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge secondary"
+        class="badge "
       >
         博客
       </a>
@@ -475,8 +528,7 @@ export default {
 
     </div>
 
-    
-<script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js"></script>
 <!-- <script src="//cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-bash.min.js"></script>
 <script src="//cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-typescript.min.js"></script>
@@ -488,7 +540,6 @@ export default {
   AOS.init()
 
   // hljs.initHighlightingOnLoad()
-
 </script>
 
 <script type="application/javascript">
@@ -612,21 +663,23 @@ export default {
 <script>
   // 点击文章内部图片查看大图
   const contentImagesEles = [...document.querySelectorAll('.post-content img')]
-  const maskEle = document.querySelector('prev-mask')
-  const containerEle = document.querySelector('image-container')
-  const imgCloseEle = document.querySelector('img-close')
-  const imgBigEle = document.querySelector('img-big')
+  const maskEle = document.querySelector('.prev-mask')
+  const containerEle = document.querySelector('.image-container')
+  const imgCloseEle = document.querySelector('.img-close')
+  const imgBigEle = document.querySelector('.img-big')
 
   contentImagesEles.forEach((ele) => {
+    ele.style
+
     ele.addEventListener('click', () => {
       const { currentSrc } = ele
-      imgBigEle.attributes.currentSrc = currentSrc
-      mask.style.display = 'block'
+      imgBigEle.src = currentSrc
+      maskEle.style.display = 'flex'
     })
   })
 
   imgCloseEle.addEventListener('click', () => {
-    mask.style.display = 'none'
+    maskEle.style.display = 'none'
   })
 </script>
 
