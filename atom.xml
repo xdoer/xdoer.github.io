@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://aiyou.life</id>
     <title>文享日志</title>
-    <updated>2022-02-23T15:54:24.745Z</updated>
+    <updated>2022-03-12T11:57:44.289Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://aiyou.life"/>
     <link rel="self" href="https://aiyou.life/atom.xml"/>
@@ -217,6 +217,23 @@ let promise = new Promise((resolve) =&gt; promiseReslove = resolve)
 </code></pre>
 <p>解决完上述问题，整个本地模式初步跑通了，效果图见上边的 UI 一览。整个效果还是令人满意的。<br>
 昨天在调试 wxCloud 模式的时候，突然小程序 IDE 报了个错，这才发现免费的微信云开发数据库，每天只有 500 次的读写操作。然后看了一下文档，数据库同时连接数只有 5 个，这就说明数据库的读写等操作，只能放到云函数里去弄，前端改造成本较低，代码设计之初就添加了 DB 的 Connect 层，后续添加或者调整存储形式，都比较容易。</p>
+<h3 id="312-日">3.12 日</h3>
+<p>目前进度:</p>
+<ol>
+<li>重构了浮层管理</li>
+<li>重构了 prequest 的类型系统</li>
+<li>重构了 <a href="https://github.com/xdoer/PreQuest/tree/main/packages/use-request">use-request</a></li>
+<li>完善了<a href="https://github.com/xdoer/StateBus">状态管理</a></li>
+<li>完成了本地模式的基本功能，提交审核了第一个版本</li>
+</ol>
+<p><strong>总结</strong><br>
+通过写这个小应用，发现之前写的小工具的很多不足，比如请求库需要手动的注入类型、状态管理初始化不够好用等等，花了比较长的时间来完善这些工具。</p>
+<p>然后就是今天终于提审了第一个版本，基本功能是有了。但对于 WxCloud 和 Server 模式，不打算继续搞了。整个小程序剩下的工作，就是写业务逻辑方面的内容，基础的重复性工作，增删查改调 UI 什么的，感觉没啥意思。</p>
+<p>最后小程序名称是: 我记个账，欢迎体验</p>
+<h2 id="后记">后记</h2>
+<p>这篇文章从去年 12 月 11号开始写起，迭代了好几个版本，内容也挺多了，就不继续更新了。期间，利用业余时间也搞了很多事情。总的来说，小有收获。对于这个账本的开发，目前会告一段落。</p>
+<p>最近有个想法，想搞一个网站或者Chrome插件什么的，可以抓取各种信息展示给用户，类似早期的今日头条。。但是专业性更强，类似 daily.dev 这个插件。<br>
+<img src="https://aiyou.life/post-images/1647085831769.png" alt="" loading="lazy"></p>
 ]]></content>
     </entry>
     <entry>
