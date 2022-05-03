@@ -13,7 +13,7 @@
 />
 <link
   rel="shortcut icon"
-  href="https://aiyou.life/favicon.ico?v=1647086258565"
+  href="https://aiyou.life/favicon.ico?v=1651556686003"
 />
 
 <link
@@ -140,7 +140,7 @@
               2021-05-06 
               <a
                 href="https://aiyou.life/tag/K1r5vpFd_/"
-                class="badge secondary"
+                class="badge warning"
               >
                 前端
               </a>
@@ -154,7 +154,7 @@
               
               <a
                 href="https://aiyou.life/tag/E75leUW9b/"
-                class="badge success"
+                class="badge secondary"
               >
                 typescript
               </a>
@@ -451,8 +451,25 @@ prequest('http://localhost:3000/api')
     }
 }
 </code></pre>
-<p><strong>注意: 在某些版本的 es 中，<code>for in</code> 循环遍历不出 class 生成实例原型上的方法。</strong></p>
-<p>方式二: 还可以使用 Proxy 代理一个空函数，来劫持访问。</p>
+<p><strong>注意: 实测发现某些版本的 es 中，<code>for in</code> 循环遍历不出 class 生成实例原型上的方法。</strong></p>
+<p>方法二: 原型继承</p>
+<pre><code class="language-ts">class PreQuest {
+
+    static create(adapter) {
+        const instance = new PreQuest(adapter)
+        
+        function request(...rest) {
+           return instance.request(...rest)
+        }
+        
+        Reflect.setPrototypeOf(request, instance)
+        
+        return request
+    }
+}
+</code></pre>
+<p>将 PreQuest 实例当做 request 方法的原型</p>
+<p>方式三: 使用 Proxy 代理一个空函数，来劫持访问。</p>
 <pre><code class="language-ts">class PreQuest {
     
     // ...some code
@@ -665,16 +682,13 @@ request.abort()
 <p>那么怎么办呢？我们可以从传参中入手</p>
 <pre><code class="language-ts">function adapter(opt) {
     const { getNativeRequestInstance } = opt
-    
-    let resolvePromise: any
-    getNativeRequestInstance(new Promise(resolve =&gt; (resolvePromise = resolve)))
-    
+
     return new Promise(() =&gt; {
         const nativeInstance = wx.request(
            // some code
         )
         
-        resolvePromise(nativeInstance)
+        getNativeRequestInstance(nativeInstance)
     })
 }
 </code></pre>
@@ -682,10 +696,8 @@ request.abort()
 <pre><code class="language-ts">const instance = PreQuest.create(adapter)
 
 instance.post('http://localhost:3000/api', {
-    getNativeRequestInstance(promise) {
-      promise.then(instance =&gt; {
-          instance.abort()
-      })
+    getNativeRequestInstance(instance) {
+        instance.abort()
     }
 })
 </code></pre>
@@ -732,7 +744,7 @@ instance.post('http://localhost:3000/api', {
       <div class="sm-12 md-4 col sidebar">
   <div class="paper info-container">
     <img
-      src="https://aiyou.life/images/avatar.png?v=1647086258565"
+      src="https://aiyou.life/images/avatar.png?v=1651556686003"
       class="no-responsive avatar"
     />
     <div class="text-muted"></div>
@@ -814,14 +826,14 @@ instance.post('http://localhost:3000/api', {
       
       <a
         href="https://aiyou.life/tag/df67loo-n/"
-        class="badge warning"
+        class="badge success"
       >
         笔记
       </a>
       
       <a
         href="https://aiyou.life/tag/K1r5vpFd_/"
-        class="badge "
+        class="badge secondary"
       >
         前端
       </a>
@@ -842,35 +854,35 @@ instance.post('http://localhost:3000/api', {
       
       <a
         href="https://aiyou.life/tag/TfrzxMzWY/"
-        class="badge warning"
+        class="badge success"
       >
         小程序
       </a>
       
       <a
         href="https://aiyou.life/tag/TDgBvCzI8/"
-        class="badge secondary"
+        class="badge success"
       >
         javascript
       </a>
       
       <a
         href="https://aiyou.life/tag/g_6wyy_ol/"
-        class="badge secondary"
+        class="badge success"
       >
         网络
       </a>
       
       <a
         href="https://aiyou.life/tag/jp41-NU1u/"
-        class="badge secondary"
+        class="badge success"
       >
         ReactNative
       </a>
       
       <a
         href="https://aiyou.life/tag/X7Cdzy-Hu/"
-        class="badge success"
+        class="badge secondary"
       >
         博客
       </a>
